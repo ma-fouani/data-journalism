@@ -1,0 +1,29 @@
+{
+  "sections": [
+    {
+      "id": "hero",
+      "title": "Welcome to Our Story",
+      "subtitle": "An immersive experience through scrolling",
+      "backgroundImage": "path/to/hero-image.jpg"
+    },
+    {
+      "id": "story",
+      "title": "The Journey Begins",
+      "content": [
+        {
+          "type": "paragraph",
+          "text": "Once upon a time in a land far away, there was a story waiting to be told..."
+        },
+        {
+          "type": "image",
+          "src": "path/to/image1.jpg",
+          "alt": "An image depicting the beginning of the journey"
+        },
+        {
+          "type": "paragraph",
+          "text": "As the journey unfolds, we encounter challenges and adventures that shape our path."
+        }
+      ]
+    }
+  ]
+}

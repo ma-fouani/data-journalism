@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Challenge 1</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="title">
+            <h1>Challenge 1</h1>
+            <p>This is the first challenge page.</p>
+        </div>
+        <div class="content">
+            <p id="main_content">This is the Main Content. You can click the button below to replace.</p>
+            <p id="alt_content" class="hidden">You've reached alt content. Click again to go back.</p>
+            <button id="replace_button">Replace Content</button>
+        </div>
+    </div>
+
+    <script>
+        const mainContent = document.getElementById('main_content');
+        const altContent = document.getElementById('alt_content');
+        const replace_button = document.getElementById('replace_button');
+        let isMainVisible = true;
+
+        replace_button.addEventListener('click', () => {
+            if (isMainVisible) {
+                mainContent.classList.add('hidden');
+                altContent.classList.remove('hidden');
+            } else {
+                mainContent.classList.remove('hidden');
+                altContent.classList.add('hidden');
+            }
+            isMainVisible=!isMainVisible;
+        });
+    </script>
+</body>
+
+</html>

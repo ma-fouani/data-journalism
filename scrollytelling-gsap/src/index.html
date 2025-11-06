@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="Scrollytelling GSAP project">
+    <title>Scrollytelling — GSAP</title>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <div class="spacer"></div>
+    <div class="spacer">
+        <div class="animated-element">
+            <h2>Animate Me</h2>
+            <p>This element will be animated on scroll using GSAP.</p>
+        </div>
+    </div>
+    <div class="spacer"></div>
+    <!-- Scripts --> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.0/gsap.min.js" ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.0/ScrollTrigger.min.js" ></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.23/bundled/lenis.min.js" ></script>
+    <script>
+        // gsap animation
+        let tl= gsap.timeline({
+            scrollTrigger: {
+                trigger: '.animated-element',
+                start: 'top center',
+                end: 'bottom center',
+                scrub: true, //if false, animation plays when trigger is reached. in that case you can also define a duration
+                markers: true,
+                //toggleActions: 'onEnter onLeave onEnterBack onLeaveBack'
+                toggleActions: 'play reverse play reverse'
+            }
+        });
+        tl.to('.animated-element', {
+            x:800,
+            //duration: 0.5 // duration is not needed when scrub is true
+        });
+
+        // Smooth Scrolling with Lenis
+        const lenis = new Lenis();
+        lenis.on('scroll', (e) => {
+            console.log(e);
+        });
+        function raf(time){
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+    </script>
+</body>
+</html>

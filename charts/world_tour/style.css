@@ -1,0 +1,251 @@
+body {
+    margin: 0;
+    padding: 0;
+    background: #fff;
+}
+
+.content {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.content p {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+#container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.country-label {
+    font-size: 24px;
+    font-family: Arial, sans-serif;
+    margin-bottom: 20px;
+}
+
+svg {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+}
+
+.sphere {
+    fill: #fff;
+}
+
+.land {
+    fill: #ddd;
+}
+
+/*.country {
+    fill: #ddd;
+    stroke: #fff;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+}
+
+.current {
+    fill: #ff0000;
+    stroke: #990000;
+    stroke-width: 1.5;
+}*/
+
+.country { fill: #ccc; stroke: #fff; stroke-width: 0.2px; }
+.country.visited { fill: #999; }
+.country.current { fill: #ff0000 !important; }
+
+.boundary {
+    fill: none;
+    stroke: #fff;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+}
+
+.route {
+    fill: none;
+    stroke: #000;
+    stroke-width: 1.5;
+    stroke-dasharray: 4, 4;
+}
+
+
+
+
+
+
+  #map-widget {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    max-width: 1400px;
+    max-height: 950px;
+    margin: 0 auto;
+    background: #e6f7ff;
+    overflow: hidden;
+  }
+
+  /* D3 container fills the base */
+  #container {
+    width: 100%;
+    height: 100%;
+    display: block;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  /* News widget positioning and styling */
+  #news-widget {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    width: 40%;
+    height: 40%;
+    background: rgba(255,255,255,0.98);
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+    z-index: 30;
+    backdrop-filter: blur(4px);
+  }
+
+  /* Fixed-height image in the card */
+  #news-image {
+    width: 120px;            /* small thumbnail column */
+    height: 120px;           /* fixed height */
+    flex: 0 0 120px;
+    object-fit: cover;
+    border-radius: 6px;
+    background: #ddd;
+  }
+
+  #news-text {
+    flex: 1 1 auto;
+    min-width: 0;           /* important for truncation */
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  #news-title {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.2;
+    font-weight: 700;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;  /* clamp to max 3 lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  #news-date {
+    color: #666;
+    font-size: 0.85rem;
+  }
+
+  #news-summary {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.3;
+    color: #222;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;  /* clamp to max 4 lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  #news-link {
+    margin-top: auto;
+    font-weight: 600;
+    color: #0a66c2;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+
+  #news-footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: auto;
+    font-size: 0.9rem;
+    color: #666;
+  }
+
+  #news-country {
+    color: #333;
+    font-weight: 600;
+  }
+
+  #news-country:before {
+    content: "- ";
+  }
+
+  #news-link {
+    margin-left: auto;
+    width: 24px;
+    height: 24px;
+  }
+
+  /* MOBILE: map remains main (full), news widget floats at bottom on top of map */
+  @media (max-width: 800px) {
+    #map-widget {
+      height: 100vh;        /* let the map take full viewport on mobile */
+      min-height: 0;
+    }
+
+    #container {
+      overflow-x: auto;
+      overflow-y: hidden;
+    }
+
+    /* News widget becomes wider (almost full width), anchored to bottom */
+    #news-widget {
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 32px);
+      max-width: 520px;
+      bottom: 20px;
+      top: auto;
+      padding: 12px;
+      align-items: center;
+      z-index: 40;
+      backdrop-filter: blur(6px);
+    }
+
+    /* Place image as full-width block on small screens if needed */
+    #news-image {
+      width: 100%;
+      height: 160px;
+      flex: 0 0 auto;
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+
+    #news-text { padding: 0 4px; }
+
+    /* Reduce clamping slightly on very small screens if you want */
+    #news-title { 
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+    }
+    #news-summary { 
+      -webkit-line-clamp: 3;
+      line-clamp: 3;
+    }
+  }

@@ -1,0 +1,25 @@
+{
+  "name": "scrollytelling-gsap",
+  "version": "1.0.0",
+  "description": "A scrollytelling webpage using GSAP for animations.",
+  "main": "src/scripts/main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "dependencies": {
+    "gsap": "^3.11.5"
+  },
+  "devDependencies": {
+    "vite": "^4.0.0"
+  },
+  "keywords": [
+    "scrollytelling",
+    "gsap",
+    "animation",
+    "web"
+  ],
+  "author": "",
+  "license": "ISC"
+}

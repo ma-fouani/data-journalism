@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Tour</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://d3js.org/topojson.v3.min.js"></script>
+</head>
+
+<body>
+    <div class="content">
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim
+            sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius
+            a, semper congue, euismod non, mi.</p>
+
+        <p>Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. Duis
+            semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue. Ut in risus
+            volutpat libero pharetra tempor.</p>
+
+        <p>Cras vestibulum bibendum augue. Praesent egestas leo in pede. Praesent blandit odio eu enim. Pellentesque sed
+            dui ut augue blandit sodales. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere
+            cubilia Curae; Aliquam nibh.</p>
+
+        <p>Mauris ac mauris sed pede pellentesque fermentum. Maecenas adipiscing ante non diam sodales hendrerit. Ut
+            velit mauris, egestas sed, gravida nec, ornare ut, mi. Aenean ut orci vel massa suscipit pulvinar. Nulla
+            sollicitudin. Fusce varius, ligula non tempus aliquam.</p>
+
+        <p>Praesent augue. Fusce commodo. Vestibulum convallis, lorem a tempus semper, dui dui euismod elit, vitae
+            placerat urna tortor vitae lacus. Nullam libero mauris, consequat quis, varius et, dictum id, arcu. Mauris
+            mollis tincidunt felis. Aliquam feugiat tellus ut neque.</p>
+    </div>
+    <div id="map-widget">
+        <!-- D3 will append the SVG inside this container -->
+        <div id="container"></div>
+
+        <!-- News widget (floats above the map) -->
+        <aside id="news-widget" role="complementary" aria-labelledby="news-title">
+            <img id="news-image" alt="News image" />
+            <div id="news-text">
+                <h2 id="news-title"></h2>
+                <p id="news-summary"></p>
+                <div id="news-footer">
+                    <div id="news-date"></div>
+                    <div id="news-country"></div>
+                    <a id="news-link" href="#" target="_blank" rel="noopener noreferrer">
+                        <img src="img/go.svg" alt="Read more" width="24" height="24">
+                    </a>
+                </div>
+            </div>
+        </aside>
+    </div>
+    <script src="data.js"></script>
+    <script>
+        // Get container dimensions
+        const container = document.getElementById('container');
+        const width = container.clientWidth;
+        const height = container.clientHeight;
+        
+        // Calculate the scale based on container size
+        const scale = Math.min(width, height) * 0.4;
+
+        // Create a projection
+        const projection = d3.geoOrthographic()
+            .scale(scale)
+            .center([0, 0])
+            .rotate([-coords[0].coords[0], -coords[0].coords[1]])
+            .translate([width / 2, height / 2]);
+
+        // Create the path generator
+        const path = d3.geoPath().projection(projection);
+
+        // Create SVG
+        const svg = d3.select("#container")
+            .append("svg")
+            .attr("viewBox", [0, 0, width, height])
+            .attr("width", "100%")
+            .attr("height", "100%");
+
+        // Add sphere and graticules
+        svg.append("path")
+            .datum({ type: "Sphere" })
+            .attr("class", "sphere")
+            .attr("d", path);
+
+        // Load world data
+        Promise.all([
+            d3.json("https://unpkg.com/world-atlas@2.0.2/countries-50m.json")
+        ]).then(([worldData]) => {
+            // Convert TopoJSON to GeoJSON
+            const countries = topojson.feature(worldData, worldData.objects.countries);
+            const boundaries = topojson.mesh(worldData, worldData.objects.countries);
+
+            // Add countries
+            svg.selectAll("path.country")
+                .data(countries.features)
+                .enter()
+                .append("path")
+                .attr("class", "country")
+                .attr("d", path);  // This was missing!
+
+            // Add boundaries
+            svg.append("path")
+                .datum(boundaries)
+                .attr("class", "boundary")
+                .attr("d", path);
+
+            // Add dynamic route segment
+            svg.append("path")
+                .attr("class", "route")
+                .attr("d", "");
+
+            let currentIndex = 0;
+
+            // Function to interpolate between two points
+            function interpolate(start, end) {
+                const interpolator = d3.geoInterpolate(start, end);
+                return function (t) {
+                    const p = interpolator(t);
+                    return [-p[0], -p[1]];
+                }
+            }
+
+            // Function to animate to next location
+            function updateCountryLabel(name) {
+                d3.select(".country-label").text(name);
+            }
+
+            function updateCurrentCountry(name) {
+                svg.selectAll(".country").classed("current", false);
+                svg.selectAll(".country")
+                    .filter(d => d.properties.name === name)
+                    .classed("current", true)
+                    .raise();
+            }
+
+            let isAnimating = false;
+            let observer;
+
+            function updateNewsPanel(country) {
+                if (!country || !country.news) return;
+                
+                const news = country.news;
+                const title = news.title || "";
+                const date = news.date || "";
+                const summary = news.description || "";
+                const link = news.link || "#";
+                const img = news.image || "";
+
+                // Update DOM
+                document.getElementById("news-title").textContent = title;
+                document.getElementById("news-date").textContent = date;
+                document.getElementById("news-country").textContent = country.name || "";
+                document.getElementById("news-summary").textContent = summary;
+                const a = document.getElementById("news-link");
+                a.setAttribute("href", link);
+
+                const imageEl = document.getElementById("news-image");
+                if (img) {
+                    imageEl.src = img;
+                    imageEl.style.display = "";
+                    imageEl.alt = title;
+                } else {
+                    // If no image, either show a placeholder color or hide the img element
+                    imageEl.style.display = "none";
+                }
+
+                // Optional: subtle enter animation
+                const widget = document.getElementById("news-widget");
+                widget.style.transition = "transform 300ms ease, opacity 300ms ease";
+                widget.style.opacity = "0";
+                widget.style.transform = "translateY(-6px)";
+                requestAnimationFrame(() => {
+                    widget.style.opacity = "1";
+                    widget.style.transform = "translateY(0)";
+                });
+            }
+
+            function setupIntersectionObserver() {
+                const options = {
+                    threshold: 0.5
+                };
+
+                observer = new IntersectionObserver((entries) => {
+                    const [entry] = entries;
+                    if (entry.isIntersecting && !isAnimating) {
+                        animateToNextLocation();
+                    }
+                }, options);
+
+                // Start observing the container
+                observer.observe(document.getElementById('container'));
+            }
+
+            function animateToNextLocation() {
+                const start = coords[currentIndex];
+                currentIndex = (currentIndex + 1) % coords.length;
+                const end = coords[currentIndex];
+
+                // Update country label and highlight
+                updateCountryLabel(end.name);
+                updateCurrentCountry(end.name);
+                updateNewsPanel(end);
+
+                const rotationInterpolator = interpolate(start.coords, end.coords);
+
+                isAnimating = true;
+                d3.transition()
+                    .duration(1250)
+                    .ease(d3.easeCubicInOut)
+                    .tween("rotate", () => {
+                        return function (t) {
+                            const r = rotationInterpolator(t);
+                            projection.rotate(r);
+
+                            // Update all paths including countries and sphere
+                            //svg.selectAll("path:not(.route)").attr("d", path);
+                            svg.selectAll(".country, .boundary, .sphere").attr("d", path);
+
+                            // Update the route segment with shrinking effect
+                            const currentPoint = [start.coords[0], start.coords[1]];
+                            const targetPoint = [end.coords[0], end.coords[1]];
+                            const interpolatedCoords = d3.geoInterpolate(currentPoint, targetPoint)(t);
+
+                            // After t > 0.9, start shrinking the line from the start
+                            let startPoint = currentPoint;
+                            if (t > 0.9) {
+                                const shrinkT = (t - 0.9) * 10; // normalize to 0-1 for last 10% of animation
+                                const shrinkStart = d3.geoInterpolate(currentPoint, interpolatedCoords)(shrinkT);
+                                startPoint = shrinkStart;
+                            }
+
+                            const routeData = {
+                                type: "Feature",
+                                geometry: {
+                                    type: "LineString",
+                                    coordinates: [startPoint, interpolatedCoords]
+                                }
+                            };
+                            svg.select("path.route").datum(routeData).attr("d", path);
+                        };
+                    })
+                    .on("end", () => {
+                        isAnimating = false;
+                        // Clear the route line
+                        svg.select("path.route").attr("d", "");
+                        const container = document.getElementById('container');
+                        const entry = observer.takeRecords()[0];
+                        // Continue to next point after a short delay
+                        setTimeout(() => {
+                            if (document.getElementById('container').getBoundingClientRect().top < window.innerHeight) {
+                                animateToNextLocation();
+                            }
+                        }, 4500);
+                    });
+            }
+
+            // Set up the observer and start the animation
+            setupIntersectionObserver();
+
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                const container = document.getElementById('container');
+                const width = container.clientWidth;
+                const height = container.clientHeight;
+                const scale = Math.min(width, height) * 0.4;
+                
+                projection
+                    .scale(scale)
+                    .translate([width / 2, height / 2]);
+
+                svg
+                    .attr("width", width)
+                    .attr("height", height)
+                    .attr("viewBox", [0, 0, width, height]);
+
+                // Update all paths
+                svg.selectAll(".country, .boundary, .sphere").attr("d", path);
+            });
+        });
+    </script>
+</body>
+
+</html>

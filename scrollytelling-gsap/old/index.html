@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scrollytelling with GSAP</title>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Hero Section -->
+        <div id="hero">
+            <!-- Include hero section HTML -->
+            <div data-include="components/section-hero.html"></div>
+        </div>
+
+        <!-- Story Section -->
+        <div id="story">
+            <!-- Include story section HTML -->
+            <div data-include="components/section-story.html"></div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/ScrollTrigger.min.js"></script>
+    <script src="scripts/scroller.js"></script>
+    <script src="scripts/main.js"></script>
+</body>
+</html>

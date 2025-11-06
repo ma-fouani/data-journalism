@@ -1,0 +1,36 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #1a1629;
+    color: #ffffff
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    background-color: #ffffff33;
+    margin: 50px;
+    padding: 40px;
+    border-radius: 10px;
+}
+
+.title {
+    padding: 20px;
+    width: 400px;
+}
+
+.content {
+    padding: 20px;
+    overflow: hidden;
+    width: 400px;
+
+    p {
+        top: 0;
+        transition: transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+}
+
+.hidden {
+    transform: translateX(-120%);
+}
