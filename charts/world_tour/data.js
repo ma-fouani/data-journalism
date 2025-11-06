@@ -61,7 +61,7 @@ const coords = [
             "subtitle": "Distribution period up to September 2024 (reported)",
             "description": "According to multiple news organisations, Hezbollah purchased the pagers through the intermediary company and distributed thousands of units to operatives (the devices were attractive because pagers avoid cell-phone vulnerabilities). Hezbollah later instructed cadres to use pagers rather than cell phones. The devices reportedly circulated widely inside Hezbollah areas in Lebanon and some in Syria.",
             "link": "https://en.wikipedia.org/wiki/2024_Lebanon_electronic_device_attacks?utm_source=chatgpt.com",
-            "image": ""
+            "image": "https://qodenext.com/wp-content/uploads/2024/01/loading-and-unloading-logistic.webp"
         }
     },
     {
@@ -74,7 +74,7 @@ const coords = [
             "subtitle": "Thousands of devices detonate simultaneously",
             "description": "At around 15:30 local time, thousands of pagers detonated in a coordinated sequence across Lebanon and parts of Syria. The blasts killed dozens and injured thousands, causing widespread panic. Hezbollah blamed Israel; Israel did not officially comment at the time.",
             "link": "https://www.bbc.com/news/world-middle-east-68282819",
-            "image": ""
+            "image": "https://i.ytimg.com/vi/JRQzbazXgXs/maxresdefault.jpg"
         }
     },
     {
@@ -87,7 +87,7 @@ const coords = [
             "subtitle": "Day two of the coordinated operation",
             "description": "A second series of blasts hit Lebanon when walkie-talkies reportedly detonated, wounding additional Hezbollah members and civilians. Hospitals across the country were overwhelmed with burn and eye injuries.",
             "link": "https://www.france24.com/en/middle-east/20240918-lebanon-walkie-talkie-explosions-follow-pager-blasts",
-            "image": ""
+            "image": "https://static.independent.co.uk/2024/09/18/17/lebanon-walkie-talkie-splash.jpg"
         }
     },
     {
@@ -100,7 +100,7 @@ const coords = [
             "subtitle": "Reuters and NYT reconstruct the supply chain",
             "description": "Investigations by Reuters and The New York Times identified BAC Consulting as a Mossad-linked front company that delivered booby-trapped pagers to Hezbollah. The reports highlighted extensive deception tactics used to disguise the devices as legitimate imports.",
             "link": "https://www.nytimes.com/2024/09/20/world/middleeast/israel-lebanon-pager-explosions.html",
-            "image": ""
+            "image": "https://img-cdn.publive.online/fit-in/640x430/filters:format(webp)/theprobe/media/media_files/dsIXbh9LtENLPriGT6w9.jpg"
         }
     },
     {
@@ -113,7 +113,7 @@ const coords = [
             "subtitle": "Health Ministry reports and UN statements",
             "description": "The Lebanese Health Ministry announced updated figures with thousands wounded and dozens killed. UN experts and rights groups called for investigations into the attacks, warning of indiscriminate harm and potential violations of international law.",
             "link": "https://www.reuters.com/world/middle-east/lebanon-health-ministry-reports-thousands-injured-pager-blasts-2024-09-18/",
-            "image": ""
+            "image": "https://i.ytimg.com/vi/ifLPzklNqRc/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLCSN088L6fLukGR6anTgws2ZEaxyQ"
         }
     },
     {
@@ -126,7 +126,7 @@ const coords = [
             "subtitle": "Specialized medical evacuations and surgeries",
             "description": "Iranian media reported that hundreds of injured Hezbollah members were flown to Iran for specialized surgeries, including eye and hand operations. Hospitals in Tehran and Mashhad received many of the patients.",
             "link": "https://www.irna.ir/news/85372870",
-            "image": ""
+            "image": "https://cnn-arabic-images.cnn.io/cloudinary/image/upload/w_1750,h_919,c_fill,q_auto,g_center/t_cnnarabic_watermark_logo_v5/cnnarabic/2024/10/09/images/279692.jpg"
         }
     },
     {
