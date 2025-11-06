@@ -76,6 +76,7 @@
         let job;
         // Loading bar functionality
         let loadingBarInterval;
+        if (height > width) verticalShift = 240;
         const loadingBar = document.getElementById('loading-bar');
 
         function startLoadingBar() {
@@ -104,7 +105,6 @@
             loadingBar.style.width = '0%';
         }
 
-        if (height > width) verticalShift = 120;
 
         // Create a projection
         const projection = d3.geoOrthographic()
