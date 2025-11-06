@@ -7,7 +7,7 @@
       "command": "powershell",
       "args": [
         "-Command",
-        "git add .; git commit -m \"AI_backup_before_modification\" --allow-empty; $timestamp = Get-Date -Format 'yyyy-MM-dd_HH-mm-ss'; git add .; git commit -m \"changes_$timestamp\""
+        "git add .; $timestamp = Get-Date -Format 'yyyy-MM-dd_HH-mm-ss'; git add .; git commit -m \"changes_$timestamp\""
       ],
       "problemMatcher": []
     } 
