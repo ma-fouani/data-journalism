@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>World Tour</title>
+    <title>Pager Attack</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -15,25 +15,31 @@
 
 <body>
     <div class="content">
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim
-            sit amet, adipiscing nec, ultricies sed, dolor. Cras elementum ultrices diam. Maecenas ligula massa, varius
-            a, semper congue, euismod non, mi.</p>
+        <h1>Pager Attack - 2024</h1>
+        <p>On 17 September 2024 thousands of pagers carried by Hezbollah members (and others) detonated nearly
+            simultaneously across Lebanon (and parts of Syria). A second wave on 18 September 2024 involved weaponised
+            walkie-talkies. The attacks caused dozens of deaths and several thousand injuries, overwhelming hospitals
+            and prompting calls for international investigation. Multiple reputable sources report that the operation
+            was attributed to Israel by regional actors and many international media organizations.</p>
 
-        <p>Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat. Duis
-            semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue. Ut in risus
-            volutpat libero pharetra tempor.</p>
-
-        <p>Cras vestibulum bibendum augue. Praesent egestas leo in pede. Praesent blandit odio eu enim. Pellentesque sed
-            dui ut augue blandit sodales. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere
-            cubilia Curae; Aliquam nibh.</p>
-
-        <p>Mauris ac mauris sed pede pellentesque fermentum. Maecenas adipiscing ante non diam sodales hendrerit. Ut
-            velit mauris, egestas sed, gravida nec, ornare ut, mi. Aenean ut orci vel massa suscipit pulvinar. Nulla
-            sollicitudin. Fusce varius, ligula non tempus aliquam.</p>
-
-        <p>Praesent augue. Fusce commodo. Vestibulum convallis, lorem a tempus semper, dui dui euismod elit, vitae
-            placerat urna tortor vitae lacus. Nullam libero mauris, consequat quis, varius et, dictum id, arcu. Mauris
-            mollis tincidunt felis. Aliquam feugiat tellus ut neque.</p>
+        <p>Pager attack: unlike a single blast (Hiroshima or Beirut port), the pager attack was a distributed,
+            coordinated detonation of many small devices across many locations. That makes an “area” comparison
+            imprecise — the greater humanitarian impact came from number of simultaneous incidents and the high number
+            of casualties and wounded treated across many hospitals.</p>
+        <h4>A Global Timeline of the 2024 Pager Attacks</h4>
+        <p>The interactive webpage offers a dynamic, globe-based visualization of the 2024 pager attack timeline, taking
+            viewers on a chronological journey across multiple countries involved in the covert operation. As the globe
+            spins, it zooms in on each location mentioned in the timeline — from Israel’s cyber operations and European
+            intermediary companies, to Lebanon, where the attacks struck. Each stop reveals a key moment in the
+            unfolding operation: intercepted communications, front-company setups, international shipments, and finally,
+            the synchronized explosions on September 17, 2024. The experience transforms a complex geopolitical story
+            into an intuitive visual narrative that connects geography, espionage, and real-world consequences.</p>
+        <p>The presentation not only highlights the technical sophistication behind the operation but also its global
+            footprint, emphasizing how intelligence networks and supply chains spanned continents before converging in
+            Lebanon. Each timeline point is enriched with context — dates, reports, and visual cues — allowing the
+            viewer to understand how a single act of sabotage was built through months of planning. The globe’s
+            movement, combined with the timeline’s structured storytelling, makes the experience both educational and
+            emotionally impactful, bridging investigative journalism with interactive data visualization.</p>
     </div>
     <div id="map-widget">
         <!-- D3 will append the SVG inside this container -->
@@ -71,26 +77,26 @@
         // Loading bar functionality
         let loadingBarInterval;
         const loadingBar = document.getElementById('loading-bar');
-        
+
         function startLoadingBar() {
             loadingBar.style.width = '0%';
             const startTime = Date.now();
-            
+
             if (loadingBarInterval) {
                 clearInterval(loadingBarInterval);
             }
-            
+
             loadingBarInterval = setInterval(() => {
                 const elapsed = Date.now() - startTime;
                 const progress = Math.min((elapsed / duration) * 100, 100);
                 loadingBar.style.width = progress + '%';
-                
+
                 if (progress >= 100) {
                     clearInterval(loadingBarInterval);
                 }
             }, 50); // Update every 50ms for smooth animation
         }
-        
+
         function resetLoadingBar() {
             if (loadingBarInterval) {
                 clearInterval(loadingBarInterval);
@@ -214,13 +220,13 @@
                 } else {
                     imageEl.style.display = "none";
                 }
-                    document.getElementById("news-title").textContent = title;
-                    document.getElementById("news-summary").textContent = summary;
-                    document.getElementById("news-date").textContent = date;
-                    document.getElementById("news-country").textContent = country.name || "";
-                    const a = document.getElementById("news-link");
-                    //a.setAttribute("href", link);
-                    a.style.opacity = 1;
+                document.getElementById("news-title").textContent = title;
+                document.getElementById("news-summary").textContent = summary;
+                document.getElementById("news-date").textContent = date;
+                document.getElementById("news-country").textContent = country.name || "";
+                const a = document.getElementById("news-link");
+                //a.setAttribute("href", link);
+                a.style.opacity = 1;
                 /*if (duration < 3000) {
                 } else {
 
@@ -269,7 +275,7 @@
 
             function animateToNextLocation() {
                 if (currentIndex >= coords.length - 1) {
-                    
+
                     return;
                 }
                 start = coords[currentIndex % coords.length];

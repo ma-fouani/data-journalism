@@ -168,8 +168,8 @@ svg {
   font-weight: 700;
   color: #fff;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
+  /*-webkit-line-clamp: 3;
+  line-clamp: 3;*/
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -185,8 +185,8 @@ svg {
   line-height: 1.4;
   color: rgba(255, 255, 255, 0.85);
   display: -webkit-box;
-  -webkit-line-clamp: 6;
-  line-clamp: 6;
+  /*-webkit-line-clamp: 6;
+  line-clamp: 6;*/
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -290,7 +290,7 @@ svg {
     padding: 0 4px;
   }
 
-  /* Reduce clamping slightly on very small screens if you want */
+  /*  
   #news-title {
     -webkit-line-clamp: 2;
     line-clamp: 2;
@@ -299,5 +299,5 @@ svg {
   #news-summary {
     -webkit-line-clamp: 3;
     line-clamp: 3;
-  }
+  }*/
 }
