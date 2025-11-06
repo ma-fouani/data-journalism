@@ -4,10 +4,20 @@
     {
       "label": "Local AI Backup",
       "type": "shell",
-      "command": "cmd",
+      "command": "powershell",
       "args": [
-        "/c",
-        "git add . && git commit -m \"AI backup before modification\" --allow-empty"
+        "-Command",
+        "git add .; git commit -m \"AI_backup_before_modification\" --allow-empty"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "Commit Changes with Timestamp",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-Command",
+        "$timestamp = Get-Date -Format 'yyyy-MM-dd_HH-mm-ss'; git add .; git commit -m \"changes_$timestamp\""
       ],
       "problemMatcher": []
     }

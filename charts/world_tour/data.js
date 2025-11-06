@@ -1,8 +1,23 @@
 const coords = [
     {
+        "name": "",
+        "coords": [34.8516, 31.0461],
+        "id": "ISR",
+        "zoom": 1,
+        "news": {
+            "date": "",
+            "title": "Pager Attacks",
+            "subtitle": "",
+            "description": "",
+            "link": "",
+            "image": ""
+        }
+    },
+    {
         "name": "Israel",
         "coords": [34.8516, 31.0461],
         "id": "ISR",
+        "zoom": 10,
         "news": {
             "date": "Reported 2022",
             "title": "Mossad discovers Hezbollah procurement of pagers; operation concept begins",
@@ -16,19 +31,21 @@ const coords = [
         "name": "Hungary",
         "coords": [19.5033, 47.1625],
         "id": "HUN",
+        "zoom": 14,
         "news": {
             "date": "2023–2024 (reported)",
             "title": "Creation of fake European shell companies",
             "subtitle": "Mossad sets up front entities to mimic real distributors",
             "description": "Investigations revealed the creation of shell firms such as BAC Consulting Kft in Hungary, complete with websites, showrooms, and marketing videos, to disguise Mossad’s role and establish a fake supply chain.",
             "link": "https://www.reuters.com/world/middle-east/how-israel-infiltrated-hezbollahs-supply-chain-2024-09-20/",
-            "image": ""
+            "image": "https://e3.365dm.com/24/09/768x432/skynews-bac-lebanon-strikes_6690166.jpg"
         }
     },
     {
         "name": "Taiwan",
         "coords": [120.9605, 23.6978],
         "id": "TWN",
+        "zoom": 10,
         "news": {
             "date": "Mid-2024 (reported)",
             "title": "Gold Apollo licensing and BAC Consulting connection",
@@ -42,6 +59,7 @@ const coords = [
         "name": "Turkey",
         "coords": [35.2433, 38.9637],
         "id": "TUR",
+        "zoom": 8,
         "news": {
             "date": "Mid-2024 (reported)",
             "title": "Suspicious shipments intercepted in transit",
@@ -55,6 +73,7 @@ const coords = [
         "name": "Lebanon",
         "coords": [35.8623, 33.8547],
         "id": "LBN",
+        "zoom": 16,
         "news": {
             "date": "Reported June 2024",
             "title": "Hezbollah acquires the pagers from the intermediary and distributes them to members",
@@ -68,6 +87,7 @@ const coords = [
         "name": "Lebanon",
         "coords": [35.8623, 33.8547],
         "id": "LBN",
+        "zoom": 22,
         "news": {
             "date": "17 September 2024",
             "title": "Coordinated pager explosions across Lebanon",
@@ -81,6 +101,7 @@ const coords = [
         "name": "Lebanon",
         "coords": [35.8623, 33.8547],
         "id": "LBN",
+        "zoom": 26,
         "news": {
             "date": "18 September 2024",
             "title": "Second wave of explosions — walkie-talkies detonate",
@@ -94,6 +115,7 @@ const coords = [
         "name": "Israel",
         "coords": [34.8516, 31.0461],
         "id": "ISR",
+        "zoom": 16,
         "news": {
             "date": "20 September 2024",
             "title": "Press investigations attribute operation to Mossad",
@@ -107,6 +129,7 @@ const coords = [
         "name": "Lebanon",
         "coords": [35.8623, 33.8547],
         "id": "LBN",
+        "zoom": 26,
         "news": {
             "date": "October 2024",
             "title": "Casualty updates and international reactions",
@@ -120,6 +143,7 @@ const coords = [
         "name": "Iran",
         "coords": [51.3890, 35.6892],
         "id": "IRN",
+        "zoom": 16,
         "news": {
             "date": "November 2024 – January 2025",
             "title": "Hundreds of injured Hezbollah members treated in Iran",
@@ -130,9 +154,10 @@ const coords = [
         }
     },
     {
-        "name": "United States",
+        "name": "United States of America",
         "coords": [-95.7129, 37.0902],
         "id": "USA",
+        "zoom": 5,
         "news": {
             "date": "22 December 2024",
             "title": "60 Minutes interview with former Mossad agents",

@@ -32,16 +32,13 @@
             placerat urna tortor vitae lacus. Nullam libero mauris, consequat quis, varius et, dictum id, arcu. Mauris
             mollis tincidunt felis. Aliquam feugiat tellus ut neque.</p>
     </div>
-    <div>
-        
-    </div>
     <div id="map-widget">
         <!-- D3 will append the SVG inside this container -->
         <div id="container"></div>
 
         <!-- News widget (floats above the map) -->
         <aside id="news-widget" role="complementary" aria-labelledby="news-title">
-            <img id="news-image" alt="News image" />
+            <img id="news-image" alt="News image" class="image-hide" />
             <div id="news-text">
                 <h2 id="news-title"></h2>
                 <p id="news-summary"></p>
@@ -49,7 +46,7 @@
                     <div id="news-date"></div>
                     <div id="news-country"></div>
                     <a id="news-link" href="#" target="_blank" rel="noopener noreferrer">
-                        <img src="img/go.svg" alt="Read more" width="24" height="24">
+                        more
                     </a>
                 </div>
             </div>
@@ -61,20 +58,23 @@
         const container = document.getElementById('container');
         const width = container.clientWidth;
         const height = container.clientHeight;
-        
-        // Calculate the scale based on container size
-        const scale = Math.min(width, height) * 0.4;
+        const duration = 4000;
+        let verticalShift = 0;
+        const scale = 100;
+
+        if (height > width) verticalShift = 120;
 
         // Create a projection
         const projection = d3.geoOrthographic()
             .scale(scale)
             .center([0, 0])
             .rotate([-coords[0].coords[0], -coords[0].coords[1]])
-            .translate([width / 2, height / 2]);
+            .translate([width / 2, height / 2 - verticalShift]);
 
         // Create the path generator
         const path = d3.geoPath().projection(projection);
 
+        const graticule = d3.geoGraticule();
         // Create SVG
         const svg = d3.select("#container")
             .append("svg")
@@ -82,17 +82,20 @@
             .attr("width", "100%")
             .attr("height", "100%");
 
-        // Add sphere and graticules
         svg.append("path")
             .datum({ type: "Sphere" })
             .attr("class", "sphere")
+            .attr("d", path);
+
+        svg.append("path")
+            .datum(graticule())
+            .attr("class", "graticule")
             .attr("d", path);
 
         // Load world data
         Promise.all([
             d3.json("https://unpkg.com/world-atlas@2.0.2/countries-50m.json")
         ]).then(([worldData]) => {
-            // Convert TopoJSON to GeoJSON
             const countries = topojson.feature(worldData, worldData.objects.countries);
             const boundaries = topojson.mesh(worldData, worldData.objects.countries);
 
@@ -102,7 +105,7 @@
                 .enter()
                 .append("path")
                 .attr("class", "country")
-                .attr("d", path);  // This was missing!
+                .attr("d", path);
 
             // Add boundaries
             svg.append("path")
@@ -116,6 +119,8 @@
                 .attr("d", "");
 
             let currentIndex = 0;
+            let isAnimating = false;
+            let observer;
 
             // Function to interpolate between two points
             function interpolate(start, end) {
@@ -126,11 +131,6 @@
                 }
             }
 
-            // Function to animate to next location
-            function updateCountryLabel(name) {
-                d3.select(".country-label").text(name);
-            }
-
             function updateCurrentCountry(name) {
                 svg.selectAll(".country").classed("current", false);
                 svg.selectAll(".country")
@@ -139,46 +139,75 @@
                     .raise();
             }
 
-            let isAnimating = false;
-            let observer;
-
             function updateNewsPanel(country) {
+                const widget = document.getElementById("news-widget");
+                widget.classList.remove("slide-up");
+                widget.classList.add("slide-down");
+
+                setTimeout(() => {
+                    loadNews(country);
+                    widget.classList.remove("slide-down");
+                    widget.classList.add("slide-up");
+                }, 600);
+            }
+
+            function loadNews(country) {
                 if (!country || !country.news) return;
-                
-                const news = country.news;
-                const title = news.title || "";
-                const date = news.date || "";
-                const summary = news.description || "";
-                const link = news.link || "#";
-                const img = news.image || "";
+                news = country.news;
+                title = news.title || "";
+                date = news.date || "";
+                summary = news.description || "";
+                link = news.link || "#";
+                img = news.image || "";
+                imageEl = document.getElementById("news-image");
 
-                // Update DOM
-                document.getElementById("news-title").textContent = title;
-                document.getElementById("news-date").textContent = date;
-                document.getElementById("news-country").textContent = country.name || "";
-                document.getElementById("news-summary").textContent = summary;
-                const a = document.getElementById("news-link");
-                a.setAttribute("href", link);
+                //typewriter effect for title
+                let i = 0;
+                let j = 0;
+                imageEl.src = "";
+                document.getElementById("news-title").textContent = "";
+                document.getElementById("news-summary").textContent = "";
+                document.getElementById("news-link").style.opacity = 0;
+                document.getElementById("news-date").textContent = "";
+                document.getElementById("news-country").textContent = "";
 
-                const imageEl = document.getElementById("news-image");
                 if (img) {
                     imageEl.src = img;
                     imageEl.style.display = "";
                     imageEl.alt = title;
                 } else {
-                    // If no image, either show a placeholder color or hide the img element
                     imageEl.style.display = "none";
                 }
+                if (duration < 3000) {
+                    document.getElementById("news-title").textContent = title;
+                    document.getElementById("news-summary").textContent = summary;
+                    document.getElementById("news-date").textContent = date;
+                    document.getElementById("news-country").textContent = country.name || "";
+                    const a = document.getElementById("news-link");
+                    a.setAttribute("href", link);
+                    a.style.opacity = 1;
+                } else {
 
-                // Optional: subtle enter animation
-                const widget = document.getElementById("news-widget");
-                widget.style.transition = "transform 300ms ease, opacity 300ms ease";
-                widget.style.opacity = "0";
-                widget.style.transform = "translateY(-6px)";
-                requestAnimationFrame(() => {
-                    widget.style.opacity = "1";
-                    widget.style.transform = "translateY(0)";
-                });
+
+                    function typeChar() {
+                        if (i < title.length) {
+                            document.getElementById("news-title").textContent += title.charAt(i);
+                            i++;
+                            setTimeout(typeChar, 1); // typing speed in ms per letter
+                        } else if (j < summary.length) {
+                            document.getElementById("news-summary").textContent += summary.charAt(j);
+                            j++;
+                            setTimeout(typeChar, 1); // typing speed in ms per letter
+                        }
+                        document.getElementById("news-date").textContent = date;
+                        document.getElementById("news-country").textContent = country.name || "";
+                        const a = document.getElementById("news-link");
+                        a.setAttribute("href", link);
+                        a.style.opacity = 1;
+                    }
+                    typeChar();
+                }
+
             }
 
             function setupIntersectionObserver() {
@@ -198,12 +227,15 @@
             }
 
             function animateToNextLocation() {
-                const start = coords[currentIndex];
-                currentIndex = (currentIndex + 1) % coords.length;
-                const end = coords[currentIndex];
+                if (currentIndex >= coords.length - 1) {
+                    
+                    return;
+                }
+                start = coords[currentIndex % coords.length];
+                end = coords[(currentIndex + 1) % coords.length];
+                currentIndex++;
+                console.log(currentIndex);
 
-                // Update country label and highlight
-                updateCountryLabel(end.name);
                 updateCurrentCountry(end.name);
                 updateNewsPanel(end);
 
@@ -217,20 +249,19 @@
                         return function (t) {
                             const r = rotationInterpolator(t);
                             projection.rotate(r);
+                            const interp = d3.interpolateNumber(start.zoom * 100, end.zoom * 100);
 
                             // Update all paths including countries and sphere
-                            //svg.selectAll("path:not(.route)").attr("d", path);
-                            svg.selectAll(".country, .boundary, .sphere").attr("d", path);
+                            svg.selectAll(".country, .graticule, .sphere, .boundary").attr("d", path);
 
                             // Update the route segment with shrinking effect
                             const currentPoint = [start.coords[0], start.coords[1]];
                             const targetPoint = [end.coords[0], end.coords[1]];
                             const interpolatedCoords = d3.geoInterpolate(currentPoint, targetPoint)(t);
 
-                            // After t > 0.9, start shrinking the line from the start
                             let startPoint = currentPoint;
                             if (t > 0.9) {
-                                const shrinkT = (t - 0.9) * 10; // normalize to 0-1 for last 10% of animation
+                                const shrinkT = (t - 0.9) * 10;
                                 const shrinkStart = d3.geoInterpolate(currentPoint, interpolatedCoords)(shrinkT);
                                 startPoint = shrinkStart;
                             }
@@ -242,34 +273,29 @@
                                     coordinates: [startPoint, interpolatedCoords]
                                 }
                             };
+                            projection.scale(interp(t));
                             svg.select("path.route").datum(routeData).attr("d", path);
                         };
                     })
                     .on("end", () => {
                         isAnimating = false;
-                        // Clear the route line
                         svg.select("path.route").attr("d", "");
-                        const container = document.getElementById('container');
-                        const entry = observer.takeRecords()[0];
-                        // Continue to next point after a short delay
                         setTimeout(() => {
                             if (document.getElementById('container').getBoundingClientRect().top < window.innerHeight) {
                                 animateToNextLocation();
                             }
-                        }, 4500);
+                        }, duration);
                     });
             }
 
-            // Set up the observer and start the animation
             setupIntersectionObserver();
 
-            // Handle window resize
             window.addEventListener('resize', () => {
                 const container = document.getElementById('container');
                 const width = container.clientWidth;
                 const height = container.clientHeight;
                 const scale = Math.min(width, height) * 0.4;
-                
+
                 projection
                     .scale(scale)
                     .translate([width / 2, height / 2]);
@@ -280,7 +306,7 @@
                     .attr("viewBox", [0, 0, width, height]);
 
                 // Update all paths
-                svg.selectAll(".country, .boundary, .sphere").attr("d", path);
+                svg.selectAll(".country, .graticule, .sphere, .boundary").attr("d", path);
             });
         });
     </script>
