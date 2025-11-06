@@ -1,0 +1,18 @@
+[
+    {
+        "name": "Lebanon",
+        "coords": [
+            35.8623,
+            33.8547
+        ],
+        "id": "LBN",
+        "news": {
+            "date": "reported June 2024",
+            "title": "Hezbollah acquires the pagers from the intermediary and distributes them to members",
+            "subtitle": "Distribution period up to September 2024 (reported)",
+            "description": "According to multiple news organisations, Hezbollah purchased the pagers through the intermediary company and distributed thousands of units to operatives (the devices were attractive because pagers avoid cell-phone vulnerabilities). Hezbollah later instructed cadres to use pagers rather than cell phones. The devices reportedly circulated widely inside Hezbollah areas in Lebanon and some in Syria",
+            "link": "https://en.wikipedia.org/wiki/2024_Lebanon_electronic_device_attacks?utm_source=chatgpt.com",
+            "image": ""
+        }
+    },
+]
