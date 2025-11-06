@@ -73,7 +73,7 @@
         const duration = 16000;
         let verticalShift = 0;
         const scale = 100;
-
+        let job;
         // Loading bar functionality
         let loadingBarInterval;
         const loadingBar = document.getElementById('loading-bar');
@@ -328,7 +328,7 @@
                     .on("end", () => {
                         isAnimating = false;
                         svg.select("path.route").attr("d", "");
-                        setTimeout(() => {
+                        job = setTimeout(() => {
                             if (document.getElementById('container').getBoundingClientRect().top < window.innerHeight) {
                                 animateToNextLocation();
                             }
