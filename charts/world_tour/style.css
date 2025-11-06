@@ -2,14 +2,17 @@ body {
   margin: 0;
   padding: 0;
   background: #fff;
+  font-family: 'Inter', sans-serif;
 }
 
 .content {
+  max-width: 800px;
+  margin: 0 auto;
   padding: 0 20px;
 }
 
 .content p {
-  font-family: Arial, sans-serif;
+  font-family: 'Inter', sans-serif;
   line-height: 1.6;
   margin-bottom: 20px;
   color: #333;
@@ -28,7 +31,7 @@ body {
 
 .country-label {
   font-size: 24px;
-  font-family: Arial, sans-serif;
+  font-family: 'Inter', sans-serif;
   margin-bottom: 20px;
 }
 
@@ -147,7 +150,6 @@ svg {
   object-fit: cover;
   border-radius: 10px;
   background: #ddd;
-  filter: 
 }
 
 #news-text {
@@ -167,6 +169,7 @@ svg {
   color: #fff;
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -182,7 +185,8 @@ svg {
   line-height: 1.4;
   color: rgba(255, 255, 255, 0.85);
   display: -webkit-box;
-  -webkit-line-clamp: 4;
+  -webkit-line-clamp: 6;
+  line-clamp: 6;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -217,6 +221,27 @@ svg {
 #news-link:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(255, 136, 94, 0.4);
+}
+
+/* Loading bar styling */
+#loading-bar-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 0 0 16px 16px;
+  overflow: hidden;
+}
+
+#loading-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #ff6b3d, #d38642);
+  border-radius: 0 0 16px 16px;
+  transition: width 0.1s ease-out;
+  box-shadow: 0 0 8px rgba(255, 107, 61, 0.6);
 }
 
 @media (min-width: 800px) {

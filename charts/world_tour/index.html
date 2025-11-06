@@ -5,6 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>World Tour</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://d3js.org/topojson.v3.min.js"></script>
@@ -50,6 +53,9 @@
                     </a>
                 </div>
             </div>
+            <div id="loading-bar-container">
+                <div id="loading-bar"></div>
+            </div>
         </aside>
     </div>
     <script src="data.js"></script>
@@ -58,9 +64,39 @@
         const container = document.getElementById('container');
         const width = container.clientWidth;
         const height = container.clientHeight;
-        const duration = 6000;
+        const duration = 16000;
         let verticalShift = 0;
         const scale = 100;
+
+        // Loading bar functionality
+        let loadingBarInterval;
+        const loadingBar = document.getElementById('loading-bar');
+        
+        function startLoadingBar() {
+            loadingBar.style.width = '0%';
+            const startTime = Date.now();
+            
+            if (loadingBarInterval) {
+                clearInterval(loadingBarInterval);
+            }
+            
+            loadingBarInterval = setInterval(() => {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min((elapsed / duration) * 100, 100);
+                loadingBar.style.width = progress + '%';
+                
+                if (progress >= 100) {
+                    clearInterval(loadingBarInterval);
+                }
+            }, 50); // Update every 50ms for smooth animation
+        }
+        
+        function resetLoadingBar() {
+            if (loadingBarInterval) {
+                clearInterval(loadingBarInterval);
+            }
+            loadingBar.style.width = '0%';
+        }
 
         if (height > width) verticalShift = 120;
 
@@ -178,14 +214,14 @@
                 } else {
                     imageEl.style.display = "none";
                 }
-                if (duration < 3000) {
                     document.getElementById("news-title").textContent = title;
                     document.getElementById("news-summary").textContent = summary;
                     document.getElementById("news-date").textContent = date;
                     document.getElementById("news-country").textContent = country.name || "";
                     const a = document.getElementById("news-link");
-                    a.setAttribute("href", link);
+                    //a.setAttribute("href", link);
                     a.style.opacity = 1;
+                /*if (duration < 3000) {
                 } else {
 
 
@@ -206,9 +242,14 @@
                         a.style.opacity = 1;
                     }
                     typeChar();
-                }
+                }*/
 
             }
+
+            // Initialize first location
+            updateCurrentCountry(coords[0].name);
+            updateNewsPanel(coords[0]);
+            startLoadingBar();
 
             function setupIntersectionObserver() {
                 const options = {
@@ -238,6 +279,7 @@
 
                 updateCurrentCountry(end.name);
                 updateNewsPanel(end);
+                startLoadingBar(); // Start the loading bar animation
 
                 const rotationInterpolator = interpolate(start.coords, end.coords);
 
