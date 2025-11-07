@@ -1,4 +1,57 @@
- html,
+ :root {
+    /* Primary Colors */
+    --color-primary: #333;
+    --color-white: #fff;
+    --color-background-gradient-start: #2c324c;
+    --color-background-gradient-end: #69a4c4;
+    
+    /* Globe Colors */
+    --color-sphere-fill: #253561;
+    --color-sphere-stroke: #0f3460;
+    --color-country-fill: #516185;
+    --color-country-stroke: #16213e;
+    --color-country-current: #cc4646;
+    --color-country-current-stroke: #fcbe81;
+    
+    /* Location & Route Colors */
+    --color-location-dot-fill: #e74c3c00;
+    --color-location-dot-stroke: #ffffff00;
+    --color-location-dot-current: #f39c1200;
+    --color-route-line: #f39c12;
+    
+    /* Progress & Accent Colors */
+    --color-progress-primary: #ff6b3d;
+    --color-progress-secondary: #d38642;
+    --color-progress-completed: #ff6b3d;
+    --color-progress-completed-light: #d38642;
+    
+    /* Glass Effect Colors */
+    --color-glass-background: rgba(255, 255, 255, 0.1);
+    --color-glass-background-hover: rgba(255, 255, 255, 0.4);
+    --color-glass-border: rgba(255, 255, 255, 0.2);  
+    
+    /* Text Colors */
+    --color-text-primary: rgba(255, 255, 255, 0.9);
+    --color-text-disabled: rgba(255, 255, 255, 0.5);
+    
+    /* Background Colors */
+    --color-background-overlay: rgba(255, 255, 255, 0.2);
+    --color-background-disabled: rgba(255, 255, 255, 0.1);
+    --color-background-placeholder: #ddd;
+    
+    /* Shadow Colors */ 
+    --color-shadow-light: rgba(0, 0, 0, 0.1);
+    --color-shadow-progress: rgba(255, 107, 61, 0.6);  
+    
+    /* Route Line Shadow Colors */
+    --color-route-shadow-1: rgba(243, 156, 18, 0.8);
+    --color-route-shadow-2: rgba(243, 156, 18, 0.4);
+    
+    /* Accent Colors */
+    --color-accent-blue: #3498db;
+}
+
+html,
  body {
      margin: 0;
      padding: 0;
@@ -13,7 +66,7 @@
      max-width: 800px;
      margin: 0 auto;
      padding: 0 20px;
-     color: #333;
+     color: var(--color-primary);
  }
 
  .content p {
@@ -25,7 +78,7 @@
  #container {
      width: 100%;
      height: 100vh;
-     background: linear-gradient(-45deg, #2c324c, #69a4c4);
+     background: linear-gradient(-45deg, var(--color-background-gradient-start), var(--color-background-gradient-end));
      position: relative;
      overflow: hidden;
      max-width: 100vw;
@@ -37,43 +90,43 @@
  }
 
  .sphere {
-     fill: #253561;
-     stroke: #0f3460;
+     fill: var(--color-sphere-fill);
+     stroke: var(--color-sphere-stroke);
      stroke-width: 1px;
  }
 
  .country {
-     fill: #516185;
-     stroke: #16213e;
+     fill: var(--color-country-fill);
+     stroke: var(--color-country-stroke);
      stroke-width: 0.25px;
  }
 
  .country.current {
-     fill: #cc4646 !important;
-     stroke: #fcbe81;
+     fill: var(--color-country-current) !important;
+     stroke: var(--color-country-current-stroke);
      stroke-width: 4px;
      stroke-opacity: 0.3;
      stroke-linejoin: round;
  }
 
  .location-dot {
-     fill: #e74c3c00;
-     stroke: #ffffff00;
+     fill: var(--color-location-dot-fill);
+     stroke: var(--color-location-dot-stroke);
      opacity: 0.1;
      stroke-width: 1px;
  }
 
  .location-dot.current {
-     fill: #f39c1200;
+     fill: var(--color-location-dot-current);
      stroke-width: 6px;
  }
 
  .route-line {
      fill: none;
-     stroke: #f39c12;
+     stroke: var(--color-route-line);
      stroke-width: 2px;
      opacity: 0.8;
-     filter: drop-shadow(0 0 8px rgba(243, 156, 18, 0.8)) drop-shadow(0 0 16px rgba(243, 156, 18, 0.4));
+     filter: drop-shadow(0 0 8px var(--color-route-shadow-1)) drop-shadow(0 0 16px var(--color-route-shadow-2));
  }
 
  .info-panel {
@@ -83,14 +136,14 @@
      width: 700px;
      height: fit-content;
      /* 🧊 Frosted glass style */
-     background: rgba(255, 255, 255, 0.12);
+     background: var(--color-glass-background);
      backdrop-filter: blur(4px) saturate(280%);
      -webkit-backdrop-filter: blur(4px) saturate(280%);
      border-radius: 16px;
-     border: 1px solid rgba(255, 255, 255, 0.25);
+     border: 1px solid var(--color-glass-border);
 
      /* ✨ Subtle shadow and depth */
-     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+     box-shadow: 0 8px 30px var(--color-shadow-light);
 
      overflow: hidden;
      display: flex;
@@ -123,7 +176,7 @@
      flex: 0 0 120px;
      object-fit: cover;
      border-radius: 10px;
-     background: #ddd;
+     background: var(--color-background-placeholder);
      display: none;
  }
 
@@ -141,7 +194,7 @@
      font-size: 1.1rem;
      line-height: 1.3;
      font-weight: 700;
-     color: #fff;
+     color: var(--color-white);
      display: -webkit-box;
      /*-webkit-line-clamp: 3;
             line-clamp: 3;*/
@@ -150,7 +203,7 @@
  }
 
  .date {
-     color: rgba(255, 255, 255, 0.7);
+     color: var(--color-text-disabled);
      font-size: 0.85rem;
      margin-bottom: 8px;
  }
@@ -159,33 +212,12 @@
      margin: 0;
      font-size: 0.95rem;
      line-height: 1.4;
-     color: rgba(255, 255, 255, 0.85);
+     color: var(--color-text-primary);
      display: -webkit-box;
      /*-webkit-line-clamp: 6;
             line-clamp: 6;*/
      -webkit-box-orient: vertical;
      overflow: hidden;
- }
-
- /* Loading bar styling */
- .loading-bar-container {
-     position: absolute;
-     bottom: 0;
-     left: 0;
-     right: 0;
-     height: 4px;
-     background: rgba(255, 255, 255, 0.2);
-     border-radius: 0 0 16px 16px;
-     overflow: hidden;
- }
-
- .loading-bar {
-     height: 100%;
-     width: 0%;
-     background: linear-gradient(90deg, #ff6b3d, #d38642);
-     border-radius: 0 0 16px 16px;
-     transition: width 0.1s ease-out;
-     box-shadow: 0 0 8px rgba(255, 107, 61, 0.6);
  }
 
  @media (min-width: 800px) {
@@ -246,12 +278,12 @@
      flex-direction: column;
      gap: 8px;
      /* 🧊 Frosted glass style */
-     background: rgba(255, 255, 255, 0.12);
+     background: var(--color-glass-background);
      backdrop-filter: blur(4px) saturate(280%);
      -webkit-backdrop-filter: blur(4px) saturate(280%);
      border-radius: 12px;
-     border: 1px solid rgba(255, 255, 255, 0.25);
-     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+     border: 1px solid var(--color-glass-border);
+     box-shadow: 0 4px 20px var(--color-shadow-light);
      padding: 8px;
      z-index: 40;
  }
@@ -259,23 +291,6 @@
  .control-buttons {
      display: flex;
      gap: 8px;
- }
-
- .progress-bar {
-     height: 4px;
-     background: rgba(255, 255, 255, 0.2);
-     border-radius: 2px;
-     overflow: hidden;
-     margin-top: 4px;
- }
-
- .progress-fill {
-     height: 100%;
-     background: linear-gradient(90deg, #ff6b3d, #d38642);
-     border-radius: 2px;
-     transition: width 0.3s ease;
-     width: 0%;
-     box-shadow: 0 0 8px rgba(255, 107, 61, 0.6);
  }
 
  .step-progress-container {
@@ -296,7 +311,7 @@
  .step-progress-bar {
      height: 3px;
      width: 100%;
-     background: rgba(255, 255, 255, 0.15);
+     background: var(--color-background-overlay);
      border-radius: 1.5px;
      overflow: hidden;
      position: relative;
@@ -304,59 +319,37 @@
 
  .step-progress-fill {
      height: 100%;
-     background: linear-gradient(90deg, #ff6b3d, #d38642);
+     background: linear-gradient(90deg, var(--color-progress-primary), var(--color-progress-secondary));
      border-radius: 1.5px;
      transition: width 0.1s ease;
      width: 0%;
-     box-shadow: 0 0 4px rgba(76, 175, 80, 0.4);
+     box-shadow: 0 0 4px var(--color-shadow-light);
  }
 
  .step-progress-item.completed .step-progress-bar {
-     background: rgba(76, 175, 80, 0.3);
+     background: var(--color-shadow-light);
  }
 
  .step-progress-item.completed .step-progress-fill {
      width: 100%;
+     background: linear-gradient(90deg, var(--color-progress-completed), var(--color-progress-completed-light));
  }
 
  .step-progress-item.current .step-progress-bar {
-     background: rgba(255, 255, 255, 0.25);
-     border: 1px solid rgba(255, 255, 255, 0.1);
+     background: var(--color-glass-background);
+     border: 1px solid var(--color-glass-border);
  }
 
  .step-progress-item.current .step-progress-fill {
-     background: linear-gradient(90deg, #ff6b3d, #d38642);
-     box-shadow: 0 0 6px rgba(255, 107, 61, 0.6);
- }
-
- .step-counter {
-     display: flex;
-     align-items: center;
-     justify-content: center;
-     width: 100%;
-     height: 100%;
-     color: rgba(255, 255, 255, 0.9);
-     font-size: 13px;
-     font-weight: 600;
-     margin: 0;
-     padding: 0;
-     opacity: 1;
-     transition: opacity 0.3s ease;
-     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-     position: absolute;
-     top: 0;
-     left: 0;
- }
-
- .step-counter.visible {
-     opacity: 1;
+     background: linear-gradient(90deg, var(--color-progress-primary), var(--color-progress-secondary));
+     box-shadow: 0 0 6px var(--color-shadow-progress);
  }
 
  .btn {
-     background: rgba(255, 255, 255, 0.2);
+     background: var(--color-background-overlay);
      backdrop-filter: blur(4px);
      -webkit-backdrop-filter: blur(4px);
-     border: 1px solid rgba(255, 255, 255, 0.3);
+     border: 1px solid var(--color-glass-border);
      color: white;
      padding: 10px;
      border-radius: 8px;
@@ -387,9 +380,9 @@
  }
 
  .btn:hover {
-     background: rgba(255, 255, 255, 0.3);
+     background: var(--color-glass-background-hover);
      transform: translateY(-1px);
-     box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+     box-shadow: 0 4px 12px var(--color-shadow-light);
  }
 
  .btn:active {
@@ -397,15 +390,15 @@
  }
 
  .btn:disabled {
-     background: rgba(255, 255, 255, 0.1);
-     color: rgba(255, 255, 255, 0.5);
+     background: var(--color-background-disabled);
+     color: var(--color-text-disabled);
      cursor: not-allowed;
      transform: none;
      box-shadow: none;
  }
 
  .btn:disabled:hover {
-     background: rgba(255, 255, 255, 0.1);
+     background: var(--color-background-disabled);
      transform: none;
      box-shadow: none;
  }
@@ -414,13 +407,13 @@
      position: absolute;
      top: 20px;
      right: 20px;
-     color: rgba(255, 255, 255, 0.7);
+     color: var(--color-text-disabled);
      /* 🧊 Frosted glass style */
-     background: rgba(255, 255, 255, 0.08);
+     background: var(--color-glass-background);
      backdrop-filter: blur(4px) saturate(280%);
      -webkit-backdrop-filter: blur(4px) saturate(280%);
      border-radius: 17px;
-     border: 1px solid rgba(255, 255, 255, 0.15);
+     border: 1px solid var(--color-glass-border);
      z-index: 41;
      transition: all 0.3s ease;
      cursor: pointer;
@@ -434,12 +427,12 @@
  }
 
  .info-pill.expanded {
-     background: rgba(255, 255, 255, 0.12);
+     background: var(--color-glass-background);
      padding: 0 12px 0 8px;
  }
 
  .info-pill:hover {
-     background: rgba(255, 255, 255, 0.12);
+     background: var(--color-glass-background);
      transform: translateY(-1px);
  }
 
@@ -464,16 +457,17 @@
  }
 
  .info-pill a {
-     color: #fff;
+     color: var(--color-white);
      text-decoration: none;
      font-weight: 500;
      transition: color 0.1s ease;
  }
 
  .info-pill a:hover {
-     color: #3498db;
+     color: var(--color-accent-blue);
  }
 
+ /* UNUSED: Mobile media query for info-pill - already commented out, alternative mobile styling not needed */
  /*
  @media (max-width: 800px) {
      .info-pill {
@@ -497,3 +491,55 @@
          font-size: 9px;
      }
  }*/
+
+ 
+ /* UNUSED: Main progress bar - removed from demo.html in favor of individual step progress bars */
+ /*
+ .progress-bar {
+     height: 4px;
+     background: var(--color-background-overlay);
+     border-radius: 2px;
+     overflow: hidden;
+     margin-top: 4px;
+ }
+
+ .progress-fill {
+     height: 100%;
+     background: linear-gradient(90deg, var(--color-progress-primary), var(--color-progress-secondary));
+     border-radius: 2px;
+     transition: width 0.3s ease;
+     width: 0%;
+     box-shadow: 0 0 8px var(--color-shadow-progress);
+ }
+ */
+ 
+ /* UNUSED: Step counter visibility class - step counter was removed from demo.html */
+ /*
+ .step-counter.visible {
+     opacity: 1;
+ }
+ */
+
+ 
+ /* UNUSED: Loading bar styling - commented out in HTML */
+ /*
+ .loading-bar-container {
+     position: absolute;
+     bottom: 0;
+     left: 0;
+     right: 0;
+     height: 4px;
+     background: var(--color-background-overlay);
+     border-radius: 0 0 16px 16px;
+     overflow: hidden;
+ }
+
+ .loading-bar {
+     height: 100%;
+     width: 0%;
+     background: linear-gradient(90deg, var(--color-progress-primary), var(--color-progress-secondary));
+     border-radius: 0 0 16px 16px;
+     transition: width 0.1s ease-out;
+     box-shadow: 0 0 8px var(--color-shadow-progress);
+ }
+ */
