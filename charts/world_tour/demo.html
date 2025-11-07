@@ -235,6 +235,7 @@
             top: 20px;
             right: 20px;
             display: flex;
+            flex-direction: column;
             gap: 8px;
             /* 🧊 Frosted glass style */
             background: rgba(255, 255, 255, 0.12);
@@ -245,6 +246,28 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
             padding: 8px;
             z-index: 40;
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b3d, #d38642);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+            width: 0%;
+            box-shadow: 0 0 8px rgba(255, 107, 61, 0.6);
         }
 
         .btn {
@@ -288,22 +311,11 @@
             transform: none;
             box-shadow: none;
         }
-
-        .progress-bar {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 2px;
-            background: #f39c12;
-            transition: width 0.3s ease;
-        }
     </style>
 </head>
 
 <body>
     <div id="container">
-        <div class="progress-bar"></div>
-
         <div class="info-panel">
             <img id="location-image" alt="Location image" />
             <div id="location-text">
@@ -317,9 +329,14 @@
         </div>
 
         <div class="controls">
-            <button class="btn" id="prev-btn">←</button>
-            <button class="btn" id="play-btn">⏸</button>
-            <button class="btn" id="next-btn">→</button>
+            <div class="control-buttons">
+                <button class="btn" id="prev-btn">←</button>
+                <button class="btn" id="play-btn">⏸</button>
+                <button class="btn" id="next-btn">→</button>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
         </div>
     </div>
 
@@ -565,7 +582,7 @@
 
         function updateProgressBar() {
             const progress = ((currentLocationIndex + 1) / coords.length) * 100;
-            document.querySelector('.progress-bar').style.width = progress + '%';
+            document.querySelector('.progress-fill').style.width = progress + '%';
         }
 
         function updateControls() {
@@ -603,6 +620,16 @@
                 isPlaying = false;
                 playBtn.textContent = '▶';
             } else {
+                // If we're at the end, restart the tour
+                if (currentLocationIndex >= coords.length - 1) {
+                    currentLocationIndex = 0;
+                    const location = coords[currentLocationIndex];
+                    rotateToLocation(location);
+                    updateLocationInfo(location);
+                    updateProgressBar();
+                    updateControls();
+                }
+
                 isPlaying = true;
                 playBtn.textContent = '⏸';
 
@@ -610,7 +637,10 @@
                     if (currentLocationIndex < coords.length - 1) {
                         nextLocation();
                     } else {
-                        togglePlay();
+                        // When reaching the end, stop and show restart symbol
+                        clearInterval(playInterval);
+                        isPlaying = false;
+                        playBtn.textContent = '⟲'; // Restart symbol
                     }
                 }, duration + 800); // Extra time for route animation
             }
