@@ -381,7 +381,12 @@
         const height = window.innerHeight;
         let verticalShift = 0;
         const duration = 1500; // Reduced duration
-        if (height > width) verticalShift = 240;
+        
+        // More robust mobile detection and vertical shift calculation
+        const isMobile = window.innerWidth <= 768 || window.innerHeight > window.innerWidth;
+        if (isMobile) {
+            verticalShift = Math.min(240, height * 0.25); // 25% of screen height or 240px, whichever is smaller
+        }
 
         // Simplified projection - start at very far zoom
         const projection = d3.geoOrthographic()
@@ -733,9 +738,16 @@
             resizeTimeout = setTimeout(function () {
                 const newWidth = window.innerWidth;
                 const newHeight = window.innerHeight;
+                
+                // Recalculate vertical shift for new dimensions using same logic
+                let newVerticalShift = 0;
+                const isMobile = newWidth <= 768 || newHeight > newWidth;
+                if (isMobile) {
+                    newVerticalShift = Math.min(240, newHeight * 0.25);
+                }
 
                 svg.attr("width", newWidth).attr("height", newHeight);
-                projection.translate([newWidth / 2, newHeight / 2]);
+                projection.translate([newWidth / 2, newHeight / 2 - newVerticalShift]);
                 updateAll();
             }, 100);
         });
