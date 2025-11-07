@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,13 +12,13 @@
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
-            background: #1a1a2e;
             color: white;
         }
 
         #container {
             width: 100vw;
             height: 100vh;
+            background: linear-gradient(-45deg, #2c324c, #69a4c4);
             position: relative;
             overflow: hidden;
         }
@@ -28,15 +29,23 @@
         }
 
         .sphere {
-            fill: #16213e;
+            fill: #253561;
             stroke: #0f3460;
             stroke-width: 1px;
         }
 
         .country {
-            fill: #533483;
+            fill: #516185;
             stroke: #16213e;
             stroke-width: 0.25px;
+        }
+
+        .country.current {
+            fill: #cc4646 !important;
+            stroke: #fcbe81;
+            stroke-width: 4px;
+            stroke-opacity: 0.3;
+            stroke-linejoin: round;
         }
 
         .location-dot {
@@ -47,6 +56,7 @@
 
         .location-dot.current {
             fill: #f39c12;
+            stroke-width: 6px;
         }
 
         .route-line {
@@ -77,17 +87,17 @@
             flex-direction: row;
             gap: 12px;
             padding: 16px;
-            z-index: 30; 
-            
+            z-index: 30;
+
             transition: transform 0.3s ease, opacity 0.3s ease;
             transform: translateY(100%);
             opacity: 0;
         }
 
         .info-panel.slide-down {
-            transition: transform .3s ease, opacity 0.3s ease!important;
-            transform: translateY(100%)!important;
-            opacity: 0!important;
+            transition: transform .3s ease, opacity 0.3s ease !important;
+            transform: translateY(100%) !important;
+            opacity: 0 !important;
         }
 
         .info-panel.slide-up {
@@ -202,7 +212,7 @@
             }
 
             .info-panel.slide-down {
-                transform: translateX(-50%) translateY(100%)!important;
+                transform: translateX(-50%) translateY(100%) !important;
             }
 
             /* Place image as full-width block on small screens if needed */
@@ -289,10 +299,11 @@
         }
     </style>
 </head>
+
 <body>
     <div id="container">
         <div class="progress-bar"></div>
-        
+
         <div class="info-panel">
             <img id="location-image" alt="Location image" />
             <div id="location-text">
@@ -300,9 +311,9 @@
                 <div class="date" id="location-date"></div>
                 <div id="location-description"></div>
             </div>
-            <div class="loading-bar-container">
+            <!-- <div class="loading-bar-container">
                 <div class="loading-bar"></div>
-            </div>
+            </div> -->
         </div>
 
         <div class="controls">
@@ -322,12 +333,14 @@
 
         const width = window.innerWidth;
         const height = window.innerHeight;
+        let verticalShift = 0;
         const duration = 1500; // Reduced duration
+        if (height > width) verticalShift = 240;
 
         // Simplified projection - start at very far zoom
         const projection = d3.geoOrthographic()
             .scale(50) // Start at very small scale (far away)
-            .translate([width / 2, height / 2])
+            .translate([width / 2, height / 2 - verticalShift])
             .rotate([0, 0]) // Start at default rotation
             .clipAngle(90);
 
@@ -341,7 +354,7 @@
 
         // Sphere
         const sphere = svg.append("path")
-            .datum({type: "Sphere"})
+            .datum({ type: "Sphere" })
             .attr("class", "sphere")
             .attr("d", path);
 
@@ -349,9 +362,9 @@
         let countryPaths, dots, routeLines;
 
         // Load simplified world data
-        d3.json("https://unpkg.com/world-atlas@2.0.2/countries-110m.json").then(function(world) {
+        d3.json("https://unpkg.com/world-atlas@2.0.2/countries-110m.json").then(function (world) {
             const countries = topojson.feature(world, world.objects.countries);
-            
+
             // Add countries with minimal styling
             countryPaths = svg.selectAll(".country")
                 .data(countries.features)
@@ -375,16 +388,16 @@
             setTimeout(() => {
                 document.querySelector('.info-panel').classList.add('slide-up');
             }, 100);
-            
+
             rotateToLocation(coords[currentLocationIndex], 2000); // Initial zoom-in with 2s duration
             setupEventListeners();
             updateControls();
             updateProgressBar();
-            
+
             // Start auto-play after initial zoom
-            setTimeout(function() {
+            setTimeout(function () {
                 document.getElementById('play-btn').textContent = '⏸';
-                playInterval = setInterval(function() {
+                playInterval = setInterval(function () {
                     if (currentLocationIndex < coords.length - 1) {
                         nextLocation();
                     } else {
@@ -397,7 +410,7 @@
         function createRoute(fromCoords, toCoords) {
             const interpolate = d3.geoInterpolate(fromCoords, toCoords);
             const points = d3.range(0, 1.01, 0.05).map(interpolate);
-            
+
             return {
                 type: "LineString",
                 coordinates: points
@@ -407,7 +420,7 @@
         function rotateToLocation(location, animationDuration = duration) {
             const targetRotation = [-location.coords[0], -location.coords[1]];
             const targetScale = location.zoom * zoomFactor;
-            
+
             if (animationDuration === 0) {
                 // Instant positioning
                 projection.rotate(targetRotation).scale(targetScale);
@@ -431,7 +444,7 @@
             if (currentLocationIndex > 0) {
                 const currentLocation = coords[currentLocationIndex];
                 const prevLocation = coords[currentLocationIndex - 1];
-                
+
                 routePath = routeLines.append("path")
                     .attr("class", "route-line")
                     .style("opacity", 0.8);
@@ -441,27 +454,27 @@
             svg.transition("main")
                 .duration(animationDuration)
                 .ease(d3.easeCubicInOut)
-                .tween("transform", function() {
-                    return function(t) {
+                .tween("transform", function () {
+                    return function (t) {
                         projection
                             .rotate(interpolateRotation(t))
                             .scale(interpolateScale(t));
-                        
+
                         // Update static elements
                         updateAll();
-                        
+
                         // Update animated route line
                         if (routePath && currentLocationIndex > 0) {
                             const currentLocation = coords[currentLocationIndex];
                             const prevLocation = coords[currentLocationIndex - 1];
-                            
+
                             let routeData;
                             if (t < 0.8) {
                                 // Growing phase: line grows from source to destination
                                 const growProgress = t / 0.8;
                                 const interpolate = d3.geoInterpolate(prevLocation.coords, currentLocation.coords);
                                 const endPoint = interpolate(growProgress);
-                                
+
                                 routeData = {
                                     type: "LineString",
                                     coordinates: [prevLocation.coords, endPoint]
@@ -471,18 +484,18 @@
                                 const shrinkProgress = (t - 0.8) / 0.2;
                                 const interpolate = d3.geoInterpolate(prevLocation.coords, currentLocation.coords);
                                 const startPoint = interpolate(shrinkProgress);
-                                
+
                                 routeData = {
                                     type: "LineString",
                                     coordinates: [startPoint, currentLocation.coords]
                                 };
                             }
-                            
+
                             routePath.datum(routeData).attr("d", path);
                         }
                     };
                 })
-                .on("end", function() {
+                .on("end", function () {
                     // Remove the route line completely after animation
                     if (routePath) {
                         routePath.remove();
@@ -494,46 +507,46 @@
             // Update all paths in one go
             sphere.attr("d", path);
             countryPaths.attr("d", path);
-            
+
             // Update existing route lines
             routeLines.selectAll(".route-line").attr("d", path);
-            
+
             // Update dots efficiently
             dots
-                .attr("cx", function(d) {
+                .attr("cx", function (d) {
                     const pos = projection(d.coords);
                     return pos ? pos[0] : -1000;
                 })
-                .attr("cy", function(d) {
+                .attr("cy", function (d) {
                     const pos = projection(d.coords);
                     return pos ? pos[1] : -1000;
                 })
-                .style("opacity", function(d, i) {
+                .style("opacity", function (d, i) {
                     const pos = projection(d.coords);
                     const visible = pos && pos[0] >= 0 && pos[0] <= width && pos[1] >= 0 && pos[1] <= height;
                     return visible ? (i === currentLocationIndex ? 1 : 0.6) : 0;
                 })
-                .attr("r", function(d, i) {
+                .attr("r", function (d, i) {
                     return i === currentLocationIndex ? 5 : 3;
                 })
-                .classed("current", function(d, i) {
+                .classed("current", function (d, i) {
                     return i === currentLocationIndex;
                 });
         }
 
         function updateLocationInfo(location) {
             const panel = document.querySelector('.info-panel');
-            
+
             // Slide down animation
             panel.classList.remove('slide-up');
             panel.classList.add('slide-down');
-            
+
             setTimeout(() => {
                 // Update content
                 document.getElementById('location-title').textContent = location.news.title || location.name;
                 document.getElementById('location-date').textContent = location.news.date || '';
                 document.getElementById('location-description').textContent = location.news.description || '';
-                
+
                 // Handle image
                 const imageEl = document.getElementById('location-image');
                 if (location.news.image) {
@@ -543,7 +556,7 @@
                 } else {
                     imageEl.style.display = 'none';
                 }
-                
+
                 // Slide up animation
                 panel.classList.remove('slide-down');
                 panel.classList.add('slide-up');
@@ -584,7 +597,7 @@
 
         function togglePlay() {
             const playBtn = document.getElementById('play-btn');
-            
+
             if (isPlaying) {
                 clearInterval(playInterval);
                 isPlaying = false;
@@ -592,8 +605,8 @@
             } else {
                 isPlaying = true;
                 playBtn.textContent = '⏸';
-                
-                playInterval = setInterval(function() {
+
+                playInterval = setInterval(function () {
                     if (currentLocationIndex < coords.length - 1) {
                         nextLocation();
                     } else {
@@ -609,7 +622,7 @@
             document.getElementById('play-btn').addEventListener('click', togglePlay);
 
             // Touch-friendly keyboard controls
-            document.addEventListener('keydown', function(event) {
+            document.addEventListener('keydown', function (event) {
                 if (event.code === 'ArrowLeft') previousLocation();
                 if (event.code === 'ArrowRight') nextLocation();
                 if (event.code === 'Space') {
@@ -621,12 +634,12 @@
 
         // Optimized resize handler
         let resizeTimeout;
-        window.addEventListener('resize', function() {
+        window.addEventListener('resize', function () {
             clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(function() {
+            resizeTimeout = setTimeout(function () {
                 const newWidth = window.innerWidth;
                 const newHeight = window.innerHeight;
-                
+
                 svg.attr("width", newWidth).attr("height", newHeight);
                 projection.translate([newWidth / 2, newHeight / 2]);
                 updateAll();
@@ -634,4 +647,5 @@
         });
     </script>
 </body>
+
 </html>
