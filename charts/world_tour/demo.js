@@ -341,6 +341,14 @@ function stopStepCounter() {
 function resetStepCounter() {
   stopStepCounter();
   stepElapsedTime = 0; // Reset elapsed time
+  
+  // Immediately reset the visual progress bar
+  if (currentLocationIndex < stepProgressBars.length) {
+    const currentBar = stepProgressBars[currentLocationIndex];
+    if (currentBar) {
+      currentBar.fill.style.width = '0%';
+    }
+  }
 }
 
 function updateStepCounter() {
