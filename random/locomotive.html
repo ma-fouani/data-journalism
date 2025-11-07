@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Locomotive Scroll Demo</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/locomotive-scroll@latest/dist/locomotive-scroll.min.css">
+  <style>
+    html, body { height: 100%; margin: 0; overflow: hidden; }
+    [data-scroll-container] { overflow: hidden; }
+    section {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 3rem;
+    }
+  </style>
+</head>
+<body>
+  <div data-scroll-container>
+    <section data-scroll-section>
+      <h1 data-scroll data-scroll-speed="1">Scroll Down ↓</h1>
+    </section>
+    <section data-scroll-section>
+      <h1 data-scroll data-scroll-speed="-2">Smooth & Parallax 😍</h1>
+    </section>
+    <section data-scroll-section>
+      <h1 data-scroll data-scroll-direction="horizontal" data-scroll-speed="3">Side Motion ➡️</h1>
+    </section>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/locomotive-scroll@latest/dist/locomotive-scroll.min.js"></script>
+  <script>
+    const scroll = new LocomotiveScroll({
+      el: document.querySelector('[data-scroll-container]'),
+      smooth: true
+    })
+  </script>
+</body>
+</html>

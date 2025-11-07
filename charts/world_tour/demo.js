@@ -1,51 +1,47 @@
-// Optimized global variables
+const duration = 14000;
+
 const zoomFactor = 70;
 let currentLocationIndex = 0;
-let isPlaying = false; // Start paused until user scrolls to viewport
+let isPlaying = false;
 let playInterval;
-let userPausedManually = false; // Track if user manually paused
-let wasPlayingBeforeScroll = false; // Track playing state before scroll
+let userPausedManually = false;
+let wasPlayingBeforeScroll = false;
+let hasInitiated = false;
 
 const width = window.innerWidth;
 const height = window.innerHeight;
 let verticalShift = 0;
-const duration = 15000; // Reduced duration
 
-// Counter variables
 let stepTimer;
 let stepStartTime;
-let stepElapsedTime = 0; // Track elapsed time when pausing
-let stepDuration = duration / 1000; // Duration in seconds (15000ms / 1000)
-let stepProgressBars = []; // Array to store individual progress bar elements
+let stepElapsedTime = 0;
+let stepDuration = duration / 1000;
+let stepProgressBars = [];
 
-// More robust mobile detection and vertical shift calculation
 const isMobile = window.innerWidth <= 768 || window.innerHeight > window.innerWidth;
 if (isMobile) {
-  verticalShift = Math.min(240, height * 0.25); // 25% of screen height or 240px, whichever is smaller
+  verticalShift = Math.min(240, height * 0.25);
 }
 
 // Simplified projection - start at very far zoom
 const projection = d3.geoOrthographic()
-  .scale(50) // Start at very small scale (far away)
+  .scale(50)
   .translate([width / 2, height / 2 - verticalShift])
-  .rotate([0, 0]) // Start at default rotation
+  .rotate([0, 0])
   .clipAngle(90);
 
 const path = d3.geoPath().projection(projection);
 
-// Create SVG with optimizations
 const svg = d3.select("#container")
   .append("svg")
   .attr("width", width)
   .attr("height", height);
 
-// Sphere
 const sphere = svg.append("path")
   .datum({ type: "Sphere" })
   .attr("class", "sphere")
   .attr("d", path);
 
-// Store global references
 let countryPaths, dots, routeLines;
 
 // Load simplified world data
@@ -69,14 +65,12 @@ d3.json("https://unpkg.com/world-atlas@2.0.2/countries-110m.json").then(function
     .attr("class", "location-dot")
     .attr("r", 3);
 
-  // Initialize
-  updateLocationInfo(coords[currentLocationIndex]);
   // Show the panel initially
   setTimeout(() => {
     document.querySelector('.info-panel').classList.add('slide-up');
   }, 100);
 
-  rotateToLocation(coords[currentLocationIndex], 2000); // Initial zoom-in with 2s duration
+  ///rotateToLocation(coords[currentLocationIndex], 2000); // Initial zoom-in with 2s duration
   setupEventListeners();
   updateControls();
 
@@ -469,74 +463,40 @@ function startPlayInterval() {
 }
 
 function setupScrollDetection() {
-  let ticking = false;
+  const container = document.getElementById('container');
 
-  function updateScrollPosition() {
-    const container = document.getElementById('container');
-    const rect = container.getBoundingClientRect();
-    const windowHeight = window.innerHeight;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const isInView = entry.intersectionRatio > 0.5; // 50% visible
 
-    // Check if more than 50% of the container is visible
-    const visibleHeight = Math.min(rect.bottom, windowHeight) - Math.max(rect.top, 0);
-    const containerHeight = rect.height;
-    const visibilityPercentage = Math.max(0, visibleHeight / containerHeight);
+      console.log('Visibility:', {
+        isVisible: isInView,
+        visibleRatio: (entry.intersectionRatio * 100).toFixed(2) + '%',
+        isIntersecting: entry.isIntersecting
+      });
 
-    const isInView = visibilityPercentage > 0.5;
-
-    if (isInView) {
-      // User scrolled into view - start playing if not manually paused
-      if (!isPlaying && !userPausedManually) {
-        isPlaying = true;
-        wasPlayingBeforeScroll = true;
-
-        const playBtn = document.getElementById('play-btn');
-        const pauseIcon = playBtn.querySelector('.pause-icon');
-        const playIcon = playBtn.querySelector('.play-icon');
-        const restartIcon = playBtn.querySelector('.restart-icon');
-
-        pauseIcon.style.display = 'block';
-        playIcon.style.display = 'none';
-        restartIcon.style.display = 'none';
-
-        // Start counter if not at last slide
-        if (currentLocationIndex < coords.length - 1) {
-          startStepCounter();
+      if (isInView && !isPlaying && !userPausedManually) {
+        if (!hasInitiated) {
+          hasInitiated = true;
+          rotateToLocation(coords[currentLocationIndex], 2000); // Initial zoom-in with 2s duration
+          updateLocationInfo(coords[currentLocationIndex]);
         }
-
+        // Auto-play logic
+        isPlaying = true;
+        startStepCounter();
         startPlayInterval();
-      }
-    } else {
-      // User scrolled out of view - pause if playing
-      if (isPlaying) {
-        wasPlayingBeforeScroll = true;
+      } else if (!isInView && isPlaying) {
+        // Auto-pause logic
         clearInterval(playInterval);
-        stopStepCounter(); // Stop the counter
+        stopStepCounter();
         isPlaying = false;
-
-        const playBtn = document.getElementById('play-btn');
-        const pauseIcon = playBtn.querySelector('.pause-icon');
-        const playIcon = playBtn.querySelector('.play-icon');
-        const restartIcon = playBtn.querySelector('.restart-icon');
-
-        pauseIcon.style.display = 'none';
-        playIcon.style.display = 'block';
-        restartIcon.style.display = 'none';
       }
-    }
+    });
+  }, {
+    threshold: [0, 0.25, 0.5, 0.75, 1.0] // Fire at multiple visibility levels
+  });
 
-    ticking = false;
-  }
-
-  function onScroll() {
-    if (!ticking) {
-      requestAnimationFrame(updateScrollPosition);
-      ticking = true;
-    }
-  }
-
-  window.addEventListener('scroll', onScroll);
-  // Initial check
-  updateScrollPosition();
+  observer.observe(container);
 }
 
 function setupEventListeners() {
@@ -601,19 +561,31 @@ function setupEventListeners() {
 }
 
 function setupActionBarScroll() {
+  console.log('🎬 setupActionBarScroll() called - Initializing action bar scroll behavior');
   const actionBar = document.getElementById('action-bar');
   let lastScrollY = window.scrollY;
   let ticking = false;
 
   function updateActionBar() {
+    console.log('🎯 updateActionBar() triggered');
     const currentScrollY = window.scrollY;
     const scrollingDown = currentScrollY > lastScrollY;
     const scrollingUp = currentScrollY < lastScrollY;
 
+    console.log(`📐 Action bar scroll stats:`, {
+      'currentScrollY': currentScrollY,
+      'lastScrollY': lastScrollY,
+      'scrollingDown': scrollingDown,
+      'scrollingUp': scrollingUp,
+      'threshold': 100
+    });
+
     // Hide when scrolling down, show when scrolling up
     if (scrollingDown && currentScrollY > 100) { // Start hiding after 100px
+      console.log('⬇️ Scrolling down - HIDING action bar');
       actionBar.classList.add('hidden');
     } else if (scrollingUp || currentScrollY <= 100) {
+      console.log('⬆️ Scrolling up or at top - SHOWING action bar');
       actionBar.classList.remove('hidden');
     }
 
@@ -622,12 +594,17 @@ function setupActionBarScroll() {
   }
 
   function onScroll() {
+    console.log('📜 [ActionBar] onScroll() fired');
     if (!ticking) {
+      console.log('⚡ [ActionBar] Scheduling updateActionBar via requestAnimationFrame');
       requestAnimationFrame(updateActionBar);
       ticking = true;
+    } else {
+      console.log('⏭️ [ActionBar] Skipping - already ticking');
     }
   }
 
+  console.log('👂 [ActionBar] Adding scroll event listener to window');
   window.addEventListener('scroll', onScroll);
 }
 

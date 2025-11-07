@@ -8,11 +8,48 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://d3js.org/topojson.v3.min.js"></script>
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/locomotive-scroll@latest/dist/locomotive-scroll.min.css">
+    <style>
+        html {
+            overflow-x: hidden;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        section {
+            min-height: 100vh;
+        }
+
+        section.content {
+            min-height: auto;
+            display: block;
+        }
+
+        section.action-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            height: 64px;
+            min-height: 64px;
+        }
+
+        section#container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
 </head>
 
 <body>
-    <div class="tour" id="tour">
-        <div class="action-bar" id="action-bar">
+
+    <div class="tour" id="tour" data-scroll-container>
+        <section class="action-bar" id="action-bar" data-scroll-section>
             <div class="action-bar-content">
                 <div class="dark-mode-toggle" id="dark-mode-toggle">
                     <div class="dark-mode-toggle-slider">
@@ -27,11 +64,12 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div class="content">
-            <h1>Pager Attack - 2024</h1>
-            <p>On 17 September 2024 thousands of pagers carried by Hezbollah members (and others) detonated nearly
+        <section class="content" data-scroll-section>
+            <h1 data-scroll data-scroll-speed="1">Pager Attack - 2024</h1>
+            <p data-scroll data-scroll-speed="1">On 17 September 2024 thousands of pagers carried by Hezbollah members
+                (and others) detonated nearly
                 simultaneously across Lebanon (and parts of Syria). A second wave on 18 September 2024 involved
                 weaponised
                 walkie-talkies. The attacks caused dozens of deaths and several thousand injuries, overwhelming
@@ -40,13 +78,15 @@
                 operation
                 was attributed to Israel by regional actors and many international media organizations.</p>
 
-            <p>Pager attack: unlike a single blast (Hiroshima or Beirut port), the pager attack was a distributed,
+            <p data-scroll data-scroll-speed="1">Pager attack: unlike a single blast (Hiroshima or Beirut port), the
+                pager attack was a distributed,
                 coordinated detonation of many small devices across many locations. That makes an “area” comparison
                 imprecise — the greater humanitarian impact came from number of simultaneous incidents and the high
                 number
                 of casualties and wounded treated across many hospitals.</p>
-            <h4>A Global Timeline of the 2024 Pager Attacks</h4>
-            <p>The interactive webpage offers a dynamic, globe-based visualization of the 2024 pager attack timeline,
+            <h4 data-scroll data-scroll-speed="1">A Global Timeline of the 2024 Pager Attacks</h4>
+            <p data-scroll data-scroll-speed="1">The interactive webpage offers a dynamic, globe-based visualization of
+                the 2024 pager attack timeline,
                 taking
                 viewers on a chronological journey across multiple countries involved in the covert operation. As the
                 globe
@@ -58,7 +98,8 @@
                 the synchronized explosions on September 17, 2024. The experience transforms a complex geopolitical
                 story
                 into an intuitive visual narrative that connects geography, espionage, and real-world consequences.</p>
-            <p>The presentation not only highlights the technical sophistication behind the operation but also its
+            <p data-scroll data-scroll-speed="1">The presentation not only highlights the technical sophistication
+                behind the operation but also its
                 global
                 footprint, emphasizing how intelligence networks and supply chains spanned continents before converging
                 in
@@ -67,10 +108,10 @@
                 movement, combined with the timeline's structured storytelling, makes the experience both educational
                 and
                 emotionally impactful, bridging investigative journalism with interactive data visualization.</p>
-        </div>
+        </section>
 
-        <div id="container">
-            <div class="info-panel">
+        <section id="container" data-scroll-section>
+            <div class="info-panel" data-scroll>
                 <img id="location-image" alt="Location image" />
                 <div id="location-text">
                     <h3 id="location-title">Loading...</h3>
@@ -82,7 +123,7 @@
             </div> -->
             </div>
 
-            <div class="controls">
+            <div class="controls" data-scroll>
                 <div class="control-buttons">
                     <button class="btn" id="prev-btn">
                         <svg viewBox="0 0 24 24">
@@ -122,13 +163,25 @@
                         rel="noopener noreferrer">@ma.fouani</a>
                 </span>
             </div>
-        </div>
+        </section>
 
     </div> <!-- End .tour -->
     <script src="data.js"></script>
-    <script src="demo.js">
+    <script src="demo.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/locomotive-scroll@latest/dist/locomotive-scroll.min.js"></script>
+    <script>
+        const scroll = new LocomotiveScroll({
+            el: document.querySelector('[data-scroll-container]'),
+            smooth: true,
+            smartphone: {
+                smooth: true
+            },
+            tablet: {
+                smooth: true
+            },
+            reloadOnContextChange: true
+        });
     </script>
-    <script src="scrolling.js"></script>
 </body>
 
 </html>

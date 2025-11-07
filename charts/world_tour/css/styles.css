@@ -1,4 +1,3 @@
- /* Global Reset - Only for body margin to prevent layout issues */
 body {
     margin: 0;
     padding: 0;
@@ -10,7 +9,7 @@ body {
     --color-white: #fff;
     --color-background-gradient-start: #2c324c;
     --color-background-gradient-end: #69a4c4;
-    
+
     /* Globe Colors */
     --color-sphere-fill: #253561;
     --color-sphere-stroke: #0f3460;
@@ -18,53 +17,52 @@ body {
     --color-country-stroke: #16213e;
     --color-country-current: #cc4646;
     --color-country-current-stroke: #fcbe81;
-    
+
     /* Location & Route Colors */
     --color-location-dot-fill: #e74c3c00;
     --color-location-dot-stroke: #ffffff00;
     --color-location-dot-current: #f39c1200;
     --color-route-line: #f39c12;
-    
+
     /* Progress & Accent Colors */
     --color-progress-primary: #ff6b3d;
     --color-progress-secondary: #d38642;
     --color-progress-completed: #ff6b3d;
     --color-progress-completed-light: #d38642;
-    
+
     /* Glass Effect Colors */
     --color-glass-background: rgba(255, 255, 255, 0.1);
     --color-glass-background-hover: rgba(255, 255, 255, 0.4);
-    --color-glass-border: rgba(255, 255, 255, 0.2);  
-    
+    --color-glass-border: rgba(255, 255, 255, 0.2);
+
     /* Text Colors */
     --color-text-primary: rgba(255, 255, 255, 0.9);
     --color-text-disabled: rgba(255, 255, 255, 0.5);
-    
+
     /* Background Colors */
     --color-background-overlay: rgba(255, 255, 255, 0.2);
     --color-background-disabled: rgba(255, 255, 255, 0.1);
     --color-background-placeholder: #ddd;
-    
-    /* Shadow Colors */ 
+
+    /* Shadow Colors */
     --color-shadow-light: rgba(0, 0, 0, 0.1);
-    --color-shadow-progress: rgba(255, 107, 61, 0.6);  
-    
+    --color-shadow-progress: rgba(255, 107, 61, 0.6);
+
     /* Route Line Shadow Colors */
     --color-route-shadow-1: rgba(243, 156, 18, 0.8);
     --color-route-shadow-2: rgba(243, 156, 18, 0.4);
-    
+
     /* Accent Colors */
     --color-accent-blue: #3498db;
 }
 
-/* Dark Mode Theme */
- .tour.dark-mode  {
+.tour.dark-mode {
     /* Primary Colors */
     --color-primary: #e8e8e8;
     --color-white: #ffffff;
     --color-background-gradient-start: #0a0b0f;
     --color-background-gradient-end: #1a1f2e;
-    
+
     /* Globe Colors */
     --color-sphere-fill: #0f1419;
     --color-sphere-stroke: #1c2332;
@@ -72,523 +70,586 @@ body {
     --color-country-stroke: #2a3441;
     --color-country-current: #e74c3c;
     --color-country-current-stroke: #f39c12;
-    
+
     /* Location & Route Colors */
     --color-location-dot-fill: #e74c3c00;
     --color-location-dot-stroke: #ffffff00;
     --color-location-dot-current: #f39c1200;
     --color-route-line: #f39c12;
-    
+
     /* Progress & Accent Colors */
     --color-progress-primary: #ff6b3d;
     --color-progress-secondary: #e67e22;
     --color-progress-completed: #27ae60;
     --color-progress-completed-light: #2ecc71;
-    
+
     /* Glass Effect Colors */
     --color-glass-background: rgba(20, 25, 35, 0.7);
     --color-glass-background-hover: rgba(30, 35, 45, 0.8);
-    --color-glass-border: rgba(255, 255, 255, 0.1);  
-    
+    --color-glass-border: rgba(255, 255, 255, 0.1);
+
     /* Text Colors */
     --color-text-primary: rgba(255, 255, 255, 0.9);
     --color-text-disabled: rgba(255, 255, 255, 0.4);
-    
+
     /* Background Colors */
     --color-background-overlay: rgba(20, 25, 35, 0.6);
     --color-background-disabled: rgba(20, 25, 35, 0.3);
     --color-background-placeholder: #2c3e50;
-    
-    /* Shadow Colors */ 
+
+    /* Shadow Colors */
     --color-shadow-light: rgba(0, 0, 0, 0.3);
-    --color-shadow-progress: rgba(255, 107, 61, 0.4);  
-    
+    --color-shadow-progress: rgba(255, 107, 61, 0.4);
+
     /* Route Line Shadow Colors */
     --color-route-shadow-1: rgba(243, 156, 18, 0.6);
     --color-route-shadow-2: rgba(243, 156, 18, 0.3);
-    
+
     /* Accent Colors */
     --color-accent-blue: #3498db;
 }
- .tour  {
-     margin: 0;
-     padding: 0;
-     font-family: Arial, sans-serif;
-     color: white;
-     overflow-x: hidden;
-     width: 100%;
-     max-width: 100%;
-     background-color: white;
-     transition: background-color 0.3s ease;
-     min-height: 100vh;
- }
- .tour.dark-mode  {
-     background-color: #0a0b0f;
- }
- .tour .content {
-     max-width: 800px;
-     margin: 0 auto;
-     padding: 20px;
-     color: var(--color-primary);
-     background-color: white;
-     transition: background-color 0.3s ease, color 0.3s ease;
-     /* Add top padding to account for action bar */
-     padding-top: 84px; /* 64px action bar + 20px spacing */
- }
- .tour.dark-mode .content  {
-     background-color: #0a0b0f;
-     color: var(--color-primary);
- }
- .tour .content p  {
-     font-family: 'Inter', sans-serif;
-     line-height: 1.6;
-     margin-bottom: 20px;
- }
- .tour #container  {
-     width: 100%;
-     height: 100vh;
-     background: linear-gradient(-45deg, var(--color-background-gradient-start), var(--color-background-gradient-end));
-     position: relative;
-     overflow: hidden;
-     max-width: 100vw;
- }
- .tour svg  {
-     width: 100%;
-     height: 100%;
- }
- .tour .sphere  {
-     fill: var(--color-sphere-fill);
-     stroke: var(--color-sphere-stroke);
-     stroke-width: 1px;
- }
- .tour .country  {
-     fill: var(--color-country-fill);
-     stroke: var(--color-country-stroke);
-     stroke-width: 0.25px;
- }
- .tour .country.current  {
-     fill: var(--color-country-current) !important;
-     stroke: var(--color-country-current-stroke);
-     stroke-width: 4px;
-     stroke-opacity: 0.3;
-     stroke-linejoin: round;
- }
- .tour .location-dot  {
-     fill: var(--color-location-dot-fill);
-     stroke: var(--color-location-dot-stroke);
-     opacity: 0.1;
-     stroke-width: 1px;
- }
- .tour .location-dot.current  {
-     fill: var(--color-location-dot-current);
-     stroke-width: 6px;
- }
- .tour .route-line  {
-     fill: none;
-     stroke: var(--color-route-line);
-     stroke-width: 2px;
-     opacity: 0.8;
-     filter: drop-shadow(0 0 8px var(--color-route-shadow-1)) drop-shadow(0 0 16px var(--color-route-shadow-2));
- }
- .tour .info-panel  {
-     position: absolute;
-     bottom: 16px;
-     left: 20px;
-     width: 700px;
-     height: fit-content;
-     /* 🧊 Frosted glass style */
-     background: var(--color-glass-background);
-     backdrop-filter: blur(4px) saturate(280%);
-     -webkit-backdrop-filter: blur(4px) saturate(280%);
-     border-radius: 16px;
-     border: 1px solid var(--color-glass-border);
 
-     /* ✨ Subtle shadow and depth */
-     box-shadow: 0 8px 30px var(--color-shadow-light);
+.tour {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    color: white;
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100vw;
+    background-color: white;
+    transition: background-color 0.3s ease;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
 
-     overflow: hidden;
-     display: flex;
-     flex-direction: row;
-     gap: 12px;
-     padding: 16px;
-     z-index: 30;
-     margin: 0 auto;
-     transition: transform 0.3s ease, opacity 0.3s ease;
-     transform: translateY(100%);
-     opacity: 0;
- }
- .tour .info-panel.slide-down  {
-     transition: transform .3s ease, opacity 0.3s ease !important;
-     transform: translateY(100%) !important;
-     opacity: 0 !important;
- }
- .tour .info-panel.slide-up  {
-     transform: translateY(0);
-     opacity: 1;
- }
+.tour.dark-mode {
+    background-color: #0a0b0f;
+}
 
- /* Fixed-height image in the card */
- .tour #location-image  {
-     transform-origin: bottom center;
-     width: 100%;
-     height: 200px;
-     flex: 0 0 120px;
-     object-fit: cover;
-     border-radius: 10px;
-     background: var(--color-background-placeholder);
-     display: none;
- }
- .tour #location-text  {
-     flex: 1 1 auto;
-     min-width: 0;
-     /* important for truncation */
-     display: flex;
-     flex-direction: column;
-     gap: 6px;
- }
- .tour .info-panel h3  {
-     margin: 0;
-     font-size: 1.1rem;
-     line-height: 1.3;
-     font-weight: 700;
-     color: var(--color-white);
-     display: -webkit-box;
-     /*-webkit-line-clamp: 3;
+.tour .content {
+    max-width: 800px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+    color: var(--color-primary);
+    background-color: white;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    padding-top: 84px;
+    box-sizing: border-box;
+}
+
+.tour.dark-mode .content {
+    background-color: #0a0b0f;
+    color: var(--color-primary);
+}
+
+.tour .content p {
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.tour #container {
+    width: 100%;
+    height: 100vh;
+    background: linear-gradient(-45deg, var(--color-background-gradient-start), var(--color-background-gradient-end));
+    position: relative;
+    overflow: hidden;
+    max-width: 100vw;
+}
+
+.tour svg {
+    width: 100%;
+    height: 100%;
+}
+
+.tour .sphere {
+    fill: var(--color-sphere-fill);
+    stroke: var(--color-sphere-stroke);
+    stroke-width: 1px;
+}
+
+.tour .country {
+    fill: var(--color-country-fill);
+    stroke: var(--color-country-stroke);
+    stroke-width: 0.25px;
+}
+
+.tour .country.current {
+    fill: var(--color-country-current) !important;
+    stroke: var(--color-country-current-stroke);
+    stroke-width: 4px;
+    stroke-opacity: 0.3;
+    stroke-linejoin: round;
+}
+
+.tour .location-dot {
+    fill: var(--color-location-dot-fill);
+    stroke: var(--color-location-dot-stroke);
+    opacity: 0.1;
+    stroke-width: 1px;
+}
+
+.tour .location-dot.current {
+    fill: var(--color-location-dot-current);
+    stroke-width: 6px;
+}
+
+.tour .route-line {
+    fill: none;
+    stroke: var(--color-route-line);
+    stroke-width: 2px;
+    opacity: 0.8;
+    filter: drop-shadow(0 0 8px var(--color-route-shadow-1)) drop-shadow(0 0 16px var(--color-route-shadow-2));
+}
+
+.tour .info-panel {
+    position: absolute;
+    bottom: 16px;
+    left: 20px;
+    width: 700px;
+    height: fit-content;
+    /* 🧊 Frosted glass style */
+    background: var(--color-glass-background);
+    backdrop-filter: blur(4px) saturate(280%);
+    -webkit-backdrop-filter: blur(4px) saturate(280%);
+    border-radius: 16px;
+    border: 1px solid var(--color-glass-border);
+
+    /* ✨ Subtle shadow and depth */
+    box-shadow: 0 8px 30px var(--color-shadow-light);
+
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    padding: 16px;
+    z-index: 30;
+    margin: 0 auto;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    transform: translateY(100%);
+    opacity: 0;
+}
+
+.tour .info-panel.slide-down {
+    transition: transform .3s ease, opacity 0.3s ease !important;
+    transform: translateY(100%) !important;
+    opacity: 0 !important;
+}
+
+.tour .info-panel.slide-up {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Fixed-height image in the card */
+.tour #location-image {
+    transform-origin: bottom center;
+    width: 100%;
+    height: 200px;
+    flex: 0 0 120px;
+    object-fit: cover;
+    border-radius: 10px;
+    background: var(--color-background-placeholder);
+    display: none;
+}
+
+.tour #location-text {
+    flex: 1 1 auto;
+    min-width: 0;
+    /* important for truncation */
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.tour .info-panel h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    line-height: 1.3;
+    font-weight: 700;
+    color: var(--color-white);
+    display: -webkit-box;
+    /*-webkit-line-clamp: 3;
             line-clamp: 3;*/
-     -webkit-box-orient: vertical;
-     overflow: hidden;
- }
- .tour .date  {
-     color: var(--color-text-disabled);
-     font-size: 0.85rem;
-     margin-bottom: 8px;
- }
- .tour #location-description  {
-     margin: 0;
-     font-size: 0.95rem;
-     line-height: 1.4;
-     color: var(--color-text-primary);
-     display: -webkit-box;
-     /*-webkit-line-clamp: 6;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.tour .date {
+    color: var(--color-text-disabled);
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+}
+
+.tour #location-description {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    color: var(--color-text-primary);
+    display: -webkit-box;
+    /*-webkit-line-clamp: 6;
             line-clamp: 6;*/
-     -webkit-box-orient: vertical;
-     overflow: hidden;
- }
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
 
- @media (min-width: 800px) {
- .tour #container  {
-         overflow: hidden;
-         justify-content: center;
-     }
- .tour .info-panel  {
-         right: 20px;
-         left: auto;
-     }
- }
+@media (min-width: 800px) {
+    .tour #container {
+        overflow: hidden;
+        justify-content: center;
+    }
 
- @media (max-width: 800px) {
- .tour #container  {
-         overflow: hidden;
-     }
- .tour .info-panel  {
-         width: 85%;
-         max-width: 400px;
-         bottom: 10px;
-         left: 50%;
-         transform: translateX(-50%) translateY(100%);
-         margin: 0 auto;
-         flex-direction: column;
-     }
- .tour .info-panel.slide-up  {
-         transform: translateX(-50%) translateY(0);
-     }
- .tour .info-panel.slide-down  {
-         transform: translateX(-50%) translateY(100%) !important;
-     }
+    .tour .info-panel {
+        right: 20px;
+        left: auto;
+    }
+}
 
-     /* Place image as full-width block on small screens if needed */
- .tour #location-image  {
-         width: 100%;
-         height: fit-content;
-         object-fit: cover;
-         aspect-ratio: 1.7;
-         border-radius: 8px;
-         margin-bottom: 8px;
-     }
- .tour #location-text  {
-         padding: 0 4px;
-     }
- }
- .tour .controls  {
-     position: absolute;
-     top: 20px;
-     left: 20px;
-     display: flex;
-     flex-direction: column;
-     gap: 8px;
-     /* 🧊 Frosted glass style */
-     background: var(--color-glass-background);
-     backdrop-filter: blur(4px) saturate(280%);
-     -webkit-backdrop-filter: blur(4px) saturate(280%);
-     border-radius: 12px;
-     border: 1px solid var(--color-glass-border);
-     box-shadow: 0 4px 20px var(--color-shadow-light);
-     padding: 8px;
-     z-index: 40;
- }
- .tour .control-buttons  {
-     display: flex;
-     gap: 8px;
- }
- .tour .step-progress-container  {
-     display: flex;
-     gap: 3px;
-     margin-top: 8px;
-     align-items: center;
- }
- .tour .step-progress-item  {
-     display: flex;
-     flex-direction: column;
-     align-items: center;
-     flex: 1;
-     min-width: 8px;
- }
- .tour .step-progress-bar  {
-     height: 3px;
-     width: 100%;
-     background: var(--color-background-overlay);
-     border-radius: 1.5px;
-     overflow: hidden;
-     position: relative;
- }
- .tour .step-progress-fill  {
-     height: 100%;
-     background: linear-gradient(90deg, var(--color-progress-primary), var(--color-progress-secondary));
-     border-radius: 1.5px;
-     transition: width 0.1s ease;
-     width: 0%;
-     box-shadow: 0 0 4px var(--color-shadow-light);
- }
- .tour .step-progress-item.completed .step-progress-bar  {
-     background: var(--color-shadow-light);
- }
- .tour .step-progress-item.completed .step-progress-fill  {
-     width: 100%;
-     background: linear-gradient(90deg, var(--color-progress-completed), var(--color-progress-completed-light));
- }
- .tour .step-progress-item.current .step-progress-bar  {
-     background: var(--color-glass-background);
-     border: 1px solid var(--color-glass-border);
- }
- .tour .step-progress-item.current .step-progress-fill  {
-     background: linear-gradient(90deg, var(--color-progress-primary), var(--color-progress-secondary));
-     box-shadow: 0 0 6px var(--color-shadow-progress);
- }
- .tour .btn  {
-     background: var(--color-background-overlay);
-     backdrop-filter: blur(4px);
-     -webkit-backdrop-filter: blur(4px);
-     border: 1px solid var(--color-glass-border);
-     color: white;
-     padding: 10px;
-     border-radius: 8px;
-     cursor: pointer;
-     font-size: 14px;
-     font-weight: 500;
-     transition: all 0.2s ease;
-     min-width: 44px;
-     min-height: 44px;
-     display: flex;
-     align-items: center;
-     justify-content: center;
- }
- .tour .btn svg  {
-     width: 18px;
-     height: 18px;
-     fill: currentColor;
- }
- .tour .btn .pause-icon  {
-     position: relative;
-     width: 18px;
-     height: 18px;
-     display: flex;
-     align-items: center;
-     justify-content: center;
- }
- .tour .btn:hover  {
-     background: var(--color-glass-background-hover);
-     transform: translateY(-1px);
-     box-shadow: 0 4px 12px var(--color-shadow-light);
- }
- .tour .btn:active  {
-     transform: translateY(0);
- }
- .tour .btn:disabled  {
-     background: var(--color-background-disabled);
-     color: var(--color-text-disabled);
-     cursor: not-allowed;
-     transform: none;
-     box-shadow: none;
- }
- .tour .btn:disabled:hover  {
-     background: var(--color-background-disabled);
-     transform: none;
-     box-shadow: none;
- }
- .tour .info-pill  {
-     position: absolute;
-     top: 20px;
-     right: 20px;
-     color: var(--color-text-disabled);
-     /* 🧊 Frosted glass style */
-     background: var(--color-glass-background);
-     backdrop-filter: blur(4px) saturate(280%);
-     -webkit-backdrop-filter: blur(4px) saturate(280%);
-     border-radius: 17px;
-     border: 1px solid var(--color-glass-border);
-     z-index: 41;
-     transition: all 0.3s ease;
-     cursor: pointer;
-     width: auto;
-     height: 44px;
-     padding: 0 2px 0 6px;
-     display: flex;
-     align-items: center;
-     justify-content: flex-start;
-     gap: 8px;
- }
- .tour .info-pill.expanded  {
-     background: var(--color-glass-background);
-     padding: 0 12px 0 8px;
- }
- .tour .info-pill:hover  {
-     background: var(--color-glass-background);
-     transform: translateY(-1px);
- }
- .tour .info-pill .author-image  {
-     width: 34px;
-     height: 34px;
-     border-radius: 50%;
-     object-fit: cover;
- }
- .tour .info-pill .info-text  {
-     transition: font-size 0.3s ease;
-     white-space: nowrap;
-     font-size: 0;
-     flex: 1;
-     overflow: hidden;
- }
- .tour .info-pill.expanded .info-text  {
-     font-size: 10px;
-     text-align: center;
- }
- .tour .info-pill a  {
-     color: var(--color-white);
-     text-decoration: none;
-     font-weight: 500;
-     transition: color 0.1s ease;
- }
- .tour .info-pill a:hover  {
-     color: var(--color-accent-blue);
- }
+@media (max-width: 800px) {
+    .tour #container {
+        overflow: hidden;
+    }
 
- /* Action Bar */
- .tour .action-bar  {
-     position: fixed;
-     top: 0;
-     left: 0;
-     right: 0;
-     height: 64px;
-     background: var(--color-glass-background);
-     backdrop-filter: blur(8px) saturate(300%);
-     -webkit-backdrop-filter: blur(8px) saturate(300%);
-     border-bottom: 1px solid var(--color-glass-border);
-     display: flex;
-     align-items: center;
-     justify-content: flex-end;
-     padding: 0 20px;
-     z-index: 100;
-     transform: translateY(0);
-     transition: transform 0.3s ease, opacity 0.3s ease;
-     box-shadow: 0 4px 20px var(--color-shadow-light);
- }
- .tour .action-bar.hidden  {
-     transform: translateY(-100%);
-     opacity: 0;
- }
- .tour .action-bar-content  {
-     display: flex;
-     align-items: center;
-     gap: 16px;
- }
+    .tour .info-panel {
+        width: 85%;
+        max-width: 400px;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100%);
+        margin: 0 auto;
+        flex-direction: column;
+    }
 
- /* Dark Mode Toggle Button */
- .tour .dark-mode-toggle  {
-     width: 48px;
-     height: 24px;
-     background: var(--color-background-overlay);
-     backdrop-filter: blur(4px) saturate(280%);
-     -webkit-backdrop-filter: blur(4px) saturate(280%);
-     border: 1px solid var(--color-glass-border);
-     border-radius: 12px;
-     cursor: pointer;
-     transition: all 0.3s ease;
-     display: flex;
-     align-items: center;
-     padding: 2px;
-     box-shadow: 0 2px 8px var(--color-shadow-light);
- }
- .tour .dark-mode-toggle:hover  {
-     background: var(--color-glass-background-hover);
-     transform: translateY(-1px);
-     box-shadow: 0 4px 12px var(--color-shadow-light);
- }
- .tour .dark-mode-toggle-slider  {
-     width: 20px;
-     height: 20px;
-     background: var(--color-white);
-     border-radius: 50%;
-     transition: transform 0.3s ease, background-color 0.3s ease;
-     display: flex;
-     align-items: center;
-     justify-content: center;
-     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-     position: relative;
- }
- .tour .dark-mode-toggle.dark .dark-mode-toggle-slider  {
-     transform: translateX(24px);
-     background: var(--color-background-gradient-start);
- }
- .tour .dark-mode-toggle-icon  {
-     width: 12px;
-     height: 12px;
-     fill: currentColor;
-     transition: opacity 0.3s ease;
- }
- .tour .dark-mode-toggle .sun-icon  {
-     color: #ffa500;
-     opacity: 1;
- }
- .tour .dark-mode-toggle .moon-icon  {
-     color: #708090;
-     opacity: 0;
-     position: absolute;
- }
- .tour .dark-mode-toggle.dark .sun-icon  {
-     opacity: 0;
- }
- .tour .dark-mode-toggle.dark .moon-icon  {
-     opacity: 1;
-     color: #e8e8e8;
- }
+    .tour .info-panel.slide-up {
+        transform: translateX(-50%) translateY(0);
+    }
 
- /* Add top padding to content to account for action bar */
- .tour .content  {
-     padding-top: 84px; /* 64px action bar + 20px spacing */
- }
+    .tour .info-panel.slide-down {
+        transform: translateX(-50%) translateY(100%) !important;
+    }
 
- /* UNUSED: Mobile media query for info-pill - already commented out, alternative mobile styling not needed */
- /*
+    /* Place image as full-width block on small screens if needed */
+    .tour #location-image {
+        width: 100%;
+        height: fit-content;
+        object-fit: cover;
+        aspect-ratio: 1.7;
+        border-radius: 8px;
+        margin-bottom: 8px;
+    }
+
+    .tour #location-text {
+        padding: 0 4px;
+    }
+}
+
+.tour .controls {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    /* 🧊 Frosted glass style */
+    background: var(--color-glass-background);
+    backdrop-filter: blur(4px) saturate(280%);
+    -webkit-backdrop-filter: blur(4px) saturate(280%);
+    border-radius: 12px;
+    border: 1px solid var(--color-glass-border);
+    box-shadow: 0 4px 20px var(--color-shadow-light);
+    padding: 8px;
+    z-index: 40;
+}
+
+.tour .control-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.tour .step-progress-container {
+    display: flex;
+    gap: 3px;
+    margin-top: 8px;
+    align-items: center;
+}
+
+.tour .step-progress-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    min-width: 8px;
+}
+
+.tour .step-progress-bar {
+    height: 3px;
+    width: 100%;
+    background: var(--color-background-overlay);
+    border-radius: 1.5px;
+    overflow: hidden;
+    position: relative;
+}
+
+.tour .step-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--color-progress-primary), var(--color-progress-secondary));
+    border-radius: 1.5px;
+    transition: width 0.1s ease;
+    width: 0%;
+    box-shadow: 0 0 4px var(--color-shadow-light);
+}
+
+.tour .step-progress-item.completed .step-progress-bar {
+    background: var(--color-shadow-light);
+}
+
+.tour .step-progress-item.completed .step-progress-fill {
+    width: 100%;
+    background: linear-gradient(90deg, var(--color-progress-completed), var(--color-progress-completed-light));
+}
+
+.tour .step-progress-item.current .step-progress-bar {
+    background: var(--color-glass-background);
+    border: 1px solid var(--color-glass-border);
+}
+
+.tour .step-progress-item.current .step-progress-fill {
+    background: linear-gradient(90deg, var(--color-progress-primary), var(--color-progress-secondary));
+    box-shadow: 0 0 6px var(--color-shadow-progress);
+}
+
+.tour .btn {
+    background: var(--color-background-overlay);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid var(--color-glass-border);
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tour .btn svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+}
+
+.tour .btn .pause-icon {
+    position: relative;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tour .btn:hover {
+    background: var(--color-glass-background-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px var(--color-shadow-light);
+}
+
+.tour .btn:active {
+    transform: translateY(0);
+}
+
+.tour .btn:disabled {
+    background: var(--color-background-disabled);
+    color: var(--color-text-disabled);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.tour .btn:disabled:hover {
+    background: var(--color-background-disabled);
+    transform: none;
+    box-shadow: none;
+}
+
+.tour .info-pill {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    color: var(--color-text-disabled);
+    /* 🧊 Frosted glass style */
+    background: var(--color-glass-background);
+    backdrop-filter: blur(4px) saturate(280%);
+    -webkit-backdrop-filter: blur(4px) saturate(280%);
+    border-radius: 17px;
+    border: 1px solid var(--color-glass-border);
+    z-index: 41;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    width: auto;
+    height: 44px;
+    padding: 0 2px 0 6px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+}
+
+.tour .info-pill.expanded {
+    background: var(--color-glass-background);
+    padding: 0 12px 0 8px;
+}
+
+.tour .info-pill:hover {
+    background: var(--color-glass-background);
+    transform: translateY(-1px);
+}
+
+.tour .info-pill .author-image {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.tour .info-pill .info-text {
+    transition: font-size 0.3s ease;
+    white-space: nowrap;
+    font-size: 0;
+    flex: 1;
+    overflow: hidden;
+}
+
+.tour .info-pill.expanded .info-text {
+    font-size: 10px;
+    text-align: center;
+}
+
+.tour .info-pill a {
+    color: var(--color-white);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.1s ease;
+}
+
+.tour .info-pill a:hover {
+    color: var(--color-accent-blue);
+}
+
+/* Action Bar */
+.tour .action-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+    background: var(--color-glass-background);
+    backdrop-filter: blur(8px) saturate(300%);
+    -webkit-backdrop-filter: blur(8px) saturate(300%);
+    border-bottom: 1px solid var(--color-glass-border);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 20px;
+    z-index: 100;
+    transform: translateY(0);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    box-shadow: 0 4px 20px var(--color-shadow-light);
+}
+
+.tour .action-bar.hidden {
+    transform: translateY(-100%);
+    opacity: 0;
+}
+
+.tour .action-bar-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+/* Dark Mode Toggle Button */
+.tour .dark-mode-toggle {
+    width: 48px;
+    height: 24px;
+    background: var(--color-background-overlay);
+    backdrop-filter: blur(4px) saturate(280%);
+    -webkit-backdrop-filter: blur(4px) saturate(280%);
+    border: 1px solid var(--color-glass-border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    padding: 2px;
+    box-shadow: 0 2px 8px var(--color-shadow-light);
+}
+
+.tour .dark-mode-toggle:hover {
+    background: var(--color-glass-background-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px var(--color-shadow-light);
+}
+
+.tour .dark-mode-toggle-slider {
+    width: 20px;
+    height: 20px;
+    background: var(--color-white);
+    border-radius: 50%;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+
+.tour .dark-mode-toggle.dark .dark-mode-toggle-slider {
+    transform: translateX(24px);
+    background: var(--color-background-gradient-start);
+}
+
+.tour .dark-mode-toggle-icon {
+    width: 12px;
+    height: 12px;
+    fill: currentColor;
+    transition: opacity 0.3s ease;
+}
+
+.tour .dark-mode-toggle .sun-icon {
+    color: #ffa500;
+    opacity: 1;
+}
+
+.tour .dark-mode-toggle .moon-icon {
+    color: #708090;
+    opacity: 0;
+    position: absolute;
+}
+
+.tour .dark-mode-toggle.dark .sun-icon {
+    opacity: 0;
+}
+
+.tour .dark-mode-toggle.dark .moon-icon {
+    opacity: 1;
+    color: #e8e8e8;
+}
+
+/* Add top padding to content to account for action bar */
+.tour .content {
+    padding-top: 84px;
+    /* 64px action bar + 20px spacing */
+}
+
+/* UNUSED: Mobile media query for info-pill - already commented out, alternative mobile styling not needed */
+/*
  @media (max-width: 800px) {
  .tour .info-pill  {
          top: 10px;
@@ -609,9 +670,9 @@ body {
      }
  }*/
 
- 
- /* UNUSED: Main progress bar - removed from demo.html in favor of individual step progress bars */
- /*
+
+/* UNUSED: Main progress bar - removed from demo.html in favor of individual step progress bars */
+/*
  .tour .progress-bar  {
      height: 4px;
      background: var(--color-background-overlay);
@@ -628,17 +689,17 @@ body {
      box-shadow: 0 0 8px var(--color-shadow-progress);
  }
  */
- 
- /* UNUSED: Step counter visibility class - step counter was removed from demo.html */
- /*
+
+/* UNUSED: Step counter visibility class - step counter was removed from demo.html */
+/*
  .tour .step-counter.visible  {
      opacity: 1;
  }
  */
 
- 
- /* UNUSED: Loading bar styling - commented out in HTML */
- /*
+
+/* UNUSED: Loading bar styling - commented out in HTML */
+/*
  .tour .loading-bar-container  {
      position: absolute;
      bottom: 0;
@@ -658,4 +719,3 @@ body {
      box-shadow: 0 0 8px var(--color-shadow-progress);
  }
  */
-
