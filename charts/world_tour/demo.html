@@ -48,6 +48,13 @@
             fill: #f39c12;
         }
 
+        .route-line {
+            fill: none;
+            stroke: #f39c12;
+            stroke-width: 2px;
+            opacity: 0.8;
+        }
+
         .info-panel {
             position: absolute;
             top: 10px;
@@ -126,17 +133,18 @@
         // Optimized global variables
         const zoomFactor = 70;
         let currentLocationIndex = 0;
-        let isPlaying = false;
+        let isPlaying = true; // Auto-play enabled by default
         let playInterval;
 
         const width = window.innerWidth;
         const height = window.innerHeight;
         const duration = 1500; // Reduced duration
 
-        // Simplified projection
+        // Simplified projection - start at very far zoom
         const projection = d3.geoOrthographic()
-            .scale(Math.min(width, height) / 6)
+            .scale(50) // Start at very small scale (far away)
             .translate([width / 2, height / 2])
+            .rotate([0, 0]) // Start at default rotation
             .clipAngle(90);
 
         const path = d3.geoPath().projection(projection);
@@ -153,36 +161,59 @@
             .attr("class", "sphere")
             .attr("d", path);
 
+        // Store global references
+        let countryPaths, dots, routeLines;
+
         // Load simplified world data
         d3.json("https://unpkg.com/world-atlas@2.0.2/countries-110m.json").then(function(world) {
             const countries = topojson.feature(world, world.objects.countries);
             
             // Add countries with minimal styling
-            const countryPaths = svg.selectAll(".country")
+            countryPaths = svg.selectAll(".country")
                 .data(countries.features)
                 .enter().append("path")
                 .attr("class", "country")
                 .attr("d", path);
 
+            // Create route lines (initially empty)
+            routeLines = svg.append("g").attr("class", "route-lines");
+
             // Add location dots
-            const dots = svg.selectAll(".location-dot")
+            dots = svg.selectAll(".location-dot")
                 .data(coords)
                 .enter().append("circle")
                 .attr("class", "location-dot")
                 .attr("r", 3);
 
-            // Store references for performance
-            window.countryPaths = countryPaths;
-            window.dots = dots;
-            window.sphere = sphere;
-
             // Initialize
             updateLocationInfo(coords[currentLocationIndex]);
-            rotateToLocation(coords[currentLocationIndex], 0);
+            rotateToLocation(coords[currentLocationIndex], 2000); // Initial zoom-in with 2s duration
             setupEventListeners();
             updateControls();
             updateProgressBar();
+            
+            // Start auto-play after initial zoom
+            setTimeout(function() {
+                document.getElementById('play-btn').textContent = '⏸';
+                playInterval = setInterval(function() {
+                    if (currentLocationIndex < coords.length - 1) {
+                        nextLocation();
+                    } else {
+                        togglePlay();
+                    }
+                }, duration + 800);
+            }, 2500); // Start auto-play 500ms after initial zoom completes
         });
+
+        function createRoute(fromCoords, toCoords) {
+            const interpolate = d3.geoInterpolate(fromCoords, toCoords);
+            const points = d3.range(0, 1.01, 0.05).map(interpolate);
+            
+            return {
+                type: "LineString",
+                coordinates: points
+            };
+        }
 
         function rotateToLocation(location, animationDuration = duration) {
             const targetRotation = [-location.coords[0], -location.coords[1]];
@@ -195,6 +226,9 @@
                 return;
             }
 
+            // Clear any existing route line
+            routeLines.selectAll(".route-line").remove();
+
             // Get current state
             const currentRotation = projection.rotate();
             const currentScale = projection.scale();
@@ -202,6 +236,17 @@
             // Create interpolators
             const interpolateRotation = d3.interpolate(currentRotation, targetRotation);
             const interpolateScale = d3.interpolate(currentScale, targetScale);
+
+            // Create animated route line if not the first location
+            let routePath = null;
+            if (currentLocationIndex > 0) {
+                const currentLocation = coords[currentLocationIndex];
+                const prevLocation = coords[currentLocationIndex - 1];
+                
+                routePath = routeLines.append("path")
+                    .attr("class", "route-line")
+                    .style("opacity", 0.8);
+            }
 
             // Single transition for everything
             svg.transition("main")
@@ -212,20 +257,60 @@
                         projection
                             .rotate(interpolateRotation(t))
                             .scale(interpolateScale(t));
+                        
+                        // Update static elements
                         updateAll();
+                        
+                        // Update animated route line
+                        if (routePath && currentLocationIndex > 0) {
+                            const currentLocation = coords[currentLocationIndex];
+                            const prevLocation = coords[currentLocationIndex - 1];
+                            
+                            let routeData;
+                            if (t < 0.8) {
+                                // Growing phase: line grows from source to destination
+                                const growProgress = t / 0.8;
+                                const interpolate = d3.geoInterpolate(prevLocation.coords, currentLocation.coords);
+                                const endPoint = interpolate(growProgress);
+                                
+                                routeData = {
+                                    type: "LineString",
+                                    coordinates: [prevLocation.coords, endPoint]
+                                };
+                            } else {
+                                // Shrinking phase: line shrinks from source end
+                                const shrinkProgress = (t - 0.8) / 0.2;
+                                const interpolate = d3.geoInterpolate(prevLocation.coords, currentLocation.coords);
+                                const startPoint = interpolate(shrinkProgress);
+                                
+                                routeData = {
+                                    type: "LineString",
+                                    coordinates: [startPoint, currentLocation.coords]
+                                };
+                            }
+                            
+                            routePath.datum(routeData).attr("d", path);
+                        }
                     };
+                })
+                .on("end", function() {
+                    // Remove the route line completely after animation
+                    if (routePath) {
+                        routePath.remove();
+                    }
                 });
         }
 
         function updateAll() {
             // Update all paths in one go
-            const pathData = path;
+            sphere.attr("d", path);
+            countryPaths.attr("d", path);
             
-            window.sphere.attr("d", pathData);
-            window.countryPaths.attr("d", pathData);
+            // Update existing route lines
+            routeLines.selectAll(".route-line").attr("d", path);
             
             // Update dots efficiently
-            window.dots
+            dots
                 .attr("cx", function(d) {
                     const pos = projection(d.coords);
                     return pos ? pos[0] : -1000;
@@ -302,7 +387,7 @@
                     } else {
                         togglePlay();
                     }
-                }, duration + 300);
+                }, duration + 800); // Extra time for route animation
             }
         }
 

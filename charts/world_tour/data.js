@@ -1,5 +1,5 @@
 const coords = [
-    {
+    /*{
         "name": "",
         "coords": [34.8516, 31.0461],
         "id": "ISR",
@@ -12,7 +12,7 @@ const coords = [
             "link": "",
             "image": ""
         }
-    },
+    },*/
     {
         "name": "Israel",
         "coords": [34.8516, 31.0461],
