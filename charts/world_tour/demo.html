@@ -482,7 +482,7 @@
             };
         }
 
-        function rotateToLocation(location, animationDuration = duration) {
+        function rotateToLocation(location, animationDuration = 1200) {
             const targetRotation = [-location.coords[0], -location.coords[1]];
             const targetScale = location.zoom * zoomFactor;
 
