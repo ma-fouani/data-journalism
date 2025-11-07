@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lebanon Pager Attacks Map - 2024</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://d3js.org/topojson.v3.min.js"></script>
+    <link rel="stylesheet" href="css/casualties_map.css">
+</head>
+
+<body>
+    <div id="map-container">
+        <div class="tooltip" id="tooltip">
+            <div class="tooltip-title"></div>
+            <div class="tooltip-content"></div>
+        </div>
+
+        <div class="legend">
+            <div class="legend-title">Incident Type</div>
+            <div class="legend-item">
+                <div class="legend-circle" style="width: 15px; height: 15px; background: #e74c3c;"></div>
+                <span>Pager 17-9</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-circle" style="width: 15px; height: 15px; background: #f39c12;"></div>
+                <span>Walkie-Talkie 18-9</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-circle" style="width: 15px; height: 15px; background: #3498db;"></div>
+                <span>Multiple Incidents</span>
+            </div>
+            <div class="legend-size">
+                <div class="legend-title">Circle Size = Casualties</div>
+                <div class="legend-size-item">
+                    <div class="legend-circle" style="width: 10px; height: 10px; background: #95a5a6;"></div>
+                    <span>50 casualties</span>
+                </div>
+                <div class="legend-size-item">
+                    <div class="legend-circle" style="width: 20px; height: 20px; background: #95a5a6;"></div>
+                    <span>500 casualties</span>
+                </div>
+                <div class="legend-size-item">
+                    <div class="legend-circle" style="width: 30px; height: 30px; background: #95a5a6;"></div>
+                    <span>1000+ casualties</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="data/lebanon.js"></script>
+    <!--this script loads the incident data -->
+    <script src="js/casualties.js"></script>
+ 
+</body>
+
+</html>

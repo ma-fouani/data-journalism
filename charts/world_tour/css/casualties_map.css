@@ -1,0 +1,146 @@
+#map-container {
+    width: 500px;
+    height: 500px;
+    min-height: 500px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(4px) saturate(280%);
+    -webkit-backdrop-filter: blur(4px) saturate(280%);
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+    margin: 0 auto;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+}
+
+.lebanon-region {
+    fill: #516185;
+    stroke: #16213e;
+    stroke-width: 1.5;
+    transition: fill 0.3s ease;
+}
+
+.lebanon-region:hover {
+    fill: #69a4c4;
+}
+
+.incident-circle {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.incident-circle:hover {
+    stroke: #fff;
+    stroke-width: 3;
+    filter: brightness(1.2);
+}
+
+.tooltip {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    position: absolute;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(4px) saturate(280%);
+    -webkit-backdrop-filter: blur(4px) saturate(280%);
+    color: rgba(255, 255, 255, 0.9);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 13px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1000;
+    max-width: 250px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.tooltip.visible {
+    opacity: 1;
+}
+
+.tooltip-title {
+    font-weight: bold;
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: #333;
+}
+
+.tooltip-detail {
+    margin: 8px 0;
+    font-size: 13px;
+    color: #333;
+}
+
+.legend {
+    position: absolute;
+    display: none;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(4px) saturate(280%);
+    -webkit-backdrop-filter: blur(4px) saturate(280%);
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.legend-title {
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 14px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin: 8px 0;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.legend-circle {
+    border-radius: 50%;
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.legend-size {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.legend-size-item {
+    display: flex;
+    align-items: center;
+    margin: 8px 0;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.city-label {
+    font-size: 12px;
+    font-weight: 600;
+    fill: rgba(255, 255, 255, 0.9);
+    pointer-events: none;
+    text-shadow: 0 0 3px rgba(0, 0, 0, 0.8), 0 0 6px rgba(0, 0, 0, 0.8);
+}
+
+.floating-image {
+    position: absolute;
+    left: -340px;
+    z-index: 5;
+}
+
+@media (max-width: 768px) {
+    #map-container {
+        width: 100%;
+        max-width: 500px;
+        height: 400px;
+        margin: 0 auto;
+    }
+}
