@@ -278,6 +278,57 @@
      box-shadow: 0 0 8px rgba(255, 107, 61, 0.6);
  }
 
+ .step-progress-container {
+     display: flex;
+     gap: 3px;
+     margin-top: 8px;
+     align-items: center;
+ }
+
+ .step-progress-item {
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     flex: 1;
+     min-width: 8px;
+ }
+
+ .step-progress-bar {
+     height: 3px;
+     width: 100%;
+     background: rgba(255, 255, 255, 0.15);
+     border-radius: 1.5px;
+     overflow: hidden;
+     position: relative;
+ }
+
+ .step-progress-fill {
+     height: 100%;
+     background: linear-gradient(90deg, #ff6b3d, #d38642);
+     border-radius: 1.5px;
+     transition: width 0.1s ease;
+     width: 0%;
+     box-shadow: 0 0 4px rgba(76, 175, 80, 0.4);
+ }
+
+ .step-progress-item.completed .step-progress-bar {
+     background: rgba(76, 175, 80, 0.3);
+ }
+
+ .step-progress-item.completed .step-progress-fill {
+     width: 100%;
+ }
+
+ .step-progress-item.current .step-progress-bar {
+     background: rgba(255, 255, 255, 0.25);
+     border: 1px solid rgba(255, 255, 255, 0.1);
+ }
+
+ .step-progress-item.current .step-progress-fill {
+     background: linear-gradient(90deg, #ff6b3d, #d38642);
+     box-shadow: 0 0 6px rgba(255, 107, 61, 0.6);
+ }
+
  .step-counter {
      display: flex;
      align-items: center;

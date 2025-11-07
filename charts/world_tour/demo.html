@@ -59,9 +59,9 @@
                     </svg>
                 </button>
                 <button class="btn" id="play-btn">
-                    <div class="pause-icon"> 
-                        <div id="step-counter" class="step-counter">...</div>
-                    </div>
+                    <svg viewBox="0 0 24 24" class="pause-icon">
+                        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                    </svg>
                     <svg viewBox="0 0 24 24" class="play-icon" style="display: none;">
                         <path d="M8 5v14l11-7z" />
                     </svg>
@@ -77,8 +77,8 @@
                     </svg>
                 </button>
             </div>
-            <div class="progress-bar">
-                <div class="progress-fill"></div>
+            <div class="step-progress-container">
+                <!-- Individual step progress bars will be generated dynamically -->
             </div>
         </div>
 
@@ -113,7 +113,7 @@
         let stepStartTime;
         let stepElapsedTime = 0; // Track elapsed time when pausing
         let stepDuration = duration / 1000; // Duration in seconds (15000ms / 1000)
-        let stepCounterElement;
+        let stepProgressBars = []; // Array to store individual progress bar elements
 
         // More robust mobile detection and vertical shift calculation
         const isMobile = window.innerWidth <= 768 || window.innerHeight > window.innerWidth;
@@ -176,10 +176,9 @@
             rotateToLocation(coords[currentLocationIndex], 2000); // Initial zoom-in with 2s duration
             setupEventListeners();
             updateControls();
-            updateProgressBar();
 
-            // Initialize counter
-            stepCounterElement = document.getElementById('step-counter');
+            // Create individual step progress bars
+            createStepProgressBars();
 
             // Start auto-play after initial zoom
             setTimeout(function () {
@@ -364,14 +363,60 @@
             }, 300);
         }
 
-        function updateProgressBar() {
-            const progress = ((currentLocationIndex + 1) / coords.length) * 100;
-            document.querySelector('.progress-fill').style.width = progress + '%';
-        }
-
         function updateControls() {
             document.getElementById('prev-btn').disabled = currentLocationIndex === 0;
             document.getElementById('next-btn').disabled = currentLocationIndex === coords.length - 1;
+        }
+
+        function createStepProgressBars() {
+            const container = document.querySelector('.step-progress-container');
+            stepProgressBars = [];
+            
+            // Clear existing progress bars
+            container.innerHTML = '';
+            
+            // Create progress bars for each step (exclude last step since there's no transition after it)
+            for (let i = 0; i < coords.length - 1; i++) {
+                const stepItem = document.createElement('div');
+                stepItem.className = 'step-progress-item';
+                if (i < currentLocationIndex) {
+                    stepItem.classList.add('completed');
+                } else if (i === currentLocationIndex) {
+                    stepItem.classList.add('current');
+                }
+                
+                const progressBar = document.createElement('div');
+                progressBar.className = 'step-progress-bar';
+                
+                const progressFill = document.createElement('div');
+                progressFill.className = 'step-progress-fill';
+                
+                progressBar.appendChild(progressFill);
+                stepItem.appendChild(progressBar);
+                container.appendChild(stepItem);
+                
+                stepProgressBars.push({
+                    item: stepItem,
+                    fill: progressFill
+                });
+            }
+            
+            updateStepProgressBars();
+        }
+
+        function updateStepProgressBars() {
+            stepProgressBars.forEach((bar, index) => {
+                bar.item.classList.remove('completed', 'current');
+                bar.fill.style.width = '0%';
+                
+                if (index < currentLocationIndex) {
+                    bar.item.classList.add('completed');
+                    bar.fill.style.width = '100%';
+                } else if (index === currentLocationIndex && currentLocationIndex < coords.length - 1) {
+                    bar.item.classList.add('current');
+                    // The current bar will be animated by updateStepCounter
+                }
+            });
         }
 
         function startStepCounter() {
@@ -399,19 +444,22 @@
         function resetStepCounter() {
             stopStepCounter();
             stepElapsedTime = 0; // Reset elapsed time
-            if (stepCounterElement) {
-                stepCounterElement.textContent = stepDuration.toString(); // Start at full duration
-            }
         }
 
         function updateStepCounter() {
-            if (!stepStartTime || !stepCounterElement) return;
+            if (!stepStartTime) return;
 
             const elapsed = (Date.now() - stepStartTime) / 1000;
             const clampedElapsed = Math.min(elapsed, stepDuration);
-            const remaining = Math.ceil(stepDuration - clampedElapsed); // Countdown
+            const progress = (clampedElapsed / stepDuration) * 100; // Progress percentage
 
-            stepCounterElement.textContent = remaining.toString(); // No "s"
+            // Update current step progress bar
+            if (currentLocationIndex < stepProgressBars.length) {
+                const currentBar = stepProgressBars[currentLocationIndex];
+                if (currentBar && currentBar.item.classList.contains('current')) {
+                    currentBar.fill.style.width = progress + '%';
+                }
+            }
 
             if (clampedElapsed >= stepDuration) {
                 stopStepCounter();
@@ -424,8 +472,8 @@
                 const location = coords[currentLocationIndex];
                 rotateToLocation(location);
                 updateLocationInfo(location);
-                updateProgressBar();
                 updateControls();
+                updateStepProgressBars(); // Update individual progress bars
 
                 // Reset counter for new step
                 resetStepCounter();
@@ -441,8 +489,8 @@
                 const location = coords[currentLocationIndex];
                 rotateToLocation(location);
                 updateLocationInfo(location);
-                updateProgressBar();
                 updateControls();
+                updateStepProgressBars(); // Update individual progress bars
 
                 // Reset counter for new step
                 resetStepCounter();
@@ -463,11 +511,10 @@
                 stopStepCounter(); // Stop the counter when paused
                 isPlaying = false;
                 userPausedManually = true; // Mark as manually paused
-                // Show play icon instead of counter
+                // Show play icon instead of pause
                 pauseIcon.style.display = 'none';
                 playIcon.style.display = 'block';
                 restartIcon.style.display = 'none';
-                updateControls(); // Update counter visibility
             } else {
                 // If we're at the end, restart the tour
                 if (currentLocationIndex >= coords.length - 1) {
@@ -475,14 +522,14 @@
                     const location = coords[currentLocationIndex];
                     rotateToLocation(location);
                     updateLocationInfo(location);
-                    updateProgressBar();
                     updateControls();
+                    updateStepProgressBars(); // Update individual progress bars
                     resetStepCounter();
                 }
 
                 isPlaying = true;
                 userPausedManually = false; // Clear manual pause flag
-                // Show counter instead of pause icon
+                // Show pause icon instead of play
                 pauseIcon.style.display = 'block';
                 playIcon.style.display = 'none';
                 restartIcon.style.display = 'none';
@@ -492,7 +539,6 @@
                     startStepCounter();
                 }
 
-                updateControls(); // Update counter visibility
                 startPlayInterval();
             }
         }
@@ -554,7 +600,6 @@
                             startStepCounter();
                         }
 
-                        updateControls(); // Update counter visibility
                         startPlayInterval();
                     }
                 } else {
@@ -573,7 +618,6 @@
                         pauseIcon.style.display = 'none';
                         playIcon.style.display = 'block';
                         restartIcon.style.display = 'none';
-                        updateControls(); // Update counter visibility
                     }
                 }
 
