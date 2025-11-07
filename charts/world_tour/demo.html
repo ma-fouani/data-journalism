@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>World Tour - D3.js Implementation</title>
+    <title>World Tour - Optimized</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://d3js.org/topojson.v3.min.js"></script>
     <style>
         body {
             margin: 0;
             padding: 0;
-            font-family: 'Arial', sans-serif;
+            font-family: Arial, sans-serif;
             background: #1a1a2e;
             color: white;
         }
@@ -19,7 +19,6 @@
             width: 100vw;
             height: 100vh;
             position: relative;
-            overflow: hidden;
         }
 
         svg {
@@ -30,131 +29,78 @@
         .sphere {
             fill: #16213e;
             stroke: #0f3460;
-            stroke-width: 2px;
-        }
-
-        .graticule {
-            fill: none;
-            stroke: #0f3460;
-            stroke-width: 0.5px;
-            stroke-opacity: 0.4;
+            stroke-width: 1px;
         }
 
         .country {
             fill: #533483;
             stroke: #16213e;
-            stroke-width: 0.5px;
-            cursor: pointer;
-            transition: fill 0.3s ease;
-        }
-
-        .country:hover {
-            fill: #7209b7;
-        }
-
-        .country.current {
-            fill: #f39c12;
-            stroke: #e67e22;
-            stroke-width: 2px;
-        }
-
-        .route {
-            fill: none;
-            stroke: #e74c3c;
-            stroke-width: 3px;
-            stroke-dasharray: 5,5;
-            opacity: 0.8;
+            stroke-width: 0.25px;
         }
 
         .location-dot {
             fill: #e74c3c;
             stroke: white;
-            stroke-width: 2px;
-            r: 6;
+            stroke-width: 1px;
         }
 
         .location-dot.current {
             fill: #f39c12;
-            r: 8;
         }
 
         .info-panel {
             position: absolute;
-            top: 20px;
-            left: 20px;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 20px;
-            border-radius: 10px;
-            max-width: 350px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 15px;
+            border-radius: 8px;
+            max-width: 300px;
+            font-size: 13px;
         }
 
         .info-panel h3 {
-            margin: 0 0 10px 0;
+            margin: 0 0 8px 0;
             color: #f39c12;
-            font-size: 18px;
+            font-size: 16px;
         }
 
-        .info-panel .date {
+        .date {
             color: #3498db;
-            font-size: 14px;
-            margin-bottom: 10px;
-        }
-
-        .info-panel .description {
-            font-size: 14px;
-            line-height: 1.4;
-            color: #ecf0f1;
+            font-size: 12px;
+            margin-bottom: 8px;
         }
 
         .controls {
             position: absolute;
-            bottom: 20px;
+            bottom: 10px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 10px;
+            gap: 8px;
         }
 
         .btn {
             background: #3498db;
             border: none;
             color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
+            padding: 8px 16px;
+            border-radius: 4px;
             cursor: pointer;
-            font-size: 14px;
-            transition: background 0.3s ease;
-        }
-
-        .btn:hover {
-            background: #2980b9;
+            font-size: 12px;
         }
 
         .btn:disabled {
             background: #7f8c8d;
-            cursor: not-allowed;
         }
 
         .progress-bar {
             position: absolute;
             top: 0;
             left: 0;
-            height: 3px;
+            height: 2px;
             background: #f39c12;
             transition: width 0.3s ease;
-        }
-
-        .location-counter {
-            position: absolute;
-            bottom: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.8);
-            padding: 10px 15px;
-            border-radius: 20px;
-            font-size: 14px;
         }
     </style>
 </head>
@@ -165,165 +111,121 @@
         <div class="info-panel">
             <h3 id="location-title">Loading...</h3>
             <div class="date" id="location-date"></div>
-            <div class="description" id="location-description"></div>
-        </div>
-
-        <div class="location-counter">
-            <span id="current-location">1</span> / <span id="total-locations">0</span>
+            <div id="location-description"></div>
         </div>
 
         <div class="controls">
-            <button class="btn" id="prev-btn" disabled>Previous</button>
-            <button class="btn" id="play-btn">Play</button>
-            <button class="btn" id="next-btn">Next</button>
+            <button class="btn" id="prev-btn">←</button>
+            <button class="btn" id="play-btn">▶</button>
+            <button class="btn" id="next-btn">→</button>
         </div>
     </div>
 
     <script src="data.js"></script>
     <script>
-        // Global variables
-        const zoomFactor = 70; // Global zoom factor as requested
+        // Optimized global variables
+        const zoomFactor = 70;
         let currentLocationIndex = 0;
         let isPlaying = false;
         let playInterval;
 
-        // Dimensions
         const width = window.innerWidth;
         const height = window.innerHeight;
-        const baseDuration = 2000; // Base animation duration
+        const duration = 1500; // Reduced duration
 
-        // Initialize projection
+        // Simplified projection
         const projection = d3.geoOrthographic()
             .scale(Math.min(width, height) / 6)
             .translate([width / 2, height / 2])
             .clipAngle(90);
 
-        // Path generator
         const path = d3.geoPath().projection(projection);
 
-        // Graticule
-        const graticule = d3.geoGraticule();
-
-        // Create SVG
+        // Create SVG with optimizations
         const svg = d3.select("#container")
             .append("svg")
             .attr("width", width)
             .attr("height", height);
 
-        // Add sphere
-        svg.append("path")
-            .datum({ type: "Sphere" })
+        // Sphere
+        const sphere = svg.append("path")
+            .datum({type: "Sphere"})
             .attr("class", "sphere")
             .attr("d", path);
 
-        // Add graticule
-        svg.append("path")
-            .datum(graticule)
-            .attr("class", "graticule")
-            .attr("d", path);
-
-        // Load world data and initialize
-        d3.json("https://unpkg.com/world-atlas@2.0.2/countries-50m.json").then(function(world) {
+        // Load simplified world data
+        d3.json("https://unpkg.com/world-atlas@2.0.2/countries-110m.json").then(function(world) {
             const countries = topojson.feature(world, world.objects.countries);
             
-            // Add countries
-            svg.selectAll(".country")
+            // Add countries with minimal styling
+            const countryPaths = svg.selectAll(".country")
                 .data(countries.features)
                 .enter().append("path")
                 .attr("class", "country")
                 .attr("d", path);
 
-            // Add route line
-            svg.append("path")
-                .attr("class", "route");
-
             // Add location dots
-            svg.selectAll(".location-dot")
+            const dots = svg.selectAll(".location-dot")
                 .data(coords)
                 .enter().append("circle")
                 .attr("class", "location-dot")
-                .attr("r", 4)
-                .style("opacity", 0.7);
+                .attr("r", 3);
+
+            // Store references for performance
+            window.countryPaths = countryPaths;
+            window.dots = dots;
+            window.sphere = sphere;
 
             // Initialize
-            updateTotalLocations();
             updateLocationInfo(coords[currentLocationIndex]);
-            updateLocationCounter();
-            rotateToLocation(coords[currentLocationIndex], 0); // Initial position without animation
-            
-            // Set up event listeners
+            rotateToLocation(coords[currentLocationIndex], 0);
             setupEventListeners();
+            updateControls();
+            updateProgressBar();
         });
 
-        function setupEventListeners() {
-            document.getElementById('prev-btn').addEventListener('click', previousLocation);
-            document.getElementById('next-btn').addEventListener('click', nextLocation);
-            document.getElementById('play-btn').addEventListener('click', togglePlay);
-
-            // Keyboard controls
-            document.addEventListener('keydown', function(event) {
-                if (event.code === 'ArrowLeft') {
-                    previousLocation();
-                } else if (event.code === 'ArrowRight') {
-                    nextLocation();
-                } else if (event.code === 'Space') {
-                    event.preventDefault();
-                    togglePlay();
-                }
-            });
-        }
-
-        function rotateToLocation(location, duration = baseDuration) {
+        function rotateToLocation(location, animationDuration = duration) {
             const targetRotation = [-location.coords[0], -location.coords[1]];
-            const targetZoom = location.zoom * zoomFactor;
+            const targetScale = location.zoom * zoomFactor;
             
-            // Get current rotation and zoom
-            const currentRotation = projection.rotate();
-            const currentZoom = projection.scale();
-
-            // Interpolators
-            const rotationInterpolator = d3.interpolate(currentRotation, targetRotation);
-            const zoomInterpolator = d3.interpolate(currentZoom, targetZoom);
-
-            // Clear any previous transitions
-            svg.interrupt();
-
-            if (duration === 0) {
-                // Instant positioning for initial setup
-                projection.rotate(targetRotation).scale(targetZoom);
-                updatePaths();
-                updateLocationDots();
+            if (animationDuration === 0) {
+                // Instant positioning
+                projection.rotate(targetRotation).scale(targetScale);
+                updateAll();
                 return;
             }
 
-            // Animate transition
-            svg.transition()
-                .duration(duration)
+            // Get current state
+            const currentRotation = projection.rotate();
+            const currentScale = projection.scale();
+
+            // Create interpolators
+            const interpolateRotation = d3.interpolate(currentRotation, targetRotation);
+            const interpolateScale = d3.interpolate(currentScale, targetScale);
+
+            // Single transition for everything
+            svg.transition("main")
+                .duration(animationDuration)
                 .ease(d3.easeCubicInOut)
-                .tween("rotate", function() {
+                .tween("transform", function() {
                     return function(t) {
                         projection
-                            .rotate(rotationInterpolator(t))
-                            .scale(zoomInterpolator(t));
-                        updatePaths();
-                        updateLocationDots();
-                        updateRouteToLocation(location, t);
+                            .rotate(interpolateRotation(t))
+                            .scale(interpolateScale(t));
+                        updateAll();
                     };
-                })
-                .on("end", function() {
-                    // Clear route at the end of animation
-                    svg.select(".route").attr("d", "");
                 });
         }
 
-        function updatePaths() {
-            svg.selectAll(".country").attr("d", path);
-            svg.selectAll(".sphere").attr("d", path);
-            svg.selectAll(".graticule").attr("d", path);
-        }
-
-        function updateLocationDots() {
-            svg.selectAll(".location-dot")
+        function updateAll() {
+            // Update all paths in one go
+            const pathData = path;
+            
+            window.sphere.attr("d", pathData);
+            window.countryPaths.attr("d", pathData);
+            
+            // Update dots efficiently
+            window.dots
                 .attr("cx", function(d) {
                     const pos = projection(d.coords);
                     return pos ? pos[0] : -1000;
@@ -332,43 +234,23 @@
                     const pos = projection(d.coords);
                     return pos ? pos[1] : -1000;
                 })
-                .style("opacity", function(d) {
+                .style("opacity", function(d, i) {
                     const pos = projection(d.coords);
-                    return pos && pos[0] >= 0 && pos[0] <= width && pos[1] >= 0 && pos[1] <= height ? 0.7 : 0;
+                    const visible = pos && pos[0] >= 0 && pos[0] <= width && pos[1] >= 0 && pos[1] <= height;
+                    return visible ? (i === currentLocationIndex ? 1 : 0.6) : 0;
+                })
+                .attr("r", function(d, i) {
+                    return i === currentLocationIndex ? 5 : 3;
                 })
                 .classed("current", function(d, i) {
                     return i === currentLocationIndex;
                 });
         }
 
-        function updateRouteToLocation(location, t) {
-            if (currentLocationIndex === 0) return;
-            
-            const previousLocation = coords[currentLocationIndex - 1];
-            const interpolatedPoint = d3.geoInterpolate(previousLocation.coords, location.coords)(t);
-            
-            const routeData = {
-                type: "LineString",
-                coordinates: [previousLocation.coords, interpolatedPoint]
-            };
-
-            svg.select(".route")
-                .datum(routeData)
-                .attr("d", path);
-        }
-
         function updateLocationInfo(location) {
             document.getElementById('location-title').textContent = location.news.title || location.name;
             document.getElementById('location-date').textContent = location.news.date || '';
             document.getElementById('location-description').textContent = location.news.description || '';
-        }
-
-        function updateLocationCounter() {
-            document.getElementById('current-location').textContent = currentLocationIndex + 1;
-        }
-
-        function updateTotalLocations() {
-            document.getElementById('total-locations').textContent = coords.length;
         }
 
         function updateProgressBar() {
@@ -385,10 +267,8 @@
             if (currentLocationIndex < coords.length - 1) {
                 currentLocationIndex++;
                 const location = coords[currentLocationIndex];
-                
                 rotateToLocation(location);
                 updateLocationInfo(location);
-                updateLocationCounter();
                 updateProgressBar();
                 updateControls();
             }
@@ -398,10 +278,8 @@
             if (currentLocationIndex > 0) {
                 currentLocationIndex--;
                 const location = coords[currentLocationIndex];
-                
                 rotateToLocation(location);
                 updateLocationInfo(location);
-                updateLocationCounter();
                 updateProgressBar();
                 updateControls();
             }
@@ -411,41 +289,52 @@
             const playBtn = document.getElementById('play-btn');
             
             if (isPlaying) {
-                // Stop playing
                 clearInterval(playInterval);
                 isPlaying = false;
-                playBtn.textContent = 'Play';
+                playBtn.textContent = '▶';
             } else {
-                // Start playing
                 isPlaying = true;
-                playBtn.textContent = 'Pause';
+                playBtn.textContent = '⏸';
                 
                 playInterval = setInterval(function() {
                     if (currentLocationIndex < coords.length - 1) {
                         nextLocation();
                     } else {
-                        // End of tour, stop playing
                         togglePlay();
                     }
-                }, baseDuration + 500); // Slightly longer than animation duration
+                }, duration + 300);
             }
         }
 
-        // Handle window resize
-        window.addEventListener('resize', function() {
-            const newWidth = window.innerWidth;
-            const newHeight = window.innerHeight;
-            
-            svg.attr("width", newWidth).attr("height", newHeight);
-            projection.translate([newWidth / 2, newHeight / 2]);
-            
-            updatePaths();
-            updateLocationDots();
-        });
+        function setupEventListeners() {
+            document.getElementById('prev-btn').addEventListener('click', previousLocation);
+            document.getElementById('next-btn').addEventListener('click', nextLocation);
+            document.getElementById('play-btn').addEventListener('click', togglePlay);
 
-        // Initialize controls
-        updateControls();
-        updateProgressBar();
+            // Touch-friendly keyboard controls
+            document.addEventListener('keydown', function(event) {
+                if (event.code === 'ArrowLeft') previousLocation();
+                if (event.code === 'ArrowRight') nextLocation();
+                if (event.code === 'Space') {
+                    event.preventDefault();
+                    togglePlay();
+                }
+            });
+        }
+
+        // Optimized resize handler
+        let resizeTimeout;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(function() {
+                const newWidth = window.innerWidth;
+                const newHeight = window.innerHeight;
+                
+                svg.attr("width", newWidth).attr("height", newHeight);
+                projection.translate([newWidth / 2, newHeight / 2]);
+                updateAll();
+            }, 100);
+        });
     </script>
 </body>
 </html>
