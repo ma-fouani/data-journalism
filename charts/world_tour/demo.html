@@ -59,9 +59,9 @@
                     </svg>
                 </button>
                 <button class="btn" id="play-btn">
-                    <svg viewBox="0 0 24 24" class="pause-icon">
-                        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-                    </svg>
+                    <div class="pause-icon"> 
+                        <div id="step-counter" class="step-counter">...</div>
+                    </div>
                     <svg viewBox="0 0 24 24" class="play-icon" style="display: none;">
                         <path d="M8 5v14l11-7z" />
                     </svg>
@@ -83,7 +83,9 @@
         </div>
 
         <div class="info-pill" id="info-button">
-            <img class="author-image" src="https://media.licdn.com/dms/image/v2/D4D03AQETRsC_6fzk1g/profile-displayphoto-scale_200_200/B4DZnI9UgVH4AY-/0/1760013143056?e=2147483647&v=beta&t=pP2TBf_XZtWV-U3dEQTNTYjRJDWcIqHmwn0URi5S4Lo" alt="Author Profile">
+            <img class="author-image"
+                src="https://media.licdn.com/dms/image/v2/D4D03AQETRsC_6fzk1g/profile-displayphoto-scale_200_200/B4DZnI9UgVH4AY-/0/1760013143056?e=2147483647&v=beta&t=pP2TBf_XZtWV-U3dEQTNTYjRJDWcIqHmwn0URi5S4Lo"
+                alt="Author Profile">
             <span class="info-text">
                 written by <a href="https://facebook.com/ma.fouani" target="_blank"
                     rel="noopener noreferrer">@ma.fouani</a>
@@ -105,6 +107,13 @@
         const height = window.innerHeight;
         let verticalShift = 0;
         const duration = 15000; // Reduced duration
+
+        // Counter variables
+        let stepTimer;
+        let stepStartTime;
+        let stepElapsedTime = 0; // Track elapsed time when pausing
+        let stepDuration = duration / 1000; // Duration in seconds (15000ms / 1000)
+        let stepCounterElement;
 
         // More robust mobile detection and vertical shift calculation
         const isMobile = window.innerWidth <= 768 || window.innerHeight > window.innerWidth;
@@ -168,6 +177,9 @@
             setupEventListeners();
             updateControls();
             updateProgressBar();
+
+            // Initialize counter
+            stepCounterElement = document.getElementById('step-counter');
 
             // Start auto-play after initial zoom
             setTimeout(function () {
@@ -362,6 +374,50 @@
             document.getElementById('next-btn').disabled = currentLocationIndex === coords.length - 1;
         }
 
+        function startStepCounter() {
+            stopStepCounter(); // Clear any existing timer
+            stepStartTime = Date.now() - (stepElapsedTime * 1000); // Account for elapsed time
+            updateStepCounter();
+
+            stepTimer = setInterval(function () {
+                updateStepCounter();
+            }, 100); // Update every 100ms for smooth animation
+        }
+
+        function stopStepCounter() {
+            if (stepTimer) {
+                // Save elapsed time before stopping
+                if (stepStartTime) {
+                    stepElapsedTime = (Date.now() - stepStartTime) / 1000;
+                    stepElapsedTime = Math.min(stepElapsedTime, stepDuration);
+                }
+                clearInterval(stepTimer);
+                stepTimer = null;
+            }
+        }
+
+        function resetStepCounter() {
+            stopStepCounter();
+            stepElapsedTime = 0; // Reset elapsed time
+            if (stepCounterElement) {
+                stepCounterElement.textContent = stepDuration.toString(); // Start at full duration
+            }
+        }
+
+        function updateStepCounter() {
+            if (!stepStartTime || !stepCounterElement) return;
+
+            const elapsed = (Date.now() - stepStartTime) / 1000;
+            const clampedElapsed = Math.min(elapsed, stepDuration);
+            const remaining = Math.ceil(stepDuration - clampedElapsed); // Countdown
+
+            stepCounterElement.textContent = remaining.toString(); // No "s"
+
+            if (clampedElapsed >= stepDuration) {
+                stopStepCounter();
+            }
+        }
+
         function nextLocation() {
             if (currentLocationIndex < coords.length - 1) {
                 currentLocationIndex++;
@@ -370,6 +426,12 @@
                 updateLocationInfo(location);
                 updateProgressBar();
                 updateControls();
+
+                // Reset counter for new step
+                resetStepCounter();
+                if (isPlaying && currentLocationIndex < coords.length - 1) {
+                    startStepCounter();
+                }
             }
         }
 
@@ -381,6 +443,12 @@
                 updateLocationInfo(location);
                 updateProgressBar();
                 updateControls();
+
+                // Reset counter for new step
+                resetStepCounter();
+                if (isPlaying && currentLocationIndex < coords.length - 1) {
+                    startStepCounter();
+                }
             }
         }
 
@@ -392,12 +460,14 @@
 
             if (isPlaying) {
                 clearInterval(playInterval);
+                stopStepCounter(); // Stop the counter when paused
                 isPlaying = false;
                 userPausedManually = true; // Mark as manually paused
-                // Show play icon
+                // Show play icon instead of counter
                 pauseIcon.style.display = 'none';
                 playIcon.style.display = 'block';
                 restartIcon.style.display = 'none';
+                updateControls(); // Update counter visibility
             } else {
                 // If we're at the end, restart the tour
                 if (currentLocationIndex >= coords.length - 1) {
@@ -407,15 +477,22 @@
                     updateLocationInfo(location);
                     updateProgressBar();
                     updateControls();
+                    resetStepCounter();
                 }
 
                 isPlaying = true;
                 userPausedManually = false; // Clear manual pause flag
-                // Show pause icon
+                // Show counter instead of pause icon
                 pauseIcon.style.display = 'block';
                 playIcon.style.display = 'none';
                 restartIcon.style.display = 'none';
 
+                // Start counter if not at last slide
+                if (currentLocationIndex < coords.length - 1) {
+                    startStepCounter();
+                }
+
+                updateControls(); // Update counter visibility
                 startPlayInterval();
             }
         }
@@ -427,6 +504,7 @@
                 } else {
                     // When reaching the end, stop and show restart symbol
                     clearInterval(playInterval);
+                    stopStepCounter(); // Stop the counter
                     isPlaying = false;
                     const playBtn = document.getElementById('play-btn');
                     const pauseIcon = playBtn.querySelector('.pause-icon');
@@ -471,6 +549,12 @@
                         playIcon.style.display = 'none';
                         restartIcon.style.display = 'none';
 
+                        // Start counter if not at last slide
+                        if (currentLocationIndex < coords.length - 1) {
+                            startStepCounter();
+                        }
+
+                        updateControls(); // Update counter visibility
                         startPlayInterval();
                     }
                 } else {
@@ -478,6 +562,7 @@
                     if (isPlaying) {
                         wasPlayingBeforeScroll = true;
                         clearInterval(playInterval);
+                        stopStepCounter(); // Stop the counter
                         isPlaying = false;
 
                         const playBtn = document.getElementById('play-btn');
@@ -488,6 +573,7 @@
                         pauseIcon.style.display = 'none';
                         playIcon.style.display = 'block';
                         restartIcon.style.display = 'none';
+                        updateControls(); // Update counter visibility
                     }
                 }
 
