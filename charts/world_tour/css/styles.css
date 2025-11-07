@@ -1,4 +1,10 @@
- :root {
+ /* Global Reset - Only for body margin to prevent layout issues */
+body {
+    margin: 0;
+    padding: 0;
+}
+
+:root {
     /* Primary Colors */
     --color-primary: #333;
     --color-white: #fff;
@@ -51,8 +57,60 @@
     --color-accent-blue: #3498db;
 }
 
-html,
- body {
+/* Dark Mode Theme */
+ .tour.dark-mode  {
+    /* Primary Colors */
+    --color-primary: #e8e8e8;
+    --color-white: #ffffff;
+    --color-background-gradient-start: #0a0b0f;
+    --color-background-gradient-end: #1a1f2e;
+    
+    /* Globe Colors */
+    --color-sphere-fill: #0f1419;
+    --color-sphere-stroke: #1c2332;
+    --color-country-fill: #1e2530;
+    --color-country-stroke: #2a3441;
+    --color-country-current: #e74c3c;
+    --color-country-current-stroke: #f39c12;
+    
+    /* Location & Route Colors */
+    --color-location-dot-fill: #e74c3c00;
+    --color-location-dot-stroke: #ffffff00;
+    --color-location-dot-current: #f39c1200;
+    --color-route-line: #f39c12;
+    
+    /* Progress & Accent Colors */
+    --color-progress-primary: #ff6b3d;
+    --color-progress-secondary: #e67e22;
+    --color-progress-completed: #27ae60;
+    --color-progress-completed-light: #2ecc71;
+    
+    /* Glass Effect Colors */
+    --color-glass-background: rgba(20, 25, 35, 0.7);
+    --color-glass-background-hover: rgba(30, 35, 45, 0.8);
+    --color-glass-border: rgba(255, 255, 255, 0.1);  
+    
+    /* Text Colors */
+    --color-text-primary: rgba(255, 255, 255, 0.9);
+    --color-text-disabled: rgba(255, 255, 255, 0.4);
+    
+    /* Background Colors */
+    --color-background-overlay: rgba(20, 25, 35, 0.6);
+    --color-background-disabled: rgba(20, 25, 35, 0.3);
+    --color-background-placeholder: #2c3e50;
+    
+    /* Shadow Colors */ 
+    --color-shadow-light: rgba(0, 0, 0, 0.3);
+    --color-shadow-progress: rgba(255, 107, 61, 0.4);  
+    
+    /* Route Line Shadow Colors */
+    --color-route-shadow-1: rgba(243, 156, 18, 0.6);
+    --color-route-shadow-2: rgba(243, 156, 18, 0.3);
+    
+    /* Accent Colors */
+    --color-accent-blue: #3498db;
+}
+ .tour  {
      margin: 0;
      padding: 0;
      font-family: Arial, sans-serif;
@@ -60,22 +118,33 @@ html,
      overflow-x: hidden;
      width: 100%;
      max-width: 100%;
+     background-color: white;
+     transition: background-color 0.3s ease;
+     min-height: 100vh;
  }
-
- .content {
+ .tour.dark-mode  {
+     background-color: #0a0b0f;
+ }
+ .tour .content {
      max-width: 800px;
      margin: 0 auto;
-     padding: 0 20px;
+     padding: 20px;
+     color: var(--color-primary);
+     background-color: white;
+     transition: background-color 0.3s ease, color 0.3s ease;
+     /* Add top padding to account for action bar */
+     padding-top: 84px; /* 64px action bar + 20px spacing */
+ }
+ .tour.dark-mode .content  {
+     background-color: #0a0b0f;
      color: var(--color-primary);
  }
-
- .content p {
+ .tour .content p  {
      font-family: 'Inter', sans-serif;
      line-height: 1.6;
      margin-bottom: 20px;
  }
-
- #container {
+ .tour #container  {
      width: 100%;
      height: 100vh;
      background: linear-gradient(-45deg, var(--color-background-gradient-start), var(--color-background-gradient-end));
@@ -83,53 +152,45 @@ html,
      overflow: hidden;
      max-width: 100vw;
  }
-
- svg {
+ .tour svg  {
      width: 100%;
      height: 100%;
  }
-
- .sphere {
+ .tour .sphere  {
      fill: var(--color-sphere-fill);
      stroke: var(--color-sphere-stroke);
      stroke-width: 1px;
  }
-
- .country {
+ .tour .country  {
      fill: var(--color-country-fill);
      stroke: var(--color-country-stroke);
      stroke-width: 0.25px;
  }
-
- .country.current {
+ .tour .country.current  {
      fill: var(--color-country-current) !important;
      stroke: var(--color-country-current-stroke);
      stroke-width: 4px;
      stroke-opacity: 0.3;
      stroke-linejoin: round;
  }
-
- .location-dot {
+ .tour .location-dot  {
      fill: var(--color-location-dot-fill);
      stroke: var(--color-location-dot-stroke);
      opacity: 0.1;
      stroke-width: 1px;
  }
-
- .location-dot.current {
+ .tour .location-dot.current  {
      fill: var(--color-location-dot-current);
      stroke-width: 6px;
  }
-
- .route-line {
+ .tour .route-line  {
      fill: none;
      stroke: var(--color-route-line);
      stroke-width: 2px;
      opacity: 0.8;
      filter: drop-shadow(0 0 8px var(--color-route-shadow-1)) drop-shadow(0 0 16px var(--color-route-shadow-2));
  }
-
- .info-panel {
+ .tour .info-panel  {
      position: absolute;
      bottom: 16px;
      left: 20px;
@@ -156,20 +217,18 @@ html,
      transform: translateY(100%);
      opacity: 0;
  }
-
- .info-panel.slide-down {
+ .tour .info-panel.slide-down  {
      transition: transform .3s ease, opacity 0.3s ease !important;
      transform: translateY(100%) !important;
      opacity: 0 !important;
  }
-
- .info-panel.slide-up {
+ .tour .info-panel.slide-up  {
      transform: translateY(0);
      opacity: 1;
  }
 
  /* Fixed-height image in the card */
- #location-image {
+ .tour #location-image  {
      transform-origin: bottom center;
      width: 100%;
      height: 200px;
@@ -179,8 +238,7 @@ html,
      background: var(--color-background-placeholder);
      display: none;
  }
-
- #location-text {
+ .tour #location-text  {
      flex: 1 1 auto;
      min-width: 0;
      /* important for truncation */
@@ -188,8 +246,7 @@ html,
      flex-direction: column;
      gap: 6px;
  }
-
- .info-panel h3 {
+ .tour .info-panel h3  {
      margin: 0;
      font-size: 1.1rem;
      line-height: 1.3;
@@ -201,14 +258,12 @@ html,
      -webkit-box-orient: vertical;
      overflow: hidden;
  }
-
- .date {
+ .tour .date  {
      color: var(--color-text-disabled);
      font-size: 0.85rem;
      margin-bottom: 8px;
  }
-
- #location-description {
+ .tour #location-description  {
      margin: 0;
      font-size: 0.95rem;
      line-height: 1.4;
@@ -221,23 +276,21 @@ html,
  }
 
  @media (min-width: 800px) {
-     #container {
+ .tour #container  {
          overflow: hidden;
          justify-content: center;
      }
-
-     .info-panel {
+ .tour .info-panel  {
          right: 20px;
          left: auto;
      }
  }
 
  @media (max-width: 800px) {
-     #container {
+ .tour #container  {
          overflow: hidden;
      }
-
-     .info-panel {
+ .tour .info-panel  {
          width: 85%;
          max-width: 400px;
          bottom: 10px;
@@ -246,17 +299,15 @@ html,
          margin: 0 auto;
          flex-direction: column;
      }
-
-     .info-panel.slide-up {
+ .tour .info-panel.slide-up  {
          transform: translateX(-50%) translateY(0);
      }
-
-     .info-panel.slide-down {
+ .tour .info-panel.slide-down  {
          transform: translateX(-50%) translateY(100%) !important;
      }
 
      /* Place image as full-width block on small screens if needed */
-     #location-image {
+ .tour #location-image  {
          width: 100%;
          height: fit-content;
          object-fit: cover;
@@ -264,13 +315,11 @@ html,
          border-radius: 8px;
          margin-bottom: 8px;
      }
-
-     #location-text {
+ .tour #location-text  {
          padding: 0 4px;
      }
  }
-
- .controls {
+ .tour .controls  {
      position: absolute;
      top: 20px;
      left: 20px;
@@ -287,28 +336,24 @@ html,
      padding: 8px;
      z-index: 40;
  }
-
- .control-buttons {
+ .tour .control-buttons  {
      display: flex;
      gap: 8px;
  }
-
- .step-progress-container {
+ .tour .step-progress-container  {
      display: flex;
      gap: 3px;
      margin-top: 8px;
      align-items: center;
  }
-
- .step-progress-item {
+ .tour .step-progress-item  {
      display: flex;
      flex-direction: column;
      align-items: center;
      flex: 1;
      min-width: 8px;
  }
-
- .step-progress-bar {
+ .tour .step-progress-bar  {
      height: 3px;
      width: 100%;
      background: var(--color-background-overlay);
@@ -316,8 +361,7 @@ html,
      overflow: hidden;
      position: relative;
  }
-
- .step-progress-fill {
+ .tour .step-progress-fill  {
      height: 100%;
      background: linear-gradient(90deg, var(--color-progress-primary), var(--color-progress-secondary));
      border-radius: 1.5px;
@@ -325,27 +369,22 @@ html,
      width: 0%;
      box-shadow: 0 0 4px var(--color-shadow-light);
  }
-
- .step-progress-item.completed .step-progress-bar {
+ .tour .step-progress-item.completed .step-progress-bar  {
      background: var(--color-shadow-light);
  }
-
- .step-progress-item.completed .step-progress-fill {
+ .tour .step-progress-item.completed .step-progress-fill  {
      width: 100%;
      background: linear-gradient(90deg, var(--color-progress-completed), var(--color-progress-completed-light));
  }
-
- .step-progress-item.current .step-progress-bar {
+ .tour .step-progress-item.current .step-progress-bar  {
      background: var(--color-glass-background);
      border: 1px solid var(--color-glass-border);
  }
-
- .step-progress-item.current .step-progress-fill {
+ .tour .step-progress-item.current .step-progress-fill  {
      background: linear-gradient(90deg, var(--color-progress-primary), var(--color-progress-secondary));
      box-shadow: 0 0 6px var(--color-shadow-progress);
  }
-
- .btn {
+ .tour .btn  {
      background: var(--color-background-overlay);
      backdrop-filter: blur(4px);
      -webkit-backdrop-filter: blur(4px);
@@ -363,14 +402,12 @@ html,
      align-items: center;
      justify-content: center;
  }
-
- .btn svg {
+ .tour .btn svg  {
      width: 18px;
      height: 18px;
      fill: currentColor;
  }
-
- .btn .pause-icon {
+ .tour .btn .pause-icon  {
      position: relative;
      width: 18px;
      height: 18px;
@@ -378,32 +415,27 @@ html,
      align-items: center;
      justify-content: center;
  }
-
- .btn:hover {
+ .tour .btn:hover  {
      background: var(--color-glass-background-hover);
      transform: translateY(-1px);
      box-shadow: 0 4px 12px var(--color-shadow-light);
  }
-
- .btn:active {
+ .tour .btn:active  {
      transform: translateY(0);
  }
-
- .btn:disabled {
+ .tour .btn:disabled  {
      background: var(--color-background-disabled);
      color: var(--color-text-disabled);
      cursor: not-allowed;
      transform: none;
      box-shadow: none;
  }
-
- .btn:disabled:hover {
+ .tour .btn:disabled:hover  {
      background: var(--color-background-disabled);
      transform: none;
      box-shadow: none;
  }
-
- .info-pill {
+ .tour .info-pill  {
      position: absolute;
      top: 20px;
      right: 20px;
@@ -425,69 +457,154 @@ html,
      justify-content: flex-start;
      gap: 8px;
  }
-
- .info-pill.expanded {
+ .tour .info-pill.expanded  {
      background: var(--color-glass-background);
      padding: 0 12px 0 8px;
  }
-
- .info-pill:hover {
+ .tour .info-pill:hover  {
      background: var(--color-glass-background);
      transform: translateY(-1px);
  }
-
- .info-pill .author-image {
+ .tour .info-pill .author-image  {
      width: 34px;
      height: 34px;
      border-radius: 50%;
      object-fit: cover;
  }
-
- .info-pill .info-text {
+ .tour .info-pill .info-text  {
      transition: font-size 0.3s ease;
      white-space: nowrap;
      font-size: 0;
      flex: 1;
      overflow: hidden;
  }
-
- .info-pill.expanded .info-text {
+ .tour .info-pill.expanded .info-text  {
      font-size: 10px;
      text-align: center;
  }
-
- .info-pill a {
+ .tour .info-pill a  {
      color: var(--color-white);
      text-decoration: none;
      font-weight: 500;
      transition: color 0.1s ease;
  }
-
- .info-pill a:hover {
+ .tour .info-pill a:hover  {
      color: var(--color-accent-blue);
+ }
+
+ /* Action Bar */
+ .tour .action-bar  {
+     position: fixed;
+     top: 0;
+     left: 0;
+     right: 0;
+     height: 64px;
+     background: var(--color-glass-background);
+     backdrop-filter: blur(8px) saturate(300%);
+     -webkit-backdrop-filter: blur(8px) saturate(300%);
+     border-bottom: 1px solid var(--color-glass-border);
+     display: flex;
+     align-items: center;
+     justify-content: flex-end;
+     padding: 0 20px;
+     z-index: 100;
+     transform: translateY(0);
+     transition: transform 0.3s ease, opacity 0.3s ease;
+     box-shadow: 0 4px 20px var(--color-shadow-light);
+ }
+ .tour .action-bar.hidden  {
+     transform: translateY(-100%);
+     opacity: 0;
+ }
+ .tour .action-bar-content  {
+     display: flex;
+     align-items: center;
+     gap: 16px;
+ }
+
+ /* Dark Mode Toggle Button */
+ .tour .dark-mode-toggle  {
+     width: 48px;
+     height: 24px;
+     background: var(--color-background-overlay);
+     backdrop-filter: blur(4px) saturate(280%);
+     -webkit-backdrop-filter: blur(4px) saturate(280%);
+     border: 1px solid var(--color-glass-border);
+     border-radius: 12px;
+     cursor: pointer;
+     transition: all 0.3s ease;
+     display: flex;
+     align-items: center;
+     padding: 2px;
+     box-shadow: 0 2px 8px var(--color-shadow-light);
+ }
+ .tour .dark-mode-toggle:hover  {
+     background: var(--color-glass-background-hover);
+     transform: translateY(-1px);
+     box-shadow: 0 4px 12px var(--color-shadow-light);
+ }
+ .tour .dark-mode-toggle-slider  {
+     width: 20px;
+     height: 20px;
+     background: var(--color-white);
+     border-radius: 50%;
+     transition: transform 0.3s ease, background-color 0.3s ease;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+     position: relative;
+ }
+ .tour .dark-mode-toggle.dark .dark-mode-toggle-slider  {
+     transform: translateX(24px);
+     background: var(--color-background-gradient-start);
+ }
+ .tour .dark-mode-toggle-icon  {
+     width: 12px;
+     height: 12px;
+     fill: currentColor;
+     transition: opacity 0.3s ease;
+ }
+ .tour .dark-mode-toggle .sun-icon  {
+     color: #ffa500;
+     opacity: 1;
+ }
+ .tour .dark-mode-toggle .moon-icon  {
+     color: #708090;
+     opacity: 0;
+     position: absolute;
+ }
+ .tour .dark-mode-toggle.dark .sun-icon  {
+     opacity: 0;
+ }
+ .tour .dark-mode-toggle.dark .moon-icon  {
+     opacity: 1;
+     color: #e8e8e8;
+ }
+
+ /* Add top padding to content to account for action bar */
+ .tour .content  {
+     padding-top: 84px; /* 64px action bar + 20px spacing */
  }
 
  /* UNUSED: Mobile media query for info-pill - already commented out, alternative mobile styling not needed */
  /*
  @media (max-width: 800px) {
-     .info-pill {
+ .tour .info-pill  {
          top: 10px;
          right: 10px;
          width: auto;
          height: 30px; 
          border-radius: 15px;
      }
-
-     .info-pill .author-image {
+ .tour .info-pill .author-image  {
          width: 22px;
          height: 22px;
      }
-
-     .info-pill .info-text {
+ .tour .info-pill .info-text  {
          font-size: 0;
      }
-
-     .info-pill.expanded .info-text {
+ .tour .info-pill.expanded .info-text  {
          font-size: 9px;
      }
  }*/
@@ -495,15 +612,14 @@ html,
  
  /* UNUSED: Main progress bar - removed from demo.html in favor of individual step progress bars */
  /*
- .progress-bar {
+ .tour .progress-bar  {
      height: 4px;
      background: var(--color-background-overlay);
      border-radius: 2px;
      overflow: hidden;
      margin-top: 4px;
  }
-
- .progress-fill {
+ .tour .progress-fill  {
      height: 100%;
      background: linear-gradient(90deg, var(--color-progress-primary), var(--color-progress-secondary));
      border-radius: 2px;
@@ -515,7 +631,7 @@ html,
  
  /* UNUSED: Step counter visibility class - step counter was removed from demo.html */
  /*
- .step-counter.visible {
+ .tour .step-counter.visible  {
      opacity: 1;
  }
  */
@@ -523,7 +639,7 @@ html,
  
  /* UNUSED: Loading bar styling - commented out in HTML */
  /*
- .loading-bar-container {
+ .tour .loading-bar-container  {
      position: absolute;
      bottom: 0;
      left: 0;
@@ -533,8 +649,7 @@ html,
      border-radius: 0 0 16px 16px;
      overflow: hidden;
  }
-
- .loading-bar {
+ .tour .loading-bar  {
      height: 100%;
      width: 0%;
      background: linear-gradient(90deg, var(--color-progress-primary), var(--color-progress-secondary));
@@ -543,3 +658,4 @@ html,
      box-shadow: 0 0 8px var(--color-shadow-progress);
  }
  */
+
