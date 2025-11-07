@@ -49,13 +49,14 @@
         }
 
         .location-dot {
-            fill: #e74c3c;
-            stroke: white;
+            fill: #e74c3c11;
+            stroke: #ffffff11;
+            opacity: 0.1;
             stroke-width: 1px;
         }
 
         .location-dot.current {
-            fill: #f39c12;
+            fill: #f39c1211; 
             stroke-width: 6px;
         }
 
@@ -64,6 +65,7 @@
             stroke: #f39c12;
             stroke-width: 2px;
             opacity: 0.8;
+            filter: drop-shadow(0 0 8px rgba(243, 156, 18, 0.8)) drop-shadow(0 0 16px rgba(243, 156, 18, 0.4));
         }
 
         .info-panel {
@@ -527,6 +529,15 @@
 
             // Update existing route lines
             routeLines.selectAll(".route-line").attr("d", path);
+
+            // Highlight current country
+            countryPaths.classed("current", function(d) {
+                const currentLocation = coords[currentLocationIndex];
+                return d.properties.ISO_A3 === currentLocation.id || 
+                       d.properties.ADM0_A3 === currentLocation.id ||
+                       d.properties.name === currentLocation.name ||
+                       d.properties.NAME === currentLocation.name;
+            });
 
             // Update dots efficiently
             dots
