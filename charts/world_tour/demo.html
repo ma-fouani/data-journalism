@@ -7,375 +7,7 @@
     <title>World Tour - Optimized</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://d3js.org/topojson.v3.min.js"></script>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            color: white;
-        }
-
-        .content {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 0 20px;
-            color: #333;
-        }
-
-        .content p {
-            font-family: 'Inter', sans-serif;
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
-
-        #container {
-            width: 100vw;
-            height: 100vh;
-            background: linear-gradient(-45deg, #2c324c, #69a4c4);
-            position: relative;
-            overflow: hidden;
-        }
-
-        svg {
-            width: 100%;
-            height: 100%;
-        }
-
-        .sphere {
-            fill: #253561;
-            stroke: #0f3460;
-            stroke-width: 1px;
-        }
-
-        .country {
-            fill: #516185;
-            stroke: #16213e;
-            stroke-width: 0.25px;
-        }
-
-        .country.current {
-            fill: #cc4646 !important;
-            stroke: #fcbe81;
-            stroke-width: 4px;
-            stroke-opacity: 0.3;
-            stroke-linejoin: round;
-        }
-
-        .location-dot {
-            fill: #e74c3c00;
-            stroke: #ffffff00;
-            opacity: 0.1;
-            stroke-width: 1px;
-        }
-
-        .location-dot.current {
-            fill: #f39c1200;
-            stroke-width: 6px;
-        }
-
-        .route-line {
-            fill: none;
-            stroke: #f39c12;
-            stroke-width: 2px;
-            opacity: 0.8;
-            filter: drop-shadow(0 0 8px rgba(243, 156, 18, 0.8)) drop-shadow(0 0 16px rgba(243, 156, 18, 0.4));
-        }
-
-        .info-panel {
-            position: absolute;
-            bottom: 16px;
-            left: 20px;
-            width: 700px;
-            height: fit-content;
-            /* 🧊 Frosted glass style */
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(4px) saturate(280%);
-            -webkit-backdrop-filter: blur(4px) saturate(280%);
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.25);
-
-            /* ✨ Subtle shadow and depth */
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
-
-            overflow: hidden;
-            display: flex;
-            flex-direction: row;
-            gap: 12px;
-            padding: 16px;
-            z-index: 30;
-            margin: 0 auto;
-            transition: transform 0.3s ease, opacity 0.3s ease;
-            transform: translateY(100%);
-            opacity: 0;
-        }
-
-        .info-panel.slide-down {
-            transition: transform .3s ease, opacity 0.3s ease !important;
-            transform: translateY(100%) !important;
-            opacity: 0 !important;
-        }
-
-        .info-panel.slide-up {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        /* Fixed-height image in the card */
-        #location-image {
-            transform-origin: bottom center;
-            width: 100%;
-            height: 200px;
-            flex: 0 0 120px;
-            object-fit: cover;
-            border-radius: 10px;
-            background: #ddd;
-            display: none;
-        }
-
-        #location-text {
-            flex: 1 1 auto;
-            min-width: 0;
-            /* important for truncation */
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .info-panel h3 {
-            margin: 0;
-            font-size: 1.1rem;
-            line-height: 1.3;
-            font-weight: 700;
-            color: #fff;
-            display: -webkit-box;
-            /*-webkit-line-clamp: 3;
-            line-clamp: 3;*/
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .date {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 0.85rem;
-            margin-bottom: 8px;
-        }
-
-        #location-description {
-            margin: 0;
-            font-size: 0.95rem;
-            line-height: 1.4;
-            color: rgba(255, 255, 255, 0.85);
-            display: -webkit-box;
-            /*-webkit-line-clamp: 6;
-            line-clamp: 6;*/
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        /* Loading bar styling */
-        .loading-bar-container {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 0 0 16px 16px;
-            overflow: hidden;
-        }
-
-        .loading-bar {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #ff6b3d, #d38642);
-            border-radius: 0 0 16px 16px;
-            transition: width 0.1s ease-out;
-            box-shadow: 0 0 8px rgba(255, 107, 61, 0.6);
-        }
-
-        @media (min-width: 800px) {
-            #container {
-                overflow-x: auto;
-                overflow-y: hidden;
-                justify-content: center;
-            }
-
-            .info-panel {
-                right: 20px;
-                left: auto;
-            }
-        }
-
-        @media (max-width: 800px) {
-            #container {
-                overflow-x: auto;
-                overflow-y: hidden;
-            }
-
-            .info-panel {
-                width: 85%;
-                max-width: 400px;
-                bottom: 10px;
-                left: 50%;
-                transform: translateX(-50%) translateY(100%);
-                margin: 0 auto;
-                flex-direction: column;
-            }
-
-            .info-panel.slide-up {
-                transform: translateX(-50%) translateY(0);
-            }
-
-            .info-panel.slide-down {
-                transform: translateX(-50%) translateY(100%) !important;
-            }
-
-            /* Place image as full-width block on small screens if needed */
-            #location-image {
-                width: 100%;
-                height: fit-content;
-                object-fit: cover;
-                aspect-ratio: 1.7;
-                border-radius: 8px;
-                margin-bottom: 8px;
-            }
-
-            #location-text {
-                padding: 0 4px;
-            }
-        }
-
-        .controls {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            /* 🧊 Frosted glass style */
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(4px) saturate(280%);
-            -webkit-backdrop-filter: blur(4px) saturate(280%);
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-            padding: 8px;
-            z-index: 40;
-        }
-
-        .control-buttons {
-            display: flex;
-            gap: 8px;
-        }
-
-        .progress-bar {
-            height: 4px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 2px;
-            overflow: hidden;
-            margin-top: 4px;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #ff6b3d, #d38642);
-            border-radius: 2px;
-            transition: width 0.3s ease;
-            width: 0%;
-            box-shadow: 0 0 8px rgba(255, 107, 61, 0.6);
-        }
-
-        .btn {
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.2s ease;
-            min-width: 44px;
-            min-height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn svg {
-            width: 18px;
-            height: 18px;
-            fill: currentColor;
-        }
-
-        .btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
-        }
-
-        .btn:active {
-            transform: translateY(0);
-        }
-
-        .btn:disabled {
-            background: rgba(255, 255, 255, 0.1);
-            color: rgba(255, 255, 255, 0.5);
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .btn:disabled:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: none;
-            box-shadow: none;
-        }
-
-        .footer-note {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.7);
-            /* 🧊 Frosted glass style */
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(4px) saturate(280%);
-            -webkit-backdrop-filter: blur(4px) saturate(280%);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 8px 16px;
-            z-index: 30;
-            transition: all 0.2s ease;
-        }
-
-        .footer-note:hover {
-            background: rgba(255, 255, 255, 0.12);
-            transform: translateY(-1px);
-        }
-
-        .footer-note a {
-            color: rgba(52, 152, 219, 0.9);
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.2s ease;
-        }
-
-        .footer-note a:hover {
-            color: #3498db;
-        }
-
-        @media (max-width: 800px) {
-            .footer-note {
-                bottom: 10px;
-                right: 10px;
-                font-size: 11px;
-                padding: 6px 12px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
@@ -450,9 +82,12 @@
             </div>
         </div>
 
-        <div class="footer-note">
-            for more info <a href="https://facebook.com/ma.fouani" target="_blank"
-                rel="noopener noreferrer">@ma.fouani</a>
+        <div class="info-pill" id="info-button">
+            <img class="author-image" src="https://media.licdn.com/dms/image/v2/D4D03AQETRsC_6fzk1g/profile-displayphoto-scale_200_200/B4DZnI9UgVH4AY-/0/1760013143056?e=2147483647&v=beta&t=pP2TBf_XZtWV-U3dEQTNTYjRJDWcIqHmwn0URi5S4Lo" alt="Author Profile">
+            <span class="info-text">
+                written by <a href="https://facebook.com/ma.fouani" target="_blank"
+                    rel="noopener noreferrer">@ma.fouani</a>
+            </span>
         </div>
     </div>
 
@@ -461,8 +96,10 @@
         // Optimized global variables
         const zoomFactor = 70;
         let currentLocationIndex = 0;
-        let isPlaying = true; // Auto-play enabled by default
+        let isPlaying = false; // Start paused until user scrolls to viewport
         let playInterval;
+        let userPausedManually = false; // Track if user manually paused
+        let wasPlayingBeforeScroll = false; // Track playing state before scroll
 
         const width = window.innerWidth;
         const height = window.innerHeight;
@@ -534,28 +171,19 @@
 
             // Start auto-play after initial zoom
             setTimeout(function () {
-                // Keep pause icon showing since auto-play is active
+                // Don't auto-start playing - wait for scroll interaction
                 const playBtn = document.getElementById('play-btn');
                 const pauseIcon = playBtn.querySelector('.pause-icon');
                 const playIcon = playBtn.querySelector('.play-icon');
                 const restartIcon = playBtn.querySelector('.restart-icon');
 
-                pauseIcon.style.display = 'block';
-                playIcon.style.display = 'none';
+                // Show play icon since we're starting paused
+                pauseIcon.style.display = 'none';
+                playIcon.style.display = 'block';
                 restartIcon.style.display = 'none';
 
-                playInterval = setInterval(function () {
-                    if (currentLocationIndex < coords.length - 1) {
-                        nextLocation();
-                    } else {
-                        // When reaching the end, stop and show restart symbol
-                        clearInterval(playInterval);
-                        isPlaying = false;
-                        pauseIcon.style.display = 'none';
-                        playIcon.style.display = 'none';
-                        restartIcon.style.display = 'block';
-                    }
-                }, duration + 800);
+                // Set up scroll detection for auto-play
+                setupScrollDetection();
             }, 2500); // Start auto-play 500ms after initial zoom completes
         });
 
@@ -765,6 +393,7 @@
             if (isPlaying) {
                 clearInterval(playInterval);
                 isPlaying = false;
+                userPausedManually = true; // Mark as manually paused
                 // Show play icon
                 pauseIcon.style.display = 'none';
                 playIcon.style.display = 'block';
@@ -781,31 +410,129 @@
                 }
 
                 isPlaying = true;
+                userPausedManually = false; // Clear manual pause flag
                 // Show pause icon
                 pauseIcon.style.display = 'block';
                 playIcon.style.display = 'none';
                 restartIcon.style.display = 'none';
 
-                playInterval = setInterval(function () {
-                    if (currentLocationIndex < coords.length - 1) {
-                        nextLocation();
-                    } else {
-                        // When reaching the end, stop and show restart symbol
+                startPlayInterval();
+            }
+        }
+
+        function startPlayInterval() {
+            playInterval = setInterval(function () {
+                if (currentLocationIndex < coords.length - 1) {
+                    nextLocation();
+                } else {
+                    // When reaching the end, stop and show restart symbol
+                    clearInterval(playInterval);
+                    isPlaying = false;
+                    const playBtn = document.getElementById('play-btn');
+                    const pauseIcon = playBtn.querySelector('.pause-icon');
+                    const playIcon = playBtn.querySelector('.play-icon');
+                    const restartIcon = playBtn.querySelector('.restart-icon');
+
+                    // Show restart icon
+                    pauseIcon.style.display = 'none';
+                    playIcon.style.display = 'none';
+                    restartIcon.style.display = 'block';
+                }
+            }, duration + 800); // Extra time for route animation
+        }
+
+        function setupScrollDetection() {
+            let ticking = false;
+
+            function updateScrollPosition() {
+                const container = document.getElementById('container');
+                const rect = container.getBoundingClientRect();
+                const windowHeight = window.innerHeight;
+
+                // Check if more than 50% of the container is visible
+                const visibleHeight = Math.min(rect.bottom, windowHeight) - Math.max(rect.top, 0);
+                const containerHeight = rect.height;
+                const visibilityPercentage = Math.max(0, visibleHeight / containerHeight);
+
+                const isInView = visibilityPercentage > 0.5;
+
+                if (isInView) {
+                    // User scrolled into view - start playing if not manually paused
+                    if (!isPlaying && !userPausedManually) {
+                        isPlaying = true;
+                        wasPlayingBeforeScroll = true;
+
+                        const playBtn = document.getElementById('play-btn');
+                        const pauseIcon = playBtn.querySelector('.pause-icon');
+                        const playIcon = playBtn.querySelector('.play-icon');
+                        const restartIcon = playBtn.querySelector('.restart-icon');
+
+                        pauseIcon.style.display = 'block';
+                        playIcon.style.display = 'none';
+                        restartIcon.style.display = 'none';
+
+                        startPlayInterval();
+                    }
+                } else {
+                    // User scrolled out of view - pause if playing
+                    if (isPlaying) {
+                        wasPlayingBeforeScroll = true;
                         clearInterval(playInterval);
                         isPlaying = false;
-                        // Show restart icon
+
+                        const playBtn = document.getElementById('play-btn');
+                        const pauseIcon = playBtn.querySelector('.pause-icon');
+                        const playIcon = playBtn.querySelector('.play-icon');
+                        const restartIcon = playBtn.querySelector('.restart-icon');
+
                         pauseIcon.style.display = 'none';
-                        playIcon.style.display = 'none';
-                        restartIcon.style.display = 'block';
+                        playIcon.style.display = 'block';
+                        restartIcon.style.display = 'none';
                     }
-                }, duration + 800); // Extra time for route animation
+                }
+
+                ticking = false;
             }
+
+            function onScroll() {
+                if (!ticking) {
+                    requestAnimationFrame(updateScrollPosition);
+                    ticking = true;
+                }
+            }
+
+            window.addEventListener('scroll', onScroll);
+            // Initial check
+            updateScrollPosition();
         }
 
         function setupEventListeners() {
             document.getElementById('prev-btn').addEventListener('click', previousLocation);
             document.getElementById('next-btn').addEventListener('click', nextLocation);
             document.getElementById('play-btn').addEventListener('click', togglePlay);
+
+            // Info button toggle
+            const infoButton = document.getElementById('info-button');
+            let isExpanded = false;
+
+            infoButton.addEventListener('click', function (e) {
+                // Prevent link clicks when collapsed
+                if (!isExpanded && e.target.tagName === 'A') {
+                    e.preventDefault();
+                    return;
+                }
+
+                isExpanded = !isExpanded;
+                infoButton.classList.toggle('expanded', isExpanded);
+            });
+
+            // Close info when clicking outside
+            document.addEventListener('click', function (e) {
+                if (!infoButton.contains(e.target) && isExpanded) {
+                    isExpanded = false;
+                    infoButton.classList.remove('expanded');
+                }
+            });
 
             // Touch-friendly keyboard controls
             document.addEventListener('keydown', function (event) {
