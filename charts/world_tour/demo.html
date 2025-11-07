@@ -56,7 +56,7 @@
         }
 
         .location-dot.current {
-            fill: #f39c1211; 
+            fill: #f39c1211;
             stroke-width: 6px;
         }
 
@@ -278,16 +278,23 @@
             -webkit-backdrop-filter: blur(4px);
             border: 1px solid rgba(255, 255, 255, 0.3);
             color: white;
-            padding: 10px 16px;
+            padding: 10px;
             border-radius: 8px;
             cursor: pointer;
             font-size: 14px;
             font-weight: 500;
             transition: all 0.2s ease;
             min-width: 44px;
+            min-height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+
+        .btn svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
         }
 
         .btn:hover {
@@ -332,9 +339,29 @@
 
         <div class="controls">
             <div class="control-buttons">
-                <button class="btn" id="prev-btn">←</button>
-                <button class="btn" id="play-btn">⏸</button>
-                <button class="btn" id="next-btn">→</button>
+                <button class="btn" id="prev-btn">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+                    </svg>
+                </button>
+                <button class="btn" id="play-btn">
+                    <svg viewBox="0 0 24 24" class="pause-icon">
+                        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                    </svg>
+                    <svg viewBox="0 0 24 24" class="play-icon" style="display: none;">
+                        <path d="M8 5v14l11-7z" />
+                    </svg>
+                    <svg viewBox="0 0 50 50" class="restart-icon" style="display: none;">
+                        <path
+                            d="M 25 2 A 2.0002 2.0002 0 1 0 25 6 C 35.517124 6 44 14.482876 44 25 C 44 35.517124 35.517124 44 25 44 C 14.482876 44 6 35.517124 6 25 C 6 19.524201 8.3080175 14.608106 12 11.144531 L 12 15 A 2.0002 2.0002 0 1 0 16 15 L 16 4 L 5 4 A 2.0002 2.0002 0 1 0 5 8 L 9.5253906 8 C 4.9067015 12.20948 2 18.272325 2 25 C 2 37.678876 12.321124 48 25 48 C 37.678876 48 48 37.678876 48 25 C 48 12.321124 37.678876 2 25 2 z">
+                        </path>
+                    </svg>
+                </button>
+                <button class="btn" id="next-btn">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+                    </svg>
+                </button>
             </div>
             <div class="progress-bar">
                 <div class="progress-fill"></div>
@@ -415,12 +442,26 @@
 
             // Start auto-play after initial zoom
             setTimeout(function () {
-                document.getElementById('play-btn').textContent = '⏸';
+                // Keep pause icon showing since auto-play is active
+                const playBtn = document.getElementById('play-btn');
+                const pauseIcon = playBtn.querySelector('.pause-icon');
+                const playIcon = playBtn.querySelector('.play-icon');
+                const restartIcon = playBtn.querySelector('.restart-icon');
+
+                pauseIcon.style.display = 'block';
+                playIcon.style.display = 'none';
+                restartIcon.style.display = 'none';
+
                 playInterval = setInterval(function () {
                     if (currentLocationIndex < coords.length - 1) {
                         nextLocation();
                     } else {
-                        togglePlay();
+                        // When reaching the end, stop and show restart symbol
+                        clearInterval(playInterval);
+                        isPlaying = false;
+                        pauseIcon.style.display = 'none';
+                        playIcon.style.display = 'none';
+                        restartIcon.style.display = 'block';
                     }
                 }, duration + 800);
             }, 2500); // Start auto-play 500ms after initial zoom completes
@@ -531,12 +572,12 @@
             routeLines.selectAll(".route-line").attr("d", path);
 
             // Highlight current country
-            countryPaths.classed("current", function(d) {
+            countryPaths.classed("current", function (d) {
                 const currentLocation = coords[currentLocationIndex];
-                return d.properties.ISO_A3 === currentLocation.id || 
-                       d.properties.ADM0_A3 === currentLocation.id ||
-                       d.properties.name === currentLocation.name ||
-                       d.properties.NAME === currentLocation.name;
+                return d.properties.ISO_A3 === currentLocation.id ||
+                    d.properties.ADM0_A3 === currentLocation.id ||
+                    d.properties.name === currentLocation.name ||
+                    d.properties.NAME === currentLocation.name;
             });
 
             // Update dots efficiently
@@ -625,11 +666,17 @@
 
         function togglePlay() {
             const playBtn = document.getElementById('play-btn');
+            const pauseIcon = playBtn.querySelector('.pause-icon');
+            const playIcon = playBtn.querySelector('.play-icon');
+            const restartIcon = playBtn.querySelector('.restart-icon');
 
             if (isPlaying) {
                 clearInterval(playInterval);
                 isPlaying = false;
-                playBtn.textContent = '▶';
+                // Show play icon
+                pauseIcon.style.display = 'none';
+                playIcon.style.display = 'block';
+                restartIcon.style.display = 'none';
             } else {
                 // If we're at the end, restart the tour
                 if (currentLocationIndex >= coords.length - 1) {
@@ -642,7 +689,10 @@
                 }
 
                 isPlaying = true;
-                playBtn.textContent = '⏸';
+                // Show pause icon
+                pauseIcon.style.display = 'block';
+                playIcon.style.display = 'none';
+                restartIcon.style.display = 'none';
 
                 playInterval = setInterval(function () {
                     if (currentLocationIndex < coords.length - 1) {
@@ -651,7 +701,10 @@
                         // When reaching the end, stop and show restart symbol
                         clearInterval(playInterval);
                         isPlaying = false;
-                        playBtn.textContent = '⟲'; // Restart symbol
+                        // Show restart icon
+                        pauseIcon.style.display = 'none';
+                        playIcon.style.display = 'none';
+                        restartIcon.style.display = 'block';
                     }
                 }, duration + 800); // Extra time for route animation
             }
