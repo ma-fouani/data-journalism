@@ -2431,16 +2431,6 @@ const lebanonGeoJSON = {
         const incidentData = [
             {
                 location: "Beirut",
-                coords: [35.5018, 33.8886],
-                casualties: 842,
-                deaths: 12,
-                injured: 830,
-                type: "pager",
-                date: "2024-09-17",
-                description: "Multiple simultaneous pager explosions across the capital"
-            },
-            {
-                location: "Dahieh (Southern Beirut)",
                 coords: [35.4867, 33.8547],
                 casualties: 654,
                 deaths: 9,
