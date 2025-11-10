@@ -1,4 +1,4 @@
-const duration = 14000;
+const duration = 4000;
 
 const zoomFactor = 70;
 let currentLocationIndex = 0;
