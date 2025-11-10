@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iraq Demographics - Zoomable Icicle</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        :root {
+            /* Primary Colors */
+            --color-primary: #333;
+            --color-white: #fff;
+            --color-background-gradient-start: #2c324c;
+            --color-background-gradient-end: #69a4c4;
+
+            /* Glass Effect Colors */
+            --color-glass-background: rgba(255, 255, 255, 0.1);
+            --color-glass-background-hover: rgba(255, 255, 255, 0.4);
+            --color-glass-border: rgba(255, 255, 255, 0.2);
+
+            /* Text Colors */
+            --color-text-primary: rgba(255, 255, 255, 0.9);
+            --color-text-secondary: rgba(255, 255, 255, 0.7);
+
+            /* Shadow Colors */
+            --color-shadow-light: rgba(0, 0, 0, 0.1);
+
+            /* Icicle Colors */
+            --color-icicle-shia: #cc4646;
+            --color-icicle-sunni: #516185;
+            --color-icicle-minorities: #69a4c4;
+            --color-icicle-coalition: #d38642;
+            --color-icicle-party: #fcbe81;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .zoom_icicle_container {
+            width: 100%;
+            min-height: 100vh;
+            background: linear-gradient(-45deg, var(--color-background-gradient-start), var(--color-background-gradient-end));
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            color: var(--color-text-primary);
+        }
+
+        .zoom_icicle_header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: var(--color-glass-background);
+            backdrop-filter: blur(8px) saturate(280%);
+            -webkit-backdrop-filter: blur(8px) saturate(280%);
+            border-radius: 16px;
+            border: 1px solid var(--color-glass-border);
+            box-shadow: 0 8px 30px var(--color-shadow-light);
+            padding: 20px 40px;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .zoom_icicle_title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--color-white);
+            margin-bottom: 8px;
+        }
+
+        .zoom_icicle_subtitle {
+            font-size: 1rem;
+            color: var(--color-text-secondary);
+        }
+
+        .zoom_icicle_chart_wrapper {
+            background: var(--color-glass-background);
+            backdrop-filter: blur(4px) saturate(280%);
+            -webkit-backdrop-filter: blur(4px) saturate(280%);
+            border-radius: 16px;
+            border: 1px solid var(--color-glass-border);
+            box-shadow: 0 8px 30px var(--color-shadow-light);
+            padding: 20px;
+            max-width: 1200px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .zoom_icicle_chart {
+            width: 100%;
+            height: auto;
+            display: block;
+            cursor: pointer;
+        }
+
+        .zoom_icicle_chart rect {
+            stroke: var(--color-background-gradient-start);
+            stroke-width: 1px;
+            transition: opacity 0.3s ease;
+        }
+
+        .zoom_icicle_chart rect:hover {
+            opacity: 0.8;
+        }
+
+        .zoom_icicle_chart text {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-size: 11px;
+            font-weight: 500;
+            pointer-events: none;
+            fill: var(--color-white);
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .zoom_icicle_breadcrumb {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+            align-items: center;
+        }
+
+        .zoom_icicle_breadcrumb_item {
+            background: var(--color-glass-background);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border: 1px solid var(--color-glass-border);
+            padding: 8px 14px;
+            border-radius: 8px;
+            color: var(--color-white);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .zoom_icicle_breadcrumb_item:hover {
+            background: var(--color-glass-background-hover);
+            transform: translateY(-1px);
+        }
+
+        .zoom_icicle_breadcrumb_separator {
+            color: var(--color-text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .zoom_icicle_info {
+            margin-top: 20px;
+            background: var(--color-glass-background);
+            backdrop-filter: blur(4px) saturate(280%);
+            -webkit-backdrop-filter: blur(4px) saturate(280%);
+            border-radius: 12px;
+            border: 1px solid var(--color-glass-border);
+            padding: 16px 20px;
+            display: none;
+        }
+
+        .zoom_icicle_info.active {
+            display: block;
+        }
+
+        .zoom_icicle_info_title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--color-white);
+        }
+
+        .zoom_icicle_info_count {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-icicle-party);
+            margin-bottom: 8px;
+        }
+
+        .zoom_icicle_info_source {
+            font-size: 0.85rem;
+            color: var(--color-text-secondary);
+            line-height: 1.5;
+        }
+
+        @media (max-width: 768px) {
+            .zoom_icicle_title {
+                font-size: 1.8rem;
+            }
+
+            .zoom_icicle_subtitle {
+                font-size: 0.9rem;
+            }
+
+            .zoom_icicle_header {
+                padding: 16px 20px;
+            }
+
+            .zoom_icicle_chart_wrapper {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="zoom_icicle_container">
+        <div class="zoom_icicle_header">
+            <h1 class="zoom_icicle_title">Iraq Demographics</h1>
+            <p class="zoom_icicle_subtitle">Explore population distribution and political coalitions - Click to zoom in,
+                click root to zoom out</p>
+        </div>
+
+        <div class="zoom_icicle_chart_wrapper">
+            <div class="zoom_icicle_breadcrumb" id="breadcrumb"></div>
+            <svg class="zoom_icicle_chart" id="chart"></svg>
+            <div class="zoom_icicle_info" id="info">
+                <div class="zoom_icicle_info_title" id="infoTitle"></div>
+                <div class="zoom_icicle_info_count" id="infoCount"></div>
+                <div class="zoom_icicle_info_source" id="infoSource"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const rawData = {
+            "name": "Lebanon",
+            "children": [
+                {
+                    "name": "Shia",
+                    "value": 1163256,
+                    "source": "Ministry of Interior (2022 election results)",
+                    "children": [
+                        {
+                            "name": "Coordination Framework (Hezbollah & Amal)",
+                            "value": 504648,
+                            "source": "2022 election results",
+                            "children": [
+                                {
+                                    "name": "Hezbollah",
+                                    "value": 335466,
+                                    "source": "2022 election results",
+                                    "children": [
+                                        { "name": "Nabih Berri", "value": 71172, "source": "2022 election results" },
+                                        { "name": "Mohammed Raad", "value": 70264, "source": "2022 election results" }
+                                    ]
+                                },
+                                {
+                                    "name": "Amal Movement",
+                                    "value": 169182,
+                                    "source": "2022 election results",
+                                    "children": [
+                                        { "name": "Ali Hassan Khalil", "value": 68181, "source": "2022 election results" },
+                                        { "name": "Hassan Zein", "value": 64354, "source": "2022 election results" }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "Sunni",
+                    "value": 1170895,
+                    "source": "Ministry of Interior (2022 election results)",
+                    "children": [
+                        {
+                            "name": "Future Movement (ex-FM coalition)",
+                            "value": 36787,
+                            "source": "2022 election results",
+                            "children": [
+                                { "name": "Sunni Candidate 1", "value": 18000, "source": "2022 election results" },
+                                { "name": "Sunni Candidate 2", "value": 18787, "source": "2022 election results" }
+                            ]
+                        },
+                        {
+                            "name": "Progress Party (Taqaddum)",
+                            "value": 20988,
+                            "source": "2022 election results",
+                            "children": [
+                                { "name": "Sunni Candidate A", "value": 10000, "source": "2022 election results" },
+                                { "name": "Sunni Candidate B", "value": 10988, "source": "2022 election results" }
+                            ]
+                        },
+                        {
+                            "name": "Arab Unification Party",
+                            "value": 10228,
+                            "source": "2022 election results",
+                            "children": [
+                                { "name": "Sunni Candidate X", "value": 6000, "source": "2022 election results" },
+                                { "name": "Sunni Candidate Y", "value": 4228, "source": "2022 election results" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "Christians",
+                    "value": 1368728,
+                    "source": "Ministry of Interior (2022 election results)",
+                    "children": [
+                        {
+                            "name": "Lebanese Forces",
+                            "value": 148867,
+                            "source": "2022 election results",
+                            "children": [
+                                { "name": "Samir Geagea", "value": 21080, "source": "2022 election results" },
+                                { "name": "Jihad Azour", "value": 10849, "source": "2022 election results" }
+                            ]
+                        },
+                        {
+                            "name": "Free Patriotic Movement",
+                            "value": 121684,
+                            "source": "2022 election results",
+                            "children": [
+                                { "name": "Gebran Bassil", "value": 21080, "source": "2022 election results" },
+                                { "name": "Youssef Fenianos", "value": 15337, "source": "2022 election results" }
+                            ]
+                        },
+                        {
+                            "name": "Kataeb Party",
+                            "value": 24602,
+                            "source": "2022 election results",
+                            "children": [
+                                { "name": "Marwan Hamadeh", "value": 14739, "source": "2022 election results" },
+                                { "name": "Jean Talhouk", "value": 9870, "source": "2022 election results" }
+                            ]
+                        },
+                        {
+                            "name": "Marada Movement",
+                            "value": 21672,
+                            "source": "2022 election results",
+                            "children": [
+                                { "name": "Sleiman Frangieh", "value": 12500, "source": "2022 election results" },
+                                { "name": "Tony Frangieh", "value": 9199, "source": "2022 election results" }
+                            ]
+                        },
+                        {
+                            "name": "Independence Movement",
+                            "value": 11296,
+                            "source": "2022 election results",
+                            "children": [
+                                { "name": "Michel Pharaoun", "value": 7000, "source": "2022 election results" },
+                                { "name": "Michel Moawad", "value": 4296, "source": "2022 election results" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "Druze",
+                    "value": 221771,
+                    "source": "Ministry of Interior (2022 election results)",
+                    "children": [
+                        {
+                            "name": "Progressive Socialist Party",
+                            "value": 55840,
+                            "source": "2022 election results",
+                            "children": [
+                                { "name": "Taymour Jumblatt", "value": 55445, "source": "2022 election results" },
+                                { "name": "Wiam Wahhab", "value": 30000, "source": "2022 election results" }
+                            ]
+                        },
+                        {
+                            "name": "Lebanese Democratic Party",
+                            "value": 12905,
+                            "source": "2022 election results",
+                            "children": [
+                                { "name": "Walid Jumblatt", "value": 12905, "source": "2022 election results" }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "Alawite",
+                    "value": 38537,
+                    "source": "Ministry of Interior (2022 election results)",
+                    "children": [
+                        {
+                            "name": "Arab Socialist Ba'ath Party",
+                            "value": 14000,
+                            "source": "2022 election results",
+                            "children": [
+                                { "name": "Ali Dirani", "value": 8000, "source": "2022 election results" },
+                                { "name": "Wahib Wakim", "value": 4837, "source": "2022 election results" }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        // Chart dimensions
+        const width = 1160;
+        const height = 600;
+
+        // Color scale based on hierarchy depth
+        const colorScale = d3.scaleOrdinal()
+            .domain(["Shia", "Sunni", "Minorities"])
+            .range(["#cc4646", "#516185", "#69a4c4"]);
+
+        // Format number with commas
+        const format = d3.format(",");
+
+        // Create hierarchy
+        const hierarchy = d3.hierarchy(rawData)
+            .sum(d => d.value)
+            .sort((a, b) => b.value - a.value);
+
+        // Create partition layout
+        const partition = d3.partition()
+            .size([width, height])
+            .padding(1);
+
+        const root = partition(hierarchy);
+
+        // Color function
+        function color(d) {
+            if (d.depth === 0) return "#253561"; // Root
+            if (d.depth === 1) return colorScale(d.data.name); // Main groups
+
+            // Get parent color and make it lighter/darker based on depth
+            const parentColor = d3.color(color(d.parent));
+            if (d.depth === 2) {
+                return parentColor.brighter(0.3);
+            } else if (d.depth === 3) {
+                return parentColor.brighter(0.6);
+            }
+            return parentColor.brighter(0.9);
+        }
+
+        // Create SVG
+        const svg = d3.select("#chart")
+            .attr("viewBox", [0, 0, width, height])
+            .style("font", "10px sans-serif");
+
+        // Create cells
+        let cell = svg
+            .selectAll("g")
+            .data(root.descendants())
+            .join("g")
+            .attr("transform", d => `translate(${d.x0},${d.y0})`);
+
+        const rect = cell.append("rect")
+            .attr("width", d => d.x1 - d.x0)
+            .attr("height", d => d.y1 - d.y0)
+            .attr("fill", d => color(d))
+            .style("cursor", "pointer")
+            .on("click", clicked);
+
+        const text = cell.append("text")
+            .style("user-select", "none")
+            .attr("pointer-events", "none")
+            .attr("x", 4)
+            .attr("y", 13)
+            .attr("fill-opacity", d => +labelVisible(d));
+
+        text.append("tspan")
+            .text(d => d.data.name);
+
+        // Add value to text if space permits
+        text.append("tspan")
+            .attr("fill-opacity", d => labelVisible(d) * 0.7)
+            .text(d => ` (${format(d.value)})`);
+
+        // Zoom functionality
+        let currentNode = root;
+
+        function clicked(event, p) {
+            if (p === currentNode) {
+                // Zoom out
+                if (currentNode.parent) {
+                    currentNode = currentNode.parent;
+                }
+            } else {
+                currentNode = p;
+            }
+
+            root.each(d => d.target = {
+                x0: (d.x0 - p.x0) / (p.x1 - p.x0) * width,
+                x1: (d.x1 - p.x0) / (p.x1 - p.x0) * width,
+                y0: d.y0 - p.y0,
+                y1: d.y1 - p.y0
+            });
+
+            const t = cell.transition().duration(750)
+                .attr("transform", d => `translate(${d.target.x0},${d.target.y0})`);
+
+            rect.transition(t)
+                .attr("width", d => d.target.x1 - d.target.x0)
+                .attr("height", d => d.target.y1 - d.target.y0);
+
+            text.transition(t)
+                .attr("fill-opacity", d => +labelVisible(d.target));
+
+            // Update breadcrumb
+            updateBreadcrumb(p);
+
+            // Update info panel
+            updateInfo(p);
+        }
+
+        function labelVisible(d) {
+            return d.y1 <= height && d.y0 >= 0 && (d.x1 - d.x0) > 40 && (d.y1 - d.y0) > 16;
+        }
+
+        // Breadcrumb navigation
+        function updateBreadcrumb(node) {
+            const breadcrumb = d3.select("#breadcrumb");
+            const ancestors = node.ancestors().reverse();
+
+            breadcrumb.selectAll("*").remove();
+
+            ancestors.forEach((d, i) => {
+                if (i > 0) {
+                    breadcrumb.append("span")
+                        .attr("class", "zoom_icicle_breadcrumb_separator")
+                        .text("›");
+                }
+
+                breadcrumb.append("span")
+                    .attr("class", "zoom_icicle_breadcrumb_item")
+                    .text(d.data.name)
+                    .on("click", () => clicked(null, d));
+            });
+        }
+
+        // Info panel
+        function updateInfo(node) {
+            const info = d3.select("#info");
+            const infoTitle = d3.select("#infoTitle");
+            const infoCount = d3.select("#infoCount");
+            const infoSource = d3.select("#infoSource");
+
+            if (node.depth > 0) {
+                info.classed("active", true);
+                infoTitle.text(node.data.name);
+                infoCount.text(format(node.value));
+                infoSource.text(node.data.source || "No source information available");
+            } else {
+                info.classed("active", false);
+            }
+        }
+
+        // Initialize breadcrumb and info
+        updateBreadcrumb(root);
+    </script>
+</body>
+
+</html>
