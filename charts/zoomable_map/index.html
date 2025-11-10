@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iraq Governorates - Interactive Map</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div id="zoomable_map_container">
+        <svg id="zoomable_map"></svg>
+        
+        <!-- Default info card -->
+        <div id="default-card" class="info-card default-card">
+            <p>Tap a governorate for more info</p>
+        </div>
+        
+        <!-- Detailed info panel -->
+        <div id="info-panel" class="info-panel hidden">
+            <!-- Sticky header with title and close button -->
+            <div class="panel-header">
+                <h2 id="gov-name">Governorate Name</h2>
+                <button id="close-btn" class="close-btn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Scrollable content -->
+            <div class="panel-content">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="8.5" cy="7" r="4"></circle>
+                            <path d="M20 8v6M23 11h-6"></path>
+                            <circle cx="20" cy="7" r="3"></circle>
+                            <path d="M13 7a3 3 0 1 0-6 0 3 3 0 0 0 6 0z"></path>
+                        </svg>
+                        <div class="stat-label">Population</div>
+                        <div class="stat-value" id="stat-population">-</div>
+                    </div>
+                    <div class="stat-item">
+                        <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M9 11l3 3L22 4"></path>
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                        </svg>
+                        <div class="stat-label">Registered Voters</div>
+                        <div class="stat-value" id="stat-voters">-</div>
+                    </div>
+                    <div class="stat-item">
+                        <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                        <div class="stat-label">GDP (Billion USD)</div>
+                        <div class="stat-value" id="stat-gdp">-</div>
+                    </div>
+                </div>
+                
+                <div class="political-info">
+                    <h3>Political Landscape</h3>
+                    <p id="political-description">-</p>
+                </div>
+                
+                <div class="voting-history">
+                    <h3>Voter Participation History</h3>
+                    <svg id="voting-chart" width="100%" height="150"></svg>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://d3js.org/topojson.v3.min.js"></script>
+    <script src="data/iraq-map.js"></script>
+    <script src="data/governorate-data.js"></script>
+    <script src="data/data.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
