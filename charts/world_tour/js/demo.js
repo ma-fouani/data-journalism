@@ -80,15 +80,7 @@ d3.json("https://unpkg.com/world-atlas@2.0.2/countries-110m.json").then(function
   // Start auto-play after initial zoom
   setTimeout(function () {
     // Don't auto-start playing - wait for scroll interaction
-    const playBtn = document.getElementById('play-btn');
-    const pauseIcon = playBtn.querySelector('.pause-icon');
-    const playIcon = playBtn.querySelector('.play-icon');
-    const restartIcon = playBtn.querySelector('.restart-icon');
-
-    // Show play icon since we're starting paused
-    pauseIcon.style.display = 'none';
-    playIcon.style.display = 'block';
-    restartIcon.style.display = 'none';
+    updatePlayButtonIcon();
 
     // Set up scroll detection for auto-play
     setupScrollDetection();
@@ -406,20 +398,11 @@ function previousLocation() {
 }
 
 function togglePlay() {
-  const playBtn = document.getElementById('play-btn');
-  const pauseIcon = playBtn.querySelector('.pause-icon');
-  const playIcon = playBtn.querySelector('.play-icon');
-  const restartIcon = playBtn.querySelector('.restart-icon');
-
   if (isPlaying) {
     clearInterval(playInterval);
     stopStepCounter(); // Stop the counter when paused
     isPlaying = false;
     userPausedManually = true; // Mark as manually paused
-    // Show play icon instead of pause
-    pauseIcon.style.display = 'none';
-    playIcon.style.display = 'block';
-    restartIcon.style.display = 'none';
   } else {
     // If we're at the end, restart the tour
     if (currentLocationIndex >= coords.length - 1) {
@@ -434,10 +417,6 @@ function togglePlay() {
 
     isPlaying = true;
     userPausedManually = false; // Clear manual pause flag
-    // Show pause icon instead of play
-    pauseIcon.style.display = 'block';
-    playIcon.style.display = 'none';
-    restartIcon.style.display = 'none';
 
     // Start counter if not at last slide
     if (currentLocationIndex < coords.length - 1) {
@@ -445,6 +424,30 @@ function togglePlay() {
     }
 
     startPlayInterval();
+  }
+  
+  // Update button icon
+  updatePlayButtonIcon();
+}
+
+function updatePlayButtonIcon() {
+  const playBtn = document.getElementById('play-btn');
+  const pauseIcon = playBtn.querySelector('.pause-icon');
+  const playIcon = playBtn.querySelector('.play-icon');
+  const restartIcon = playBtn.querySelector('.restart-icon');
+
+  // Reset all icons first
+  pauseIcon.style.display = 'none';
+  playIcon.style.display = 'none';
+  restartIcon.style.display = 'none';
+
+  // Show the appropriate icon based on state
+  if (isPlaying) {
+    pauseIcon.style.display = 'block';
+  } else if (currentLocationIndex >= coords.length - 1) {
+    restartIcon.style.display = 'block';
+  } else {
+    playIcon.style.display = 'block';
   }
 }
 
@@ -457,15 +460,7 @@ function startPlayInterval() {
       clearInterval(playInterval);
       stopStepCounter(); // Stop the counter
       isPlaying = false;
-      const playBtn = document.getElementById('play-btn');
-      const pauseIcon = playBtn.querySelector('.pause-icon');
-      const playIcon = playBtn.querySelector('.play-icon');
-      const restartIcon = playBtn.querySelector('.restart-icon');
-
-      // Show restart icon
-      pauseIcon.style.display = 'none';
-      playIcon.style.display = 'none';
-      restartIcon.style.display = 'block';
+      updatePlayButtonIcon();
     }
   }, duration + 800); // Extra time for route animation
 }
@@ -491,6 +486,7 @@ function setupScrollDetection() {
         }
         // Auto-play logic
         isPlaying = true;
+        updatePlayButtonIcon();
         startStepCounter();
         startPlayInterval();
       } else if (!isInView && isPlaying) {
@@ -498,6 +494,7 @@ function setupScrollDetection() {
         clearInterval(playInterval);
         stopStepCounter();
         isPlaying = false;
+        updatePlayButtonIcon();
       }
     });
   }, {
