@@ -1,0 +1,420 @@
+/* Root variables for theming */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    --bg-primary: #1a1a1a;
+    --bg-secondary: rgba(255, 255, 255, 0.1);
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.8);
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --shadow: rgba(0, 0, 0, 0.3);
+    --node-stroke: #fff;
+    --link-opacity: 0.7;
+}
+
+[data-theme="light"] {
+    --bg-primary: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    --bg-secondary: rgba(0, 0, 0, 0.05);
+    --text-primary: #2d3748;
+    --text-secondary: rgba(45, 55, 72, 0.8);
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.9);
+    --shadow: rgba(0, 0, 0, 0.15);
+    --node-stroke: #2d3748;
+    --link-opacity: 0.4;
+}
+
+/* Base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    padding: 2rem;
+    transition: background 0.3s ease;
+}
+
+/* Container */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Glass panel effect */
+.glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px) saturate(180%);
+    -webkit-backdrop-filter: blur(10px) saturate(180%);
+    border-radius: 20px;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 8px 32px 0 var(--shadow);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    transition: all 0.3s ease;
+}
+
+.glass-panel:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px 0 var(--shadow);
+}
+
+/* Header */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+}
+
+header h1 {
+    font-size: 2rem;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+}
+
+/* Theme toggle button */
+.theme-toggle {
+    background: var(--bg-secondary);
+    border: 1px solid var(--glass-border);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1);
+    background: var(--glass-bg);
+}
+
+.theme-toggle svg {
+    width: 24px;
+    height: 24px;
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+    position: absolute;
+}
+
+.sun-icon {
+    opacity: 0;
+    transform: rotate(180deg) scale(0);
+}
+
+[data-theme="light"] .sun-icon {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+}
+
+.moon-icon {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+}
+
+[data-theme="light"] .moon-icon {
+    opacity: 0;
+    transform: rotate(-180deg) scale(0);
+}
+
+/* Chart container */
+.chart-container {
+    min-height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+}
+
+#sankey-chart {
+    width: 100%;
+    height: 100%;
+}
+
+#sankey-chart svg {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Sankey diagram styles */
+.node rect {
+    cursor: default;
+    fill-opacity: 0.9;
+    shape-rendering: crispEdges;
+    stroke: var(--node-stroke);
+    stroke-width: 2;
+    transition: all 0.3s ease;
+}
+
+.node rect:hover {
+    fill-opacity: 1;
+    stroke-width: 3;
+}
+
+.node text {
+    pointer-events: none;
+    font-size: 12px;
+    font-weight: 500;
+    fill: var(--text-primary);
+    text-shadow: 0 1px 3px var(--shadow);
+}
+
+.link {
+    fill: none;
+    stroke-opacity: var(--link-opacity);
+    transition: stroke-opacity 0.3s ease;
+}
+
+.link:hover {
+    stroke-opacity: 0.8;
+}
+
+.link-label {
+    font-size: 11px;
+    fill: var(--text-primary);
+    text-anchor: middle;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.link:hover + .link-label {
+    opacity: 1;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    padding: 1.5rem 2rem;
+}
+
+.footer-section {
+    margin-bottom: 1.5rem;
+}
+
+.footer-section:last-child {
+    margin-bottom: 0;
+}
+
+.footer-section h3 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+    opacity: 0.8;
+}
+
+/* Category Filters */
+#category-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.filter-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--glass-border);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    font-family: 'Inter', sans-serif;
+}
+
+.filter-btn:hover {
+    background: var(--glass-bg);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--shadow);
+}
+
+.filter-btn.active {
+    background: var(--text-primary);
+    color: var(--bg-primary);
+    border-color: var(--text-primary);
+}
+
+[data-theme="light"] .filter-btn.active {
+    background: var(--text-primary);
+    color: #ffffff;
+    border-color: var(--text-primary);
+}
+
+.filter-btn.hidden {
+    display: none;
+}
+
+.more-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--glass-border);
+    background: var(--glass-bg);
+    color: var(--text-primary);
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    font-family: 'Inter', sans-serif;
+}
+
+.more-btn:hover {
+    background: var(--bg-secondary);
+    transform: scale(1.05);
+}
+
+/* Alignment Controls */
+#alignment-controls {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.alignment-btn {
+    padding: 0.5rem;
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--glass-border);
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.alignment-btn svg {
+    width: 20px;
+    height: 20px;
+    color: var(--text-primary);
+}
+
+.alignment-btn:hover {
+    background: var(--glass-bg);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--shadow);
+}
+
+.alignment-btn.active {
+    background: var(--text-primary);
+    border-color: var(--text-primary);
+}
+
+.alignment-btn.active svg {
+    color: var(--bg-primary);
+}
+
+[data-theme="light"] .alignment-btn.active svg {
+    color: #ffffff;
+}
+
+/* Tooltip */
+.tooltip {
+    position: absolute;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    z-index: 1000;
+    box-shadow: 0 4px 16px var(--shadow);
+}
+
+.tooltip.show {
+    opacity: 1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    body {
+        padding: 1rem;
+    }
+
+    header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    header h1 {
+        font-size: 1.5rem;
+    }
+
+    .glass-panel {
+        padding: 1.5rem;
+        border-radius: 15px;
+    }
+
+    .chart-container {
+        padding: 1.5rem;
+        min-height: 400px;
+    }
+
+    .node text {
+        font-size: 10px;
+    }
+}
+
+/* Color scheme for nodes - lighter colors */
+.node-Agricultural { fill: #a8e6cf; }
+.node-Bio { fill: #fff9b3; }
+.node-Liquid { fill: #d4c5f9; }
+.node-Losses { fill: #ffb3a7; }
+.node-Solid { fill: #a3d5ff; }
+.node-Gas { fill: #ffd4a3; }
+.node-Biofuel { fill: #d4f1a5; }
+.node-Biomass { fill: #ffd6f0; }
+.node-Coal { fill: #e6e6e6; }
+.node-District { fill: #d4a5d4; }
+.node-Industry { fill: #dff5d6; }
+.node-Heating { fill: #fff9a8; }
+.node-Electricity { fill: #99e6d6; }
+.node-Over { fill: #ffb399; }
+.node-H2 { fill: #b3c5e6; }
+.node-Road { fill: #ffb3d9; }
+.node-Agriculture { fill: #c9f0a0; }
+.node-Rail { fill: #ffe680; }
+.node-Lighting { fill: #f5d9b3; }
+.node-Ngas { fill: #d9d9d9; }
+.node-Thermal { fill: #ff6666; }
+.node-Geothermal { fill: #6699cc; }
+.node-Hydro { fill: #80d980; }
+.node-International { fill: #c299d9; }
+.node-Domestic { fill: #ffb366; }
+.node-National { fill: #ffff80; }
+.node-Marine { fill: #cc8866; }
+.node-Nuclear { fill: #ffb3e6; }
+.node-Oil { fill: #b3b3b3; }
+.node-Other { fill: #99e6d6; }
+.node-Pumped { fill: #ffb399; }
+.node-Solar { fill: #b3c5e6; }
+.node-Tidal { fill: #ffb3d9; }
+.node-UK { fill: #c9f0a0; }
+.node-Wave { fill: #ffe680; }
+.node-Wind { fill: #f5d9b3; }
