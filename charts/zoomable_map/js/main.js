@@ -149,12 +149,20 @@ function showInfoPanel(feature) {
     // Hide default card
     d3.select("#default-card").classed("hidden", true);
     
-    // Update panel content
-    d3.select("#gov-name").text(props.name);
-    d3.select("#stat-population").text(formatNumberShort(props.population));
-    d3.select("#stat-voters").text(formatNumberShort(props.voters));
-    d3.select("#stat-gdp").text(`$${props.gdp.toFixed(1)}B`);
-    d3.select("#political-description").text(props.political);
+    // Update panel content with null safety
+    d3.select("#gov-name").text(props.name || "Unknown");
+    d3.select("#stat-population").text(
+        props.population != null ? formatNumberShort(props.population) : "N/A"
+    );
+    d3.select("#stat-voters").text(
+        props.voters != null ? formatNumberShort(props.voters) : "N/A"
+    );
+    d3.select("#stat-gdp").text(
+        props.gdp != null ? `$${props.gdp.toFixed(1)}B` : "N/A"
+    );
+    d3.select("#political-description").text(
+        props.political || "No political information available for this governorate."
+    );
     
     // Render voting chart
     renderVotingChart(props.votingHistory);
@@ -188,6 +196,18 @@ function formatNumber(num) {
 function renderVotingChart(votingHistory) {
     const chartSvg = d3.select("#voting-chart");
     chartSvg.selectAll("*").remove();
+    
+    // Handle missing voting history data
+    if (!votingHistory || Object.keys(votingHistory).length === 0) {
+        chartSvg.append("text")
+            .attr("x", "50%")
+            .attr("y", "50%")
+            .attr("text-anchor", "middle")
+            .attr("dominant-baseline", "middle")
+            .attr("class", "chart-axis-text")
+            .text("No voting history data available");
+        return;
+    }
     
     const margin = { top: 20, right: 20, bottom: 30, left: 40 };
     const chartWidth = parseInt(chartSvg.style("width")) - margin.left - margin.right;
