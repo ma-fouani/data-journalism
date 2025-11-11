@@ -1,0 +1,194 @@
+:root {
+    /* Primary Colors */
+    --color-primary: #333;
+    --color-white: #fff;
+    --color-background-gradient-start: #2c324c;
+    --color-background-gradient-end: #69a4c4;
+
+    /* Glass Effect Colors */
+    --color-glass-background: rgba(255, 255, 255, 0.1);
+    --color-glass-background-hover: rgba(255, 255, 255, 0.4);
+    --color-glass-border: rgba(255, 255, 255, 0.2);
+
+    /* Text Colors */
+    --color-text-primary: rgba(255, 255, 255, 0.9);
+    --color-text-secondary: rgba(255, 255, 255, 0.7);
+
+    /* Shadow Colors */
+    --color-shadow-light: rgba(0, 0, 0, 0.1);
+
+    /* Icicle Colors */
+    --color-icicle-shia: #cc4646;
+    --color-icicle-sunni: #516185;
+    --color-icicle-minorities: #69a4c4;
+    --color-icicle-coalition: #d38642;
+    --color-icicle-party: #fcbe81;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.zoom_icicle_container {
+    width: 100%;
+    min-height: 100vh;
+    background: linear-gradient(-45deg, var(--color-background-gradient-start), var(--color-background-gradient-end));
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    color: var(--color-text-primary);
+}
+
+.zoom_icicle_header {
+    text-align: center;
+    margin-bottom: 30px;
+    background: var(--color-glass-background);
+    backdrop-filter: blur(8px) saturate(280%);
+    -webkit-backdrop-filter: blur(8px) saturate(280%);
+    border-radius: 16px;
+    border: 1px solid var(--color-glass-border);
+    box-shadow: 0 8px 30px var(--color-shadow-light);
+    padding: 20px 40px;
+    max-width: 800px;
+    width: 100%;
+}
+
+.zoom_icicle_title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-white);
+    margin-bottom: 8px;
+}
+
+.zoom_icicle_subtitle {
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+}
+
+.zoom_icicle_chart_wrapper {
+    background: var(--color-glass-background);
+    backdrop-filter: blur(4px) saturate(280%);
+    -webkit-backdrop-filter: blur(4px) saturate(280%);
+    border-radius: 16px;
+    border: 1px solid var(--color-glass-border);
+    box-shadow: 0 8px 30px var(--color-shadow-light);
+    padding: 20px;
+    max-width: 1200px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.zoom_icicle_chart {
+    width: 100%;
+    height: auto;
+    display: block;
+    cursor: pointer;
+}
+
+.zoom_icicle_chart rect {
+    stroke: var(--color-background-gradient-start);
+    stroke-width: 1px;
+    transition: opacity 0.3s ease;
+}
+
+.zoom_icicle_chart rect:hover {
+    opacity: 0.8;
+}
+
+.zoom_icicle_chart text {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    pointer-events: none;
+    fill: var(--color-white);
+    text-anchor: middle;
+    dominant-baseline: middle;
+}
+
+.zoom_icicle_breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+    align-items: center;
+}
+
+.zoom_icicle_breadcrumb_item {
+    background: var(--color-glass-background);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid var(--color-glass-border);
+    padding: 8px 14px;
+    border-radius: 8px;
+    color: var(--color-white);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.zoom_icicle_breadcrumb_item:hover {
+    background: var(--color-glass-background-hover);
+    transform: translateY(-1px);
+}
+
+.zoom_icicle_breadcrumb_separator {
+    color: var(--color-text-secondary);
+    font-size: 0.8rem;
+}
+
+.zoom_icicle_info {
+    margin-top: 20px;
+    background: var(--color-glass-background);
+    backdrop-filter: blur(4px) saturate(280%);
+    -webkit-backdrop-filter: blur(4px) saturate(280%);
+    border-radius: 12px;
+    border: 1px solid var(--color-glass-border);
+    padding: 16px 20px;
+    display: none;
+}
+
+.zoom_icicle_info.active {
+    display: block;
+}
+
+.zoom_icicle_info_title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--color-white);
+}
+
+.zoom_icicle_info_count {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-icicle-party);
+    margin-bottom: 8px;
+}
+
+.zoom_icicle_info_source {
+    font-size: 0.85rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+    .zoom_icicle_title {
+        font-size: 1.8rem;
+    }
+
+    .zoom_icicle_subtitle {
+        font-size: 0.9rem;
+    }
+
+    .zoom_icicle_header {
+        padding: 16px 20px;
+    }
+
+    .zoom_icicle_chart_wrapper {
+        padding: 12px;
+    }
+}
