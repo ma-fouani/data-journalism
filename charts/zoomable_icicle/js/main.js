@@ -9,6 +9,16 @@ const colorScale = d3.scaleOrdinal()
 // Format number with commas
 const format = d3.format(",");
 
+// Format numbers in Arabic - shorten to مليون or ألف
+function formatArabicNumber(num) {
+    if (num >= 1000000) {
+        return (num / 1000000).toFixed(1) + ' مليون';
+    } else if (num >= 1000) {
+        return (num / 1000).toFixed(1) + ' ألف';
+    }
+    return num.toString();
+}
+
 // Create hierarchy
 // Only sum leaf node values (nodes without children) to avoid double-counting
 const hierarchy = d3.hierarchy(rawData)
@@ -65,202 +75,210 @@ const rect = cell.append("rect")
     .style("cursor", "pointer")
     .on("click", clicked);
 
-const text = cell.append("text")
-    .style("user-select", "none")
-    .attr("pointer-events", "none")
-    .style("transition", "font-size 0.75s ease")
-    .attr("x", d => (d.y1 - d.y0) / 2)
-    .attr("y", d => (d.x1 - d.x0) / 2)
-    .attr("fill-opacity", d => +labelVisible(d));
+// Create text groups instead of single text elements
+const textGroup = cell.append("g")
+    .attr("class", "text-group")
+    .style("pointer-events", "none")
+    .attr("transform", d => `translate(${(d.y1 - d.y0) / 2}, ${(d.x1 - d.x0) / 2})`);
 
-text.append("tspan")
-    .attr("class", "name-tspan")
-    .text(d => d.data.name);
+// Apply initial text content
+updateTextContent(cell, false);
 
-// Add value to text - will be positioned dynamically
-const tspan = text.append("tspan")
-    .attr("class", "value-tspan")
-    .style("transition", "font-size 0.75s ease")
-    .attr("fill-opacity", d => labelVisible(d) * 0.7)
-    .text(d => ` ${format(d.value)}`);
+// Function to get predominant religion from a party's children
+function getPredominantReligion(node) {
+    if (!node.children || node.children.length === 0) return null;
+    
+    const religionCounts = {};
+    node.children.forEach(child => {
+        if (child.data.classification && child.data.classification.length > 0) {
+            const religion = child.data.classification[0];
+            religionCounts[religion] = (religionCounts[religion] || 0) + 1;
+        }
+    });
+    
+    let maxCount = 0;
+    let predominantReligion = null;
+    for (const [religion, count] of Object.entries(religionCounts)) {
+        if (count > maxCount) {
+            maxCount = count;
+            predominantReligion = religion;
+        }
+    }
+    
+    return predominantReligion;
+}
 
-// Apply initial font sizing and positioning
-updateTextSizing(cell, false);
-
-// Function to update text sizing based on box dimensions
-function updateTextSizing(selection, animate = true) {
+// Function to update text content based on node depth and dimensions
+function updateTextContent(selection, animate = true) {
+    const duration = animate ? 750 : 0;
+    
     selection.each(function (d) {
-        const textElement = d3.select(this).select("text");
-        const nameTspan = textElement.select(".name-tspan");
-        const valueTspan = textElement.select(".value-tspan");
-
+        const textGroup = d3.select(this).select(".text-group");
         const boxHeight = d.x1 - d.x0;
         const boxWidth = d.y1 - d.y0;
-
-        // Get the text content to check if we have a name
-        const nameText = d.data.name;
-        const hasValidName = nameText && nameText.trim().length > 0;
-
-        // Don't manage visibility here - let fill-opacity from labelVisible handle it
-        // Only update font sizing and positioning
-
-        // Center horizontally and vertically
-        const centerX = boxWidth / 2;
-        const centerY = boxHeight / 2;
-
-        // Calculate appropriate font size based on box height
-        let fontSize;
-        const duration = animate ? 750 : 0;
-
-        if (boxHeight > 100 && boxWidth > 200) {
-            // Very large boxes - huge title with number underneath
-            fontSize = Math.min(32, boxHeight * 0.2);
-            textElement.style("font-size", `${fontSize}px`);
-
-            if (animate) {
-                textElement
-                    .transition()
-                    .duration(duration)
-                    .ease(d3.easeCubicInOut)
-                    .attr("x", centerX)
-                    .attr("y", centerY - fontSize * 0.3);
-            } else {
-                textElement
-                    .attr("x", centerX)
-                    .attr("y", centerY - fontSize * 0.3);
-            }
-
-            // Reset the name tspan
-            nameTspan.attr("x", null).attr("dy", null);
-
-            // Position value underneath, centered
-            if (animate) {
-                valueTspan
-                    .transition()
-                    .duration(duration)
-                    .ease(d3.easeCubicInOut)
-                    .attr("x", centerX)
-                    .attr("dy", fontSize * 1.2)
-                    .text(` ${format(d.value)}`)
-                    .style("font-size", `${fontSize * 0.7}px`);
-            } else {
-                valueTspan
-                    .attr("x", centerX)
-                    .attr("dy", fontSize * 1.2)
-                    .text(` ${format(d.value)}`)
-                    .style("font-size", `${fontSize * 0.7}px`);
-            }
-        } else if (boxHeight > 60) {
-            // Large boxes - inline with slight spacing
-            fontSize = Math.min(20, boxHeight * 0.25);
-            textElement.style("font-size", `${fontSize}px`);
-
-            if (animate) {
-                textElement
-                    .transition()
-                    .duration(duration)
-                    .ease(d3.easeCubicInOut)
-                    .attr("x", centerX)
-                    .attr("y", centerY);
-            } else {
-                textElement
-                    .attr("x", centerX)
-                    .attr("y", centerY);
-            }
-
-            // Reset the name tspan
-            nameTspan.attr("x", null).attr("dy", null);
-
-            if (animate) {
-                valueTspan
-                    .transition()
-                    .duration(duration)
-                    .ease(d3.easeCubicInOut)
-                    .attr("x", null)
-                    .attr("dy", 0)
-                    .text(` (${format(d.value)})`)
-                    .style("font-size", `${fontSize * 0.85}px`);
-            } else {
-                valueTspan
-                    .attr("x", null)
-                    .attr("dy", 0)
-                    .text(` (${format(d.value)})`)
-                    .style("font-size", `${fontSize * 0.85}px`);
-            }
-        } else if (boxHeight > 40) {
-            // Medium boxes
-            fontSize = Math.min(14, boxHeight * 0.3);
-            textElement.style("font-size", `${fontSize}px`);
-
-            if (animate) {
-                textElement
-                    .transition()
-                    .duration(duration)
-                    .ease(d3.easeCubicInOut)
-                    .attr("x", centerX)
-                    .attr("y", centerY);
-            } else {
-                textElement
-                    .attr("x", centerX)
-                    .attr("y", centerY);
-            }
-
-            // Reset the name tspan
-            nameTspan.attr("x", null).attr("dy", null);
-
-            if (animate) {
-                valueTspan
-                    .transition()
-                    .duration(duration)
-                    .ease(d3.easeCubicInOut)
-                    .attr("x", null)
-                    .attr("dy", 0)
-                    .text(` (${format(d.value)})`)
-                    .style("font-size", `${fontSize}px`);
-            } else {
-                valueTspan
-                    .attr("x", null)
-                    .attr("dy", 0)
-                    .text(` (${format(d.value)})`)
-                    .style("font-size", `${fontSize}px`);
-            }
+        
+        // Clear existing content
+        textGroup.selectAll("*").remove();
+        
+        // Don't show text if box is too small
+        if (!labelVisible(d)) {
+            return;
+        }
+        
+        // Position the group at the center
+        if (animate) {
+            textGroup
+                .transition()
+                .duration(duration)
+                .ease(d3.easeCubicInOut)
+                .attr("transform", `translate(${boxWidth / 2}, ${boxHeight / 2})`);
         } else {
-            // Small boxes - tight spacing, smaller font
-            fontSize = Math.min(11, boxHeight * 0.4);
-            textElement.style("font-size", `${fontSize}px`);
-
+            textGroup.attr("transform", `translate(${boxWidth / 2}, ${boxHeight / 2})`);
+        }
+        
+        // Calculate title font size proportionate to height (20px - 60px range)
+        let titleFontSize = Math.min(60, Math.max(20, boxHeight * 0.15));
+        
+        // DEPTH 0: Country level - show total members, parties, independents, voters
+        if (d.depth === 0 && boxHeight > 300) {
+            const totalParties = d.children ? d.children.length : 0;
+            const independent = d.children ? d.children.find(c => c.data.name === "مستقل") : null;
+            const independentCount = independent ? independent.data.count : 0;
+            
+            const foreignObject = textGroup.append("foreignObject")
+                .attr("x", -boxWidth / 2)
+                .attr("y", -boxHeight / 2)
+                .attr("width", boxWidth)
+                .attr("height", boxHeight);
+            
+            const div = foreignObject.append("xhtml:div")
+                .attr("class", "text-wrapper")
+                .style("opacity", animate ? 0 : 1);
+            
+            div.append("xhtml:div")
+                .attr("class", "title")
+                .style("font-size", `${titleFontSize}px`)
+                .style("font-weight", 700)
+                .style("margin-bottom", "20px")
+                .text(d.data.name);
+            
+            const infoDiv = div.append("xhtml:div").attr("class", "info");
+            infoDiv.append("xhtml:div").text(`إجمالي النواب: 128`);
+            infoDiv.append("xhtml:div").text(`عدد الأحزاب: ${totalParties}`);
+            infoDiv.append("xhtml:div").text(`المستقلون: ${independentCount}`);
+            infoDiv.append("xhtml:div")
+                .attr("class", "info-highlight")
+                .text(`إجمالي الأصوات: ${formatArabicNumber(d.value)}`);
+            
             if (animate) {
-                textElement
-                    .transition()
-                    .duration(duration)
-                    .ease(d3.easeCubicInOut)
-                    .attr("x", centerX)
-                    .attr("y", centerY);
-            } else {
-                textElement
-                    .attr("x", centerX)
-                    .attr("y", centerY);
+                div.transition().duration(duration).style("opacity", 1);
             }
-
-            // Reset the name tspan
-            nameTspan.attr("x", null).attr("dy", null);
-
+        }
+        // DEPTH 1: Political party level - show voters, percentage, members count, religion
+        else if (d.depth === 1 && boxHeight > 300) {
+            const percentage = d.parent ? ((d.value / d.parent.value) * 100).toFixed(1) : 0;
+            const religion = getPredominantReligion(d);
+            const memberCount = d.data.count || 0;
+            
+            const foreignObject = textGroup.append("foreignObject")
+                .attr("x", -boxWidth / 2)
+                .attr("y", -boxHeight / 2)
+                .attr("width", boxWidth)
+                .attr("height", boxHeight);
+            
+            const div = foreignObject.append("xhtml:div")
+                .attr("class", "text-wrapper")
+                .style("opacity", animate ? 0 : 1);
+            
+            div.append("xhtml:div")
+                .attr("class", "title")
+                .style("font-size", `${titleFontSize}px`)
+                .style("font-weight", 700)
+                .style("margin-bottom", "20px")
+                .text(d.data.name);
+            
+            const infoDiv = div.append("xhtml:div").attr("class", "info");
+            infoDiv.append("xhtml:div")
+                .attr("class", "info-highlight")
+                .text(`الأصوات: ${formatArabicNumber(d.value)}`);
+            infoDiv.append("xhtml:div").text(`${percentage}% من الإجمالي`);
+            infoDiv.append("xhtml:div").text(`عدد النواب: ${memberCount}`);
+            
+            if (religion) {
+                infoDiv.append("xhtml:div").text(`الطائفة الغالبة: ${religion}`);
+            }
+            
             if (animate) {
-                valueTspan
-                    .transition()
-                    .duration(duration)
-                    .ease(d3.easeCubicInOut)
-                    .attr("x", null)
-                    .attr("dy", 0)
-                    .text(` (${format(d.value)})`)
-                    .style("font-size", `${fontSize}px`);
-            } else {
-                valueTspan
-                    .attr("x", null)
-                    .attr("dy", 0)
-                    .text(` (${format(d.value)})`)
-                    .style("font-size", `${fontSize}px`);
+                div.transition().duration(duration).style("opacity", 1);
             }
+        }
+        // DEPTH 2: Parliament member level - show votes and classification
+        else if (d.depth === 2 && boxHeight > 300) {
+            const classification = d.data.classification || [];
+            
+            const foreignObject = textGroup.append("foreignObject")
+                .attr("x", -boxWidth / 2)
+                .attr("y", -boxHeight / 2)
+                .attr("width", boxWidth)
+                .attr("height", boxHeight);
+            
+            const div = foreignObject.append("xhtml:div")
+                .attr("class", "text-wrapper")
+                .style("opacity", animate ? 0 : 1);
+            
+            div.append("xhtml:div")
+                .attr("class", "title")
+                .style("font-size", `${titleFontSize}px`)
+                .style("font-weight", 700)
+                .style("margin-bottom", "15px")
+                .text(d.data.name);
+            
+            const infoDiv = div.append("xhtml:div").attr("class", "info");
+            infoDiv.append("xhtml:div")
+                .attr("class", "info-highlight")
+                .text(`الأصوات: ${formatArabicNumber(d.value)}`);
+            
+            if (classification.length > 0) {
+                infoDiv.append("xhtml:div")
+                    .style("margin-top", "10px")
+                    .text(`التصنيف:`);
+                classification.forEach(cls => {
+                    infoDiv.append("xhtml:div").text(cls);
+                });
+            }
+            
+            if (animate) {
+                div.transition().duration(duration).style("opacity", 1);
+            }
+        }
+        // For boxes with height < 300px - only show name (no details)
+        else if (boxHeight > 40) {
+            textGroup.append("text")
+                .attr("y", 0)
+                .attr("fill", "white")
+                .attr("fill-opacity", animate ? 0 : 0.9)
+                .style("font-size", `${titleFontSize}px`)
+                .style("font-weight", 700)
+                .style("text-anchor", "middle")
+                .text(d.data.name)
+                .transition()
+                .duration(duration)
+                .attr("fill-opacity", 0.9);
+        }
+        // Very small boxes - just the name with smaller font
+        else {
+            const smallFontSize = Math.min(14, boxHeight * 0.5, boxWidth * 0.04);
+            textGroup.append("text")
+                .attr("y", 0)
+                .attr("fill", "white")
+                .attr("fill-opacity", animate ? 0 : 0.9)
+                .style("font-size", `${smallFontSize}px`)
+                .style("font-weight", 500)
+                .style("text-anchor", "middle")
+                .text(d.data.name)
+                .transition()
+                .duration(duration)
+                .attr("fill-opacity", 0.9);
         }
     });
 }
@@ -295,12 +313,6 @@ function clicked(event, p) {
         .attr("width", d => d.target.y1 - d.target.y0 - 1)
         .attr("height", d => rectHeight(d.target));
 
-    text.transition(t)
-        .attr("fill-opacity", d => +labelVisible(d.target));
-
-    tspan.transition(t)
-        .attr("fill-opacity", d => labelVisible(d.target) * 0.7);
-
     // Update dimensions immediately for smooth text transitions
     root.each(d => {
         d.x0 = d.target.x0;
@@ -309,21 +321,11 @@ function clicked(event, p) {
         d.y1 = d.target.y1;
     });
 
-    // Apply text sizing immediately to trigger CSS transitions
-    updateTextSizing(cell);
-
-    // After transition completes, update visibility again to ensure text appears for newly large boxes
-    t.on("end", function() {
-        // Update fill-opacity based on the new dimensions
-        text.attr("fill-opacity", d => +labelVisible(d));
-        tspan.attr("fill-opacity", d => labelVisible(d) * 0.7);
-    });
+    // Apply text content update with animation
+    updateTextContent(cell, true);
 
     // Update breadcrumb
     updateBreadcrumb(p);
-
-    // Update info panel
-    updateInfo(p);
 }
 
 function rectHeight(d) {
@@ -355,22 +357,5 @@ function updateBreadcrumb(node) {
     });
 }
 
-// Info panel
-function updateInfo(node) {
-    const info = d3.select("#info");
-    const infoTitle = d3.select("#infoTitle");
-    const infoCount = d3.select("#infoCount");
-    const infoSource = d3.select("#infoSource");
-
-    if (node.depth > 0) {
-        info.classed("active", true);
-        infoTitle.text(node.data.name);
-        infoCount.text(format(node.value));
-        infoSource.text(node.data.source || "No source information available");
-    } else {
-        info.classed("active", false);
-    }
-}
-
-// Initialize breadcrumb and info
+// Initialize breadcrumb
 updateBreadcrumb(root);
