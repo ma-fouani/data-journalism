@@ -1,6 +1,10 @@
 const width = 1160;
 const height = 800;
 
+// Create scales for zooming
+const xScale = d3.scaleLinear().range([0, width]);
+const yScale = d3.scaleLinear().range([0, height]);
+
 // Color scale based on hierarchy depth - Pure blue gradient
 const colorScale = d3.scaleOrdinal()
     .domain(["Shia", "Sunni", "Minorities"])
@@ -56,6 +60,10 @@ function color(d) {
     return d3.hsl(baseHue, saturation / 100, lightness / 100).toString();
 }
 
+// Initialize scales to show full hierarchy
+xScale.domain([root.y0, root.y1]);
+yScale.domain([root.x0, root.x1]);
+
 // Create SVG
 const svg = d3.select("#chart")
     .attr("viewBox", [0, 0, width, height])
@@ -110,18 +118,19 @@ function getPredominantReligion(node) {
 
 // Function to update text content based on node depth and dimensions
 function updateTextContent(selection, animate = true) {
-    const duration = animate ? 750 : 0;
+    const duration = animate ? 500 : 0;
     
     selection.each(function (d) {
         const textGroup = d3.select(this).select(".text-group");
-        const boxHeight = d.x1 - d.x0;
-        const boxWidth = d.y1 - d.y0;
+        // Use scaled dimensions for accurate box size calculations
+        const boxHeight = yScale(d.x1) - yScale(d.x0);
+        const boxWidth = xScale(d.y1) - xScale(d.y0);
         
         // Clear existing content
         textGroup.selectAll("*").remove();
         
         // Don't show text if box is too small
-        if (!labelVisible(d)) {
+        if (boxWidth < 0 || boxHeight < 15) {
             return;
         }
         
@@ -253,32 +262,46 @@ function updateTextContent(selection, animate = true) {
         }
         // For boxes with height < 300px - only show name (no details)
         else if (boxHeight > 40) {
-            textGroup.append("text")
+            const text = textGroup.append("text")
                 .attr("y", 0)
                 .attr("fill", "white")
-                .attr("fill-opacity", animate ? 0 : 0.9)
-                .style("font-size", `${titleFontSize}px`)
+                .attr("fill-opacity", 0)
+                .style("font-size", animate ? "10px" : `${titleFontSize}px`)
                 .style("font-weight", 700)
                 .style("text-anchor", "middle")
-                .text(d.data.name)
-                .transition()
-                .duration(duration)
-                .attr("fill-opacity", 0.9);
+                .text(d.data.name);
+            
+            if (animate) {
+                text.transition()
+                    .duration(duration)
+                    .ease(d3.easeCubicInOut)
+                    .style("font-size", `${titleFontSize}px`)
+                    .attr("fill-opacity", 0.9);
+            } else {
+                text.attr("fill-opacity", 0.9);
+            }
         }
         // Very small boxes - just the name with smaller font
         else {
             const smallFontSize = Math.min(14, boxHeight * 0.5, boxWidth * 0.04);
-            textGroup.append("text")
+            const text = textGroup.append("text")
                 .attr("y", 0)
                 .attr("fill", "white")
-                .attr("fill-opacity", animate ? 0 : 0.9)
-                .style("font-size", `${smallFontSize}px`)
+                .attr("fill-opacity", 0)
+                .style("font-size", animate ? "8px" : `${smallFontSize}px`)
                 .style("font-weight", 500)
                 .style("text-anchor", "middle")
-                .text(d.data.name)
-                .transition()
-                .duration(duration)
-                .attr("fill-opacity", 0.9);
+                .text(d.data.name);
+            
+            if (animate) {
+                text.transition()
+                    .duration(duration)
+                    .ease(d3.easeCubicInOut)
+                    .style("font-size", `${smallFontSize}px`)
+                    .attr("fill-opacity", 0.9);
+            } else {
+                text.attr("fill-opacity", 0.9);
+            }
         }
     });
 }
@@ -298,42 +321,47 @@ function clicked(event, p) {
         currentNode = p;
     }
 
-    // Calculate zoom targets - swapped for vertical orientation
-    root.each(d => d.target = {
-        x0: (d.x0 - p.x0) / (p.x1 - p.x0) * height,
-        x1: (d.x1 - p.x0) / (p.x1 - p.x0) * height,
-        y0: d.y0 - p.y0,
-        y1: d.y1 - p.y0
-    });
+    // Update scale domains based on clicked node - vertical orientation (x and y swapped)
+    xScale.domain([p.y0, p.y1]); // horizontal is based on y coordinates
+    yScale.domain([p.x0, p.x1]); // vertical is based on x coordinates
 
-    const t = cell.transition().duration(750)
-        .attr("transform", d => `translate(${d.target.y0},${d.target.x0})`);
+    // Fade out all text first
+    cell.selectAll(".text-group")
+        .transition()
+        .duration(150)
+        .ease(d3.easeCubicInOut)
+        .style("opacity", 0);
 
-    rect.transition(t)
-        .attr("width", d => d.target.y1 - d.target.y0 - 1)
-        .attr("height", d => rectHeight(d.target));
+    // Create transition
+    const t = d3.transition()
+        .duration(500)
+        .ease(d3.easeCubicInOut);
 
-    // Update dimensions immediately for smooth text transitions
-    root.each(d => {
-        d.x0 = d.target.x0;
-        d.x1 = d.target.x1;
-        d.y0 = d.target.y0;
-        d.y1 = d.target.y1;
-    });
+    // Update all cells using scales - position and size change together
+    cell.transition(t)
+        .attr("transform", d => `translate(${xScale(d.y0)},${yScale(d.x0)})`);
 
-    // Apply text content update with animation
-    updateTextContent(cell, true);
+    cell.select("rect")
+        .transition(t)
+        .attr("width", d => xScale(d.y1) - xScale(d.y0) - 1)
+        .attr("height", d => yScale(d.x1) - yScale(d.x0) - Math.min(1, (yScale(d.x1) - yScale(d.x0)) / 2));
+
+    // Update text groups during the transition
+    cell.select(".text-group")
+        .transition(t)
+        .attr("transform", d => {
+            const w = xScale(d.y1) - xScale(d.y0);
+            const h = yScale(d.x1) - yScale(d.x0);
+            return `translate(${w / 2}, ${h / 2})`;
+        });
+
+    // Update text content after transition completes
+    setTimeout(() => {
+        updateTextContent(cell, true);
+    }, 200);
 
     // Update breadcrumb
     updateBreadcrumb(p);
-}
-
-function rectHeight(d) {
-    return d.x1 - d.x0 - Math.min(1, (d.x1 - d.x0) / 2);
-}
-
-function labelVisible(d) {
-    return d.y1 <= width && d.y0 >= 0 && d.x1 - d.x0 > 15;
 }
 
 // Breadcrumb navigation
