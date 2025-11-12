@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zoomable Icicle Chart - Lebanese Elections 2022</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        h1 {
+            color: #333;
+            margin: 0 0 10px 0;
+        }
+        .subtitle {
+            color: #666;
+            margin: 5px 0;
+        }
+        .instruction {
+            color: #999;
+            font-style: italic;
+            font-size: 14px;
+        }
+        #chart-container {
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Lebanese Parliamentary Elections 2022</h1>
+            <p class="subtitle">Hierarchical breakdown of votes by party and candidates</p>
+            <p class="instruction">Click on any rectangle to zoom in/out</p>
+        </div>
+        <div id="chart-container"></div>
+    </div>
+
+    <script>
+        // Sample data structure
+        const rawData = {
+            name: "Total Votes",
+            children: [
+                {
+                    name: "Party A",
+                    children: [
+                        {name: "Candidate 1", value: 5000},
+                        {name: "Candidate 2", value: 3000},
+                        {name: "Candidate 3", value: 2000}
+                    ]
+                },
+                {
+                    name: "Party B",
+                    children: [
+                        {name: "Candidate 4", value: 4500},
+                        {name: "Candidate 5", value: 2500}
+                    ]
+                },
+                {
+                    name: "Party C",
+                    children: [
+                        {name: "Candidate 6", value: 6000},
+                        {name: "Candidate 7", value: 1000},
+                        {name: "Candidate 8", value: 3000}
+                    ]
+                }
+            ]
+        };
+
+        const chart = createIcicleChart(rawData);
+        document.getElementById('chart-container').appendChild(chart);
+
+        function createIcicleChart(data) {
+            const width = 1200;
+            const height = 800;
+
+            const color = d3.scaleOrdinal(d3.quantize(d3.interpolateRainbow, data.children.length + 1));
+
+            const hierarchy = d3.hierarchy(data)
+                .sum(d => d.value)
+                .sort((a, b) => b.height - a.height || b.value - a.value);
+            
+            const root = d3.partition()
+                .size([height, width])
+                (hierarchy);
+
+            const svg = d3.create("svg")
+                .attr("viewBox", [0, 0, width, height])
+                .attr("width", width)
+                .attr("height", height)
+                .attr("style", "max-width: 100%; height: auto;");
+
+            // Append cells with clip paths
+            const cell = svg
+                .selectAll("g")
+                .data(root.descendants())
+                .join("g")
+                .attr("transform", d => `translate(${d.y0},${d.x0})`);
+
+            // Add clip path for each cell
+            cell.append("clipPath")
+                .attr("id", (d, i) => `clip-${i}`)
+                .append("rect")
+                .attr("width", d => Math.max(0, d.y1 - d.y0 - 1))
+                .attr("height", d => d.x1 - d.x0);
+
+            const rect = cell.append("rect")
+                .attr("width", d => Math.max(0, d.y1 - d.y0 - 1))
+                .attr("height", d => d.x1 - d.x0)
+                .attr("fill-opacity", 0.6)
+                .attr("fill", d => {
+                    if (!d.depth) return "#ccc";
+                    while (d.depth > 1) d = d.parent;
+                    return color(d.data.name);
+                })
+                .style("cursor", "pointer")
+                .on("click", clicked);
+
+            function getFontSize(height) {
+                const minSize = 10;
+                const maxSize = 60;
+                const size = Math.min(maxSize, Math.max(minSize, height * 0.4));
+                return size;
+            }
+
+            function getTextOpacity(height) {
+                if (height < 20) {
+                    return height / 20;
+                }
+                return 1;
+            }
+
+            // Apply clip path to text groups
+            const text = cell.append("text")
+                .attr("clip-path", (d, i) => `url(#clip-${i})`)
+                .style("user-select", "none")
+                .attr("pointer-events", "none")
+                .attr("text-anchor", "middle")
+                .attr("fill", "white")
+                .attr("font-weight", "500")
+                .attr("x", d => (d.y1 - d.y0) / 2)
+                .attr("y", d => (d.x1 - d.x0) / 2)
+                .attr("dy", "0.35em")
+                .attr("font-size", d => `${getFontSize(d.x1 - d.x0)}px`)
+                .attr("fill-opacity", d => getTextOpacity(d.x1 - d.x0))
+                .classed("hide-text", d => (d.x1 - d.x0) < 20);
+
+            text.append("tspan")
+                .attr("x", d => (d.y1 - d.y0) / 2)
+                .text(d => d.data.name);
+
+            const format = d3.format(",d");
+            text.append("tspan")
+                .attr("x", d => (d.y1 - d.y0) / 2)
+                .attr("dy", "1.2em")
+                .attr("fill-opacity", 0.8)
+                .attr("font-size", d => `${getFontSize(d.x1 - d.x0) * 0.7}px`)
+                .text(d => ` ${format(d.value)}`);
+
+            cell.append("title")
+                .text(d => `${d.ancestors().map(d => d.data.name).reverse().join("/")}\n${format(d.value)}`);
+
+            let focus = root;
+
+            function clicked(event, p) {
+                focus = focus === p ? p = p.parent : p;
+                
+                root.each(d => d.target = {
+                    x0: (d.x0 - p.x0) / (p.x1 - p.x0) * height,
+                    x1: (d.x1 - p.x0) / (p.x1 - p.x0) * height,
+                    y0: d.y0 - p.y0,
+                    y1: d.y1 - p.y0
+                });
+
+                const transition = svg.transition().duration(750);
+
+                cell.transition(transition)
+                    .attr("transform", d => `translate(${d.target.y0},${d.target.x0})`);
+
+                // Animate clip path rectangles
+                cell.select("clipPath rect")
+                    .transition(transition)
+                    .attr("width", d => Math.max(0, d.target.y1 - d.target.y0 - 1))
+                    .attr("height", d => Math.max(0, d.target.x1 - d.target.x0));
+
+                rect.transition(transition)
+                    .attr("width", d => Math.max(0, d.target.y1 - d.target.y0 - 1))
+                    .attr("height", d => Math.max(0, d.target.x1 - d.target.x0));
+
+                text.each(function(d) {
+                        // Update hide-text class based on target height
+                        const targetHeight = d.target.x1 - d.target.x0;
+                        d3.select(this).classed("hide-text", targetHeight < 20);
+                    })
+                    .transition(transition)
+                    .attr("x", d => (d.target.y1 - d.target.y0) / 2)
+                    .attr("y", d => (d.target.x1 - d.target.x0) / 2)
+                    .attr("font-size", d => `${getFontSize(d.target.x1 - d.target.x0)}px`)
+                    .attr("fill-opacity", d => getTextOpacity(d.target.x1 - d.target.x0));
+
+                text.selectAll("tspan:first-child")
+                    .transition(transition)
+                    .attr("x", d => (d.target.y1 - d.target.y0) / 2);
+
+                text.selectAll("tspan:last-child")
+                    .transition(transition)
+                    .attr("x", d => (d.target.y1 - d.target.y0) / 2)
+                    .attr("font-size", d => `${getFontSize(d.target.x1 - d.target.x0) * 0.7}px`);
+            }
+
+            return svg.node();
+        }
+    </script>
+</body>
+</html

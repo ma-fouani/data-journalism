@@ -4,33 +4,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lebanon 2022 - Zoomable Icicle</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Zoomable Icicle Chart - Lebanese Elections 2022</title>
     <script src="https://d3js.org/d3.v7.min.js"></script>
+
     <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
-    <div class="zoom_icicle_container">
-        <div class="zoom_icicle_chart_wrapper">
-            <div class="zoom_icicle_top_bar">
-                <div class="zoom_icicle_header">
-                    <h1 class="zoom_icicle_title">Lebanon 2022</h1>
-                    <p class="zoom_icicle_subtitle">Explore election results and political coalitions - Click to zoom in,
-                        click root to zoom out</p>
-                </div>
-                <div class="zoom_icicle_breadcrumb" id="breadcrumb"></div>
-            </div>
-            <div class="zoom_icicle_content">
-                <svg class="zoom_icicle_chart" id="chart"></svg>
-            </div>
+    <div class="container">
+        <div class="header">
+            <h1>Lebanese Parliamentary Elections 2022</h1>
+            <p class="subtitle">Hierarchical breakdown of votes by party and candidates</p>
+            <p class="instruction">Click on any rectangle to zoom in/out</p>
         </div>
+        <div id="chart-container"></div>
     </div>
-
     <script src="data/data.js"></script>
     <script src="js/main.js"></script>
 </body>
 
-</html>
+</html
