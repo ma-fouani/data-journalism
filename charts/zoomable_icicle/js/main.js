@@ -94,6 +94,16 @@ function createIcicleChart(data) {
         return lines;
     }
 
+    // Format numbers with K/M suffixes
+    function formatValue(value) {
+        if (value >= 1000000) {
+            return (value / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+        } else if (value >= 1000) {
+            return (value / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+        }
+        return value.toString();
+    }
+
     const format = d3.format(",d");
 
     // Apply clip path to text groups
@@ -117,7 +127,7 @@ function createIcicleChart(data) {
         
         const centerX = (d.y1 - d.y0) / 2;
         const lineHeight = fontSize * 1.1;
-        const totalTextHeight = lines.length * lineHeight + lineHeight * 0.7; // includes value line
+        const totalTextHeight = lines.length * lineHeight + lineHeight * 0.35; // reduced padding
         const startY = (height - totalTextHeight) / 2 + lineHeight / 2;
 
         // Add each line as a tspan
@@ -129,14 +139,14 @@ function createIcicleChart(data) {
                 .text(line);
         });
 
-        // Add value below the name
+        // Add value below the name (50% smaller)
         textElement.append("tspan")
             .attr("x", centerX)
             .attr("y", startY + (lines.length * lineHeight))
-            .attr("dy", "0.3em")
+            .attr("dy", "0.15em") // reduced padding
             .attr("fill-opacity", 0.8)
-            .attr("font-size", `${fontSize * 0.7}px`)
-            .text(` ${format(d.value)}`);
+            .attr("font-size", `${fontSize * 0.5}px`) // changed from 0.7 to 0.5
+            .text(formatValue(d.value)); // using formatValue instead of format
     });
 
     cell.append("title")
@@ -181,7 +191,7 @@ function createIcicleChart(data) {
             const lines = wrapText(d.data.name, targetWidth, fontSize);
             const centerX = (d.target.y1 - d.target.y0) / 2;
             const lineHeight = fontSize * 1.1;
-            const totalTextHeight = lines.length * lineHeight + lineHeight * 0.7;
+            const totalTextHeight = lines.length * lineHeight + lineHeight * 0.35; // reduced padding
             const startY = (targetHeight - totalTextHeight) / 2 + lineHeight / 2;
 
             const textElement = d3.select(this);
@@ -199,15 +209,15 @@ function createIcicleChart(data) {
                 }
             });
 
-            // Update value tspan (last one)
+            // Update value tspan (last one) - 50% smaller
             const valueTspan = d3.select(tspans.nodes()[lines.length]);
             if (valueTspan.size() > 0) {
                 valueTspan.transition(transition)
                     .attr("x", centerX)
                     .attr("y", startY + (lines.length * lineHeight))
-                    .attr("dy", "0.3em")
-                    .attr("font-size", `${fontSize * 0.7}px`)
-                    .text(` ${format(d.value)}`);
+                    .attr("dy", "0.15em") // reduced padding
+                    .attr("font-size", `${fontSize * 0.5}px`) // changed from 0.7 to 0.5
+                    .text(formatValue(d.value)); // using formatValue instead of format
             }
         })
             .transition(transition)
