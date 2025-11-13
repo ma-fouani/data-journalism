@@ -35,7 +35,15 @@ const rect = cell.append("rect")
     .attr("width", d => Math.max(0, d.y1 - d.y0)) // removed - 1
     .attr("height", d => d.x1 - d.x0)
     .attr("fill-opacity", 0.8) // set initial opacity
-    .attr("fill", d => d.data.color)
+    .attr("fill", d => {
+        if (!d.parent) {
+            return d3.color(d.data.color).darker(0.1).formatHex();
+        }
+        if (d.depth === 1) {
+            return d.data.color;
+        }
+        return d3.color(d.data.color).brighter(0.1).formatHex();
+    })
     .style("cursor", "pointer")
     .on("click", clicked);
 
@@ -111,7 +119,7 @@ const text = cell.append("text")
     .attr("direction", "rtl"); // RTL alignment for all text
 
 // Add wrapped text for each cell
-text.each(function(d) {
+text.each(function (d) {
     const textElement = d3.select(this);
     const width = d.y1 - d.y0 - 10; // subtract padding
     const height = d.x1 - d.x0;
@@ -285,18 +293,28 @@ function searchAndZoom(query) {
     // Find all leaf nodes (candidates)
     const leaves = root.leaves();
     const queryLower = query.toLowerCase();
-    
-    // Search for matching candidate
-    const match = leaves.find(d => 
+
+    // Search for matching candidate (third level)
+    let match = leaves.find(d =>
         d.data.name.toLowerCase().includes(queryLower)
     );
 
+    // If not found, search for matching party (second level)
+    if (!match) {
+        const parties = root.descendants().filter(d =>
+            d.depth === 1 && d.data.name && d.data.name.toLowerCase().includes(queryLower)
+        );
+        if (parties.length > 0) {
+            match = parties[0];
+        }
+    }
+
     if (match) {
-        // Zoom to the matched candidate
+        // Zoom to the matched node
         clicked(null, match);
     } else {
         // Show alert if no match found
-        alert('لم يتم العثور على مرشح بهذا الاسم');
+        alert('لم يتم العثور على مرشح أو حزب بهذا الاسم');
     }
 }
 
