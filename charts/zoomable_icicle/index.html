@@ -15,6 +15,21 @@
         <div class="header">
             <h1>Lebanese Parliamentary Elections 2022</h1>
             <p class="subtitle">Hierarchical breakdown of votes by party and candidates</p>
+            <div class="search-container">
+                <input type="text" id="searchInput" class="search-input" placeholder="اكتب اسم المرشح بالعربية">
+                <button id="searchBtn" class="search-btn hidden">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M8 3L13 8L8 13M12.5 8H3" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                </button>
+                <button id="clearBtn" class="clear-btn hidden">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                </button>
+            </div>
             <p class="instruction">Click on any rectangle to zoom in/out</p>
         </div>
         <div id="chart-container"></div>
@@ -23,4 +38,4 @@
     <script src="js/main.js"></script>
 </body>
 
-</html
+</html>
