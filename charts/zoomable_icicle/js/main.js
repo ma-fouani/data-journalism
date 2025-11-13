@@ -28,25 +28,21 @@ const cell = svg
 cell.append("clipPath")
     .attr("id", (d, i) => `clip-${i}`)
     .append("rect")
-    .attr("width", d => Math.max(0, d.y1 - d.y0 - 1))
+    .attr("width", d => Math.max(0, d.y1 - d.y0)) // removed - 1
     .attr("height", d => d.x1 - d.x0);
 
 const rect = cell.append("rect")
-    .attr("width", d => Math.max(0, d.y1 - d.y0 - 1))
+    .attr("width", d => Math.max(0, d.y1 - d.y0)) // removed - 1
     .attr("height", d => d.x1 - d.x0)
-    .attr("fill-opacity", 0.4) // changed from 0.6 to 0.1
-    .attr("fill", d => {
-        if (!d.depth) return "#ccc";
-        while (d.depth > 1) d = d.parent;
-        return color(d.data.name);
-    })
+    .attr("fill-opacity", 0.8) // set initial opacity
+    .attr("fill", d => d.data.color)
     .style("cursor", "pointer")
     .on("click", clicked);
 
 function getFontSize(height) {
     const minSize = 10;
-    const maxSize = 60;
-    const size = Math.min(maxSize, Math.max(minSize, height * 0.4));
+    const maxSize = 48; // reduce max for Noto Kufi Arabic
+    const size = Math.min(maxSize, Math.max(minSize, height * 0.15)); // reduce scaling factor
     return size;
 }
 
@@ -63,11 +59,11 @@ function wrapText(text, maxWidth, fontSize) {
     const lines = [];
     let currentLine = words[0] || '';
 
-    // Create temporary text element to measure width
+    // Use Noto Kufi Arabic for measurement
     const tempText = svg.append("text")
         .attr("font-size", fontSize)
         .attr("font-weight", "500")
-        .attr("font-family", "'Inter', sans-serif")
+        .attr("font-family", "'Noto Kufi Arabic', sans-serif")
         .style("visibility", "hidden");
 
     for (let i = 1; i < words.length; i++) {
@@ -75,7 +71,7 @@ function wrapText(text, maxWidth, fontSize) {
         tempText.text(testLine);
         const testWidth = tempText.node().getComputedTextLength();
 
-        if (testWidth > maxWidth && currentLine.length > 0) {
+        if (testWidth > maxWidth - 4 && currentLine.length > 0) { // add small padding
             lines.push(currentLine);
             currentLine = words[i];
         } else {
@@ -108,10 +104,11 @@ const text = cell.append("text")
     .style("user-select", "none")
     .attr("pointer-events", "none")
     .attr("text-anchor", "middle")
-    .attr("fill", "white")
+    .attr("fill", "#fff")
     .attr("font-weight", "500")
     .attr("fill-opacity", d => getTextOpacity(d.x1 - d.x0))
-    .classed("hide-text", d => (d.x1 - d.x0) < 20);
+    .classed("hide-text", d => (d.x1 - d.x0) < 20)
+    .attr("direction", "rtl"); // RTL alignment for all text
 
 // Add wrapped text for each cell
 text.each(function(d) {
@@ -120,29 +117,44 @@ text.each(function(d) {
     const height = d.x1 - d.x0;
     const fontSize = getFontSize(height);
     const lines = wrapText(d.data.name, width, fontSize);
-    
+
     const centerX = (d.y1 - d.y0) / 2;
     const lineHeight = fontSize * 1.1;
-    const totalTextHeight = lines.length * lineHeight + lineHeight * 0.35; // reduced padding
+    const totalTextHeight = lines.length * lineHeight + lineHeight * 0.35;
     const startY = (height - totalTextHeight) / 2 + lineHeight / 2;
 
-    // Add each line as a tspan
-    lines.forEach((line, i) => {
+    textElement.selectAll("tspan").remove();
+
+    if (height < 60) {
+        // Title and value on same line
+        const label = lines.join(" ") + "  " + formatValue(d.value);
         textElement.append("tspan")
             .attr("x", centerX)
-            .attr("y", startY + (i * lineHeight))
+            .attr("y", height / 2)
             .attr("font-size", `${fontSize}px`)
-            .text(line);
-    });
+            .attr("direction", "rtl") // RTL for tspan
+            .text(label);
+    } else {
+        // Add each line as a tspan
+        lines.forEach((line, i) => {
+            textElement.append("tspan")
+                .attr("x", centerX)
+                .attr("y", startY + (i * lineHeight))
+                .attr("font-size", `${fontSize}px`)
+                .attr("direction", "rtl") // RTL for tspan
+                .text(line);
+        });
 
-    // Add value below the name (50% smaller)
-    textElement.append("tspan")
-        .attr("x", centerX)
-        .attr("y", startY + (lines.length * lineHeight))
-        .attr("dy", "0.15em") // reduced padding
-        .attr("fill-opacity", 0.8)
-        .attr("font-size", `${fontSize * 0.5}px`) // changed from 0.7 to 0.5
-        .text(formatValue(d.value)); // using formatValue instead of format
+        // Add value below the name (50% smaller)
+        textElement.append("tspan")
+            .attr("x", centerX)
+            .attr("y", startY + (lines.length * lineHeight) - (lineHeight * 0.3))
+            .attr("dy", "0.05em") // less padding between title and value
+            .attr("fill-opacity", 0.8)
+            .attr("font-size", `${fontSize * 0.5}px`)
+            .attr("direction", "rtl") // RTL for tspan
+            .text(formatValue(d.value));
+    }
 });
 
 cell.append("title")
@@ -169,13 +181,13 @@ function clicked(event, p) {
     // Animate clip path rectangles
     cell.select("clipPath rect")
         .transition(transition)
-        .attr("width", d => Math.max(0, d.target.y1 - d.target.y0 - 1))
+        .attr("width", d => Math.max(0, d.target.y1 - d.target.y0)) // removed - 1
         .attr("height", d => Math.max(0, d.target.x1 - d.target.x0));
 
     rect.transition(transition)
-        .attr("width", d => Math.max(0, d.target.y1 - d.target.y0 - 1))
+        .attr("width", d => Math.max(0, d.target.y1 - d.target.y0)) // removed - 1
         .attr("height", d => Math.max(0, d.target.x1 - d.target.x0))
-        .attr("fill-opacity", 0.4);
+        .attr("fill-opacity", 0.8);
 
     // Update text - targets are already calculated
     text.transition(transition)
@@ -184,11 +196,9 @@ function clicked(event, p) {
             const targetHeight = d.target.x1 - d.target.x0;
             const targetWidth = d.target.y1 - d.target.y0 - 10;
             const fontSize = getFontSize(targetHeight);
-            
-            // Update hide-text class based on target height
+
             d3.select(this).classed("hide-text", targetHeight < 20);
 
-            // Re-wrap text for new dimensions
             const lines = wrapText(d.data.name, targetWidth, fontSize);
             const centerX = (d.target.y1 - d.target.y0) / 2;
             const lineHeight = fontSize * 1.1;
@@ -196,28 +206,35 @@ function clicked(event, p) {
             const startY = (targetHeight - totalTextHeight) / 2 + lineHeight / 2;
 
             const textElement = d3.select(this);
-            const tspans = textElement.selectAll("tspan");
-            
-            // Update existing tspans for name lines
-            lines.forEach((line, i) => {
-                const tspan = d3.select(tspans.nodes()[i]);
-                if (tspan.size() > 0) {
-                    tspan.transition(transition)
+            textElement.selectAll("tspan").remove();
+
+            if (targetHeight < 60) {
+                // Title and value on same line
+                const label = lines.join(" ") + "  " + formatValue(d.value);
+                textElement.append("tspan")
+                    .attr("x", centerX)
+                    .attr("y", targetHeight / 2)
+                    .attr("font-size", `${fontSize}px`)
+                    .attr("direction", "rtl") // RTL for tspan
+                    .text(label);
+            } else {
+                // Update existing tspans for name lines
+                lines.forEach((line, i) => {
+                    textElement.append("tspan")
                         .attr("x", centerX)
                         .attr("y", startY + (i * lineHeight))
                         .attr("font-size", `${fontSize}px`)
+                        .attr("direction", "rtl") // RTL for tspan
                         .text(line);
-                }
-            });
+                });
 
-            // Update value tspan (last one)
-            const valueTspan = d3.select(tspans.nodes()[lines.length]);
-            if (valueTspan.size() > 0) {
-                valueTspan.transition(transition)
+                // Add value tspan (last one)
+                textElement.append("tspan")
                     .attr("x", centerX)
-                    .attr("y", startY + (lines.length * lineHeight))
-                    .attr("dy", "0.15em")
+                    .attr("y", startY + (lines.length * lineHeight) - (lineHeight * 0.3))
+                    .attr("dy", "0.05em")
                     .attr("font-size", `${fontSize * 0.5}px`)
+                    .attr("direction", "rtl") // RTL for tspan
                     .text(formatValue(d.value));
             }
         });

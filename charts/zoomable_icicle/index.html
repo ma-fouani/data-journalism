@@ -7,9 +7,8 @@
     <title>Zoomable Icicle Chart - Lebanese Elections 2022</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://d3js.org/d3.v7.min.js"></script>
-
     <link rel="stylesheet" href="css/styles.css">
 </head>
 
@@ -18,11 +17,11 @@
         <div class="inner-content">
             <div class="header">
                 <div class="header-row">
-                    <h1 class="main-title">Lebanese Election Results - 2022</h1>
+                    <h1 class="main-title">الإنتخابات اللبنانية 2022</h1>
                     <div class="search-container">
-                        <input type="text" id="searchInput" class="search-input" placeholder="Search for member">
+                        <input type="text" id="searchInput" class="search-input" placeholder="أدخل إسم نائب">
                         <button id="searchBtn" class="search-btn hidden">
-                            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                            <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
                                 <circle cx="15" cy="15" r="9" stroke="currentColor" stroke-width="2" fill="none" />
                                 <line x1="23" y1="23" x2="29" y2="29" stroke="currentColor" stroke-width="2"
                                     stroke-linecap="round" />
@@ -30,17 +29,41 @@
                         </button>
                         <button id="clearBtn" class="clear-btn hidden">
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" />
+                                <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" />
                             </svg>
                         </button>
                     </div>
                 </div>
             </div>
             <div id="chart-container"></div>
+            <!-- Legend List -->
+            <div class="legend-list">
+                <div class="legend-item">
+                    <span class="legend-circle" style="background:#85c980"></span>
+                    <span class="legend-label">شيعة</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-circle" style="background:#8380c9"></span>
+                    <span class="legend-label">سني</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-circle" style="background:#c98080"></span>
+                    <span class="legend-label">مسيحي</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-circle" style="background:#bc80c9"></span>
+                    <span class="legend-label">دروز</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-circle" style="background:#c8c8c8"></span>
+                    <span class="legend-label">أخرى</span>
+                </div>
+            </div>
         </div>
     </div>
     <script src="data/data.js"></script>
+    <script src="js/coloring.js"></script>
     <script src="js/main.js"></script>
 </body>
 
