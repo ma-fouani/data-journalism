@@ -153,6 +153,7 @@ let focus = root;
 function clicked(event, p) {
     focus = focus === p ? p = p.parent : p;
 
+    // Calculate targets for ALL descendants first
     root.each(d => d.target = {
         x0: (d.x0 - p.x0) / (p.x1 - p.x0) * height,
         x1: (d.x1 - p.x0) / (p.x1 - p.x0) * height,
@@ -175,49 +176,50 @@ function clicked(event, p) {
         .attr("width", d => Math.max(0, d.target.y1 - d.target.y0 - 1))
         .attr("height", d => Math.max(0, d.target.x1 - d.target.x0));
 
-    text.each(function (d) {
-        const targetHeight = d.target.x1 - d.target.x0;
-        const targetWidth = d.target.y1 - d.target.y0 - 10;
-        const fontSize = getFontSize(targetHeight);
-        
-        // Update hide-text class based on target height
-        d3.select(this).classed("hide-text", targetHeight < 20);
+    // Update text - targets are already calculated
+    text.transition(transition)
+        .attr("fill-opacity", d => getTextOpacity(d.target.x1 - d.target.x0))
+        .each(function (d) {
+            const targetHeight = d.target.x1 - d.target.x0;
+            const targetWidth = d.target.y1 - d.target.y0 - 10;
+            const fontSize = getFontSize(targetHeight);
+            
+            // Update hide-text class based on target height
+            d3.select(this).classed("hide-text", targetHeight < 20);
 
-        // Re-wrap text for new dimensions
-        const lines = wrapText(d.data.name, targetWidth, fontSize);
-        const centerX = (d.target.y1 - d.target.y0) / 2;
-        const lineHeight = fontSize * 1.1;
-        const totalTextHeight = lines.length * lineHeight + lineHeight * 0.35; // reduced padding
-        const startY = (targetHeight - totalTextHeight) / 2 + lineHeight / 2;
+            // Re-wrap text for new dimensions
+            const lines = wrapText(d.data.name, targetWidth, fontSize);
+            const centerX = (d.target.y1 - d.target.y0) / 2;
+            const lineHeight = fontSize * 1.1;
+            const totalTextHeight = lines.length * lineHeight + lineHeight * 0.35;
+            const startY = (targetHeight - totalTextHeight) / 2 + lineHeight / 2;
 
-        const textElement = d3.select(this);
-        const tspans = textElement.selectAll("tspan");
-        
-        // Update existing tspans for name lines
-        lines.forEach((line, i) => {
-            const tspan = d3.select(tspans.nodes()[i]);
-            if (tspan.size() > 0) {
-                tspan.transition(transition)
+            const textElement = d3.select(this);
+            const tspans = textElement.selectAll("tspan");
+            
+            // Update existing tspans for name lines
+            lines.forEach((line, i) => {
+                const tspan = d3.select(tspans.nodes()[i]);
+                if (tspan.size() > 0) {
+                    tspan.transition(transition)
+                        .attr("x", centerX)
+                        .attr("y", startY + (i * lineHeight))
+                        .attr("font-size", `${fontSize}px`)
+                        .text(line);
+                }
+            });
+
+            // Update value tspan (last one)
+            const valueTspan = d3.select(tspans.nodes()[lines.length]);
+            if (valueTspan.size() > 0) {
+                valueTspan.transition(transition)
                     .attr("x", centerX)
-                    .attr("y", startY + (i * lineHeight))
-                    .attr("font-size", `${fontSize}px`)
-                    .text(line);
+                    .attr("y", startY + (lines.length * lineHeight))
+                    .attr("dy", "0.15em")
+                    .attr("font-size", `${fontSize * 0.5}px`)
+                    .text(formatValue(d.value));
             }
         });
-
-        // Update value tspan (last one) - 50% smaller
-        const valueTspan = d3.select(tspans.nodes()[lines.length]);
-        if (valueTspan.size() > 0) {
-            valueTspan.transition(transition)
-                .attr("x", centerX)
-                .attr("y", startY + (lines.length * lineHeight))
-                .attr("dy", "0.15em") // reduced padding
-                .attr("font-size", `${fontSize * 0.5}px`) // changed from 0.7 to 0.5
-                .text(formatValue(d.value)); // using formatValue instead of format
-        }
-    })
-        .transition(transition)
-        .attr("fill-opacity", d => getTextOpacity(d.target.x1 - d.target.x0));
 }
 
 // Search function to find and zoom to leaf nodes
@@ -255,12 +257,16 @@ document.getElementById('chart-container').appendChild(svg.node());
 const searchInput = document.getElementById('searchInput');
 const searchBtn = document.getElementById('searchBtn');
 const clearBtn = document.getElementById('clearBtn');
+const searchContainer = document.querySelector('.search-container');
 
-// Show/hide buttons based on input
+// Show/hide buttons and animate input based on input value
 searchInput.addEventListener('input', (e) => {
     const hasValue = e.target.value.trim().length > 0;
     searchBtn.classList.toggle('hidden', !hasValue);
     clearBtn.classList.toggle('hidden', !hasValue);
+    if (searchContainer) {
+        searchContainer.classList.toggle('has-value', hasValue);
+    }
 });
 
 // Search on button click
