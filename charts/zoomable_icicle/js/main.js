@@ -34,7 +34,7 @@ cell.append("clipPath")
 const rect = cell.append("rect")
     .attr("width", d => Math.max(0, d.y1 - d.y0 - 1))
     .attr("height", d => d.x1 - d.x0)
-    .attr("fill-opacity", 0.6)
+    .attr("fill-opacity", 0.4) // changed from 0.6 to 0.1
     .attr("fill", d => {
         if (!d.depth) return "#ccc";
         while (d.depth > 1) d = d.parent;
@@ -174,7 +174,8 @@ function clicked(event, p) {
 
     rect.transition(transition)
         .attr("width", d => Math.max(0, d.target.y1 - d.target.y0 - 1))
-        .attr("height", d => Math.max(0, d.target.x1 - d.target.x0));
+        .attr("height", d => Math.max(0, d.target.x1 - d.target.x0))
+        .attr("fill-opacity", 0.4);
 
     // Update text - targets are already calculated
     text.transition(transition)

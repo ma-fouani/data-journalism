@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -15,25 +15,30 @@
 
 <body>
     <div class="container">
-        <div class="header">
-            <h1>الإنتخابات النيابية اللبنانية 2022</h1> 
-            <div class="search-container">
-                <input type="text" id="searchInput" class="search-input" placeholder="اكتب اسم المرشح بالعربية">
-                <button id="searchBtn" class="search-btn hidden">
-                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-                        <circle cx="15" cy="15" r="9" stroke="currentColor" stroke-width="2" fill="none"/>
-                        <line x1="23" y1="23" x2="29" y2="29" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
-                </button>
-                <button id="clearBtn" class="clear-btn hidden">
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                        <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" />
-                    </svg>
-                </button>
+        <div class="inner-content">
+            <div class="header">
+                <div class="header-row">
+                    <h1 class="main-title">Lebanese Election Results - 2022</h1>
+                    <div class="search-container">
+                        <input type="text" id="searchInput" class="search-input" placeholder="Search for member">
+                        <button id="searchBtn" class="search-btn hidden">
+                            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                                <circle cx="15" cy="15" r="9" stroke="currentColor" stroke-width="2" fill="none" />
+                                <line x1="23" y1="23" x2="29" y2="29" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" />
+                            </svg>
+                        </button>
+                        <button id="clearBtn" class="clear-btn hidden">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
             </div>
+            <div id="chart-container"></div>
         </div>
-        <div id="chart-container"></div>
     </div>
     <script src="data/data.js"></script>
     <script src="js/main.js"></script>
