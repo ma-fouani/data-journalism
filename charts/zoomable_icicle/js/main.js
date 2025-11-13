@@ -238,6 +238,40 @@ function clicked(event, p) {
                     .text(formatValue(d.value));
             }
         });
+
+    // Show/hide details div based on focus
+    if (focus === p) {
+        showDetailsDiv(p);
+    } else {
+        removeDetailsDiv();
+    }
+
+    // Update legend percentages for current focus
+    updateLegendPercentages(p);
+}
+
+// Update legend percentages based on current focus
+function updateLegendPercentages(node) {
+    let counts = { shia: 0, sunni: 0, christian: 0, druz: 0, others: 0 };
+    let total = 0;
+    function collect(n) {
+        if (n.children && n.children.length) {
+            n.children.forEach(collect);
+        } else {
+            const key = getReligionKey(n.data?.classification ?? n.classification);
+            counts[key] = (counts[key] || 0) + (n.value || n.data?.value || 0);
+            total += (n.value || n.data?.value || 0);
+        }
+    }
+    node.leaves ? node.leaves().forEach(collect) : collect(node);
+
+    Object.entries(counts).forEach(([key, val]) => {
+        const percent = total ? Math.round(val / total * 100) : 0;
+        const el = document.getElementById(`legend-percent-${key}`);
+        const item = el?.parentElement;
+        if (el) el.textContent = percent + "%";
+        if (item) item.style.display = percent === 0 ? "none" : "";
+    });
 }
 
 // Search function to find and zoom to leaf nodes
@@ -312,3 +346,6 @@ clearBtn.addEventListener('click', () => {
         searchFunction(''); // Reset to root view
     }
 });
+
+// Initial legend percentages for root
+updateLegendPercentages(root);
