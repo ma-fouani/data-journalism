@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sunburst - Lebanese Elections 2022</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            background: #181a20;
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+
+        a,
+        p,
+        span,
+        div,
+        #observablehq-viewof-sunburst-ae24fb37,
+        #observablehq-breadcrumb-ae24fb37 {
+            color: #e0e0e0 !important;
+        }
+
+
+        .sunburst-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding-top: 60px;
+            padding-bottom: 60px;
+            background: #181a20;
+        }
+
+        #container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(40, 44, 52, 0.18);
+            backdrop-filter: blur(8px) saturate(180%);
+            -webkit-backdrop-filter: blur(8px) saturate(180%);
+            border-radius: 32px;
+            box-shadow: 0 0 32px 8px #2e2e3a88, 0 0 0 2px #222 inset;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 32px;
+            position: relative;
+        }
+
+        #container::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 32px;
+            pointer-events: none;
+            opacity: 0.18;
+        }
+
+        #container::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 32px;
+            pointer-events: none;
+            box-shadow: 0 0 80px 8px #00eaff44, 0 0 32px 2px #fff2 inset;
+            opacity: 0.18;
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: #e0e0e0;
+            text-shadow: 0 2px 12px #00eaff44, 0 1px 0 #222;
+        }
+
+        #observablehq-viewof-sunburst-ae24fb37,
+        #observablehq-breadcrumb-ae24fb37 {
+            display: block;
+            margin: 20px auto !important;
+            padding: 20px;
+            background: none;
+            text-align: center;
+        }
+
+        @media (max-width: 768px),
+        (max-height: 600px) {
+            #observablehq-breadcrumb-ae24fb37 {
+                font-size: 1.5rem !important;
+                padding: 32px 16px !important;
+            }
+        }
+
+        /* Force percentage text in breadcrumb to be white */
+        #observablehq-breadcrumb-ae24fb37 .percentage,
+        #observablehq-breadcrumb-ae24fb37 [class*="percent"],
+        #observablehq-breadcrumb-ae24fb37 svg text {
+            fill: #fff !important;
+            color: #fff !important;
+        }
+
+        #observablehq-viewof-sunburst-ae24fb37>*,
+        #observablehq-breadcrumb-ae24fb37>* {
+            margin: 0 auto !important;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="observablehq-viewof-sunburst-ae24fb37"></div>
+    <div id="observablehq-breadcrumb-ae24fb37"></div>
+    <p>Credit: <a href="#">Lebanese Election Results - 2022 by maf</a></p>
+
+    <script type="module">
+        import { Runtime, Inspector } from "../js/observablejs.js";
+        import define from "../js/sunburst.js";
+        new Runtime().module(define, name => {
+            if (name === "viewof sunburst") return new Inspector(document.querySelector("#observablehq-viewof-sunburst-ae24fb37"));
+            if (name === "breadcrumb") return new Inspector(document.querySelector("#observablehq-breadcrumb-ae24fb37"));
+        });
+    </script>
+</body>
+
+</html>

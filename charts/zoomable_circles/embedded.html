@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zoomable Circles | Lebanese Election 2022</title>
+</head>
+
+<body>
+    <div id="observablehq-chart-65d7741b"></div>
+
+    <link rel="stylesheet" href="../css/zoomable_circles.css"> 
+    <script type="module">
+        import { Runtime, Inspector } from "../js/observablejs.js";
+        import define from "../js/zoomable_circles.js";
+        new Runtime().module(define, name => {
+            if (name === "chart") return new Inspector(document.querySelector("#observablehq-chart-65d7741b"));
+        });
+    </script> 
+</body>
+
+</html>
